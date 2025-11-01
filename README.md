@@ -5,11 +5,13 @@ A hybrid design system setup that supports both rapid development and stable pro
 ## 🧭 Hybrid Development Model
 
 ### Development Phase
+
 - Apps use `workspace:*` to link directly to the local design system
 - Changes in design system are reflected immediately in apps
 - Perfect for rapid iteration and component development
 
 ### Production Phase
+
 - Design system is published to npm/GitHub Packages
 - Apps lock to specific versions (e.g., `^1.2.0`)
 - Stable, predictable deployments
@@ -51,12 +53,14 @@ npm run dev:web
 ## 🔄 Publishing Workflow
 
 ### 1. Make changes to design system
+
 ```bash
 cd design-system
 # Edit components, update tokens, etc.
 ```
 
 ### 2. Test locally
+
 ```bash
 npm run dev  # Test design system
 cd ../apps/web-app
@@ -64,23 +68,26 @@ npm run dev  # Test in app
 ```
 
 ### 3. Build for production
+
 ```bash
 cd ../design-system
 npm run build
 ```
 
 ### 4. Version and publish
+
 ```bash
 npm version patch  # or minor/major
 npm publish --registry=https://npm.pkg.github.com
 ```
 
 ### 5. Update apps to use published version
+
 ```json
 // In apps/web-app/package.json
 {
   "dependencies": {
-    "@yourorg/design-system": "^1.2.0"  // Instead of "workspace:*"
+    "@yourorg/design-system": "^1.2.0" // Instead of "workspace:*"
   }
 }
 ```
@@ -88,17 +95,20 @@ npm publish --registry=https://npm.pkg.github.com
 ## 🧰 Available Scripts
 
 ### Root workspace
+
 - `npm run install:all` - Install all workspace dependencies
 - `npm run dev:ds` - Develop design system
 - `npm run dev:web` - Develop web app
 - `npm run build:ds` - Build design system
 
 ### Design system
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview built version
 
 ### Apps
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview built version

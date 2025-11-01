@@ -10,8 +10,8 @@ import {
   LitElement,
   html,
   css,
-} from "https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js";
-import { unsafeHTML } from "https://cdn.jsdelivr.net/npm/lit-html@3/directives/unsafe-html.js";
+} from "lit";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 /**
  * DataTable - Flexible data table component

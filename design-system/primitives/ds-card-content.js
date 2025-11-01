@@ -9,7 +9,7 @@ import {
   LitElement,
   html,
   css,
-} from "https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js";
+} from "lit";
 import "./ds-card-header.js";
 import "./ds-card-footer.js";
 import "./ds-card.js";
