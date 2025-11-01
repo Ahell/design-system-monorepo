@@ -152,6 +152,6 @@ class CardFooter extends LitElement {
 }
 
 // Register component
-customElements.define("card-footer", CardFooter);
+customElements.define("ds-card-footer", CardFooter);
 
 export { CardFooter };

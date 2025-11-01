@@ -124,6 +124,6 @@ class CardHeader extends LitElement {
 }
 
 // Register component
-customElements.define("card-header", CardHeader);
+customElements.define("ds-card-header", CardHeader);
 
 export { CardHeader };
