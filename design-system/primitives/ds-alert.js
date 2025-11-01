@@ -167,7 +167,7 @@ export class DSAlert extends LitElement {
         return "✓";
       case "warning":
         return "⚠";
-      case "danger":
+      case "error":
         return "✕";
       case "info":
       default:

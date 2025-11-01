@@ -1,4 +1,5 @@
 import "@yourorg/design-system";
+import "@yourorg/design-system/tokens/index.css";
 
 // Debug: Check if components are registered
 console.log("App loaded with design system");
