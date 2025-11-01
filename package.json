@@ -1,0 +1,16 @@
+{
+  "name": "design-system-workspace",
+  "private": true,
+  "workspaces": [
+    "design-system",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:ds": "npm run dev --workspace=design-system",
+    "dev:web": "npm run dev --workspace=apps/web-app",
+    "build:ds": "npm run build --workspace=design-system",
+    "install:all": "npm install",
+    "version:ds": "npm version --workspace=design-system",
+    "publish:ds": "npm publish --workspace=design-system --registry=https://npm.pkg.github.com"
+  }
+}
