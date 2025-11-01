@@ -2,15 +2,15 @@
   "name": "@yourorg/design-system",
   "version": "1.0.1",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "./index.js",
   "files": [
     "dist",
     "tokens"
   ],
   "exports": {
-    ".": "./dist/index.js",
+    ".": "./index.js",
     "./tokens": "./tokens/index.css",
-    "./primitives/*": "./dist/primitives/*.js"
+    "./primitives/*": "./primitives/*.js"
   },
   "dependencies": {
     "lit": "^3.1.0"
