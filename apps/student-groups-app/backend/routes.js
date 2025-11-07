@@ -325,6 +325,7 @@ function setupRoutes(app, config) {
       res.status(error.statusCode || 500).json(error);
     }
   });
+}
 
 module.exports = {
   setupRoutes,
