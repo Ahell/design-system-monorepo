@@ -30,13 +30,13 @@
           <p>Select a Canvas course to load student groups</p>
         </ds-card-header>
         <ds-card-content>
-          <ds-stack gap="4" style="align-items: flex-end; flex-direction: row;">
+          <ds-stack gap="4" style="align-items: flex-end; flex-direction: row">
             <ds-select
               id="course-select"
               label="Select Course"
               placeholder="Loading courses..."
               full-width
-              style="flex: 1;"
+              style="flex: 1"
             ></ds-select>
             <ds-button id="load-course-btn" variant="primary">
               Load Groups
@@ -53,8 +53,14 @@
 
         <ds-card-content>
           <ds-stack gap="4">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3 style="margin: 0;">Group Categories</h3>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h3 style="margin: 0">Group Categories</h3>
               <div
                 id="selection-status"
                 style="
@@ -80,7 +86,7 @@
             </div>
 
             <!-- Groups Overview Table (appears after Apply Selection) -->
-            <div id="groups-overview" style="display: none;">
+            <div id="groups-overview" style="display: none">
               <!-- Table will be dynamically inserted here -->
             </div>
           </ds-stack>

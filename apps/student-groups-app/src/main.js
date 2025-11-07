@@ -536,11 +536,7 @@ async function loadTabContent(categoryName, tabsElement) {
         return {
           ...tab,
           loading: false,
-          content:
-            '        } catch (error) {
-          console.error("Error loading groups:", error);
-          tabs[idx].content = `<ds-alert variant="error" title="Error Loading Groups">Failed to load groups for this category. Please try again.</ds-alert>`;
-          tabs[idx].loading = false;',
+          content: `<ds-alert variant="error" title="Error Loading Groups">Failed to load groups for this category. Please try again.</ds-alert>`,
         };
       }
       return tab;
@@ -549,14 +545,10 @@ async function loadTabContent(categoryName, tabsElement) {
   }
 }
 
-// Generate HTML content for groups display
-function generateGroupsContent(groups, categoryName) {
-  if (groups.length === 0) {
-    return `// Function to generate groups display with selection controls
+// Function to generate groups display with selection controls
 function generateGroupsContent(groups, categoryName) {
   if (groups.length === 0) {
     return `<ds-alert variant="info" title="No Groups Found">No groups found in the "${categoryName}" category.</ds-alert>`;
-  }`;
   }
 
   // Create groups display with filter controls
