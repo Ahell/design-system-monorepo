@@ -152,6 +152,7 @@ async function initializeApp() {
 function setupEventListeners() {
   const loadButton = document.getElementById("load-course-btn");
   const courseSelect = document.getElementById("course-select");
+  const addCategoryBtn = document.getElementById("add-category-btn");
 
   if (loadButton) {
     loadButton.addEventListener("click", handleLoadCourse);
@@ -165,6 +166,10 @@ function setupEventListeners() {
       // Store the selected value for later use
       courseSelect.setAttribute("data-selected-id", selectedCourseId);
     });
+  }
+
+  if (addCategoryBtn) {
+    addCategoryBtn.addEventListener("click", handleAddCategory);
   }
 }
 
@@ -337,6 +342,141 @@ async function handleLoadCourse() {
   }
 }
 
+// Handle adding a new group category
+async function handleAddCategory() {
+  if (!currentCourseId) {
+    alert("No course selected");
+    return;
+  }
+
+  const categoryName = prompt("Enter the name for the new group category:");
+
+  if (!categoryName || categoryName.trim() === "") {
+    return; // User cancelled or entered empty name
+  }
+
+  const categoryDescription = prompt("Enter a description (optional):", "");
+
+  const addCategoryBtn = document.getElementById("add-category-btn");
+
+  try {
+    // Disable button during creation
+    if (addCategoryBtn) {
+      addCategoryBtn.disabled = true;
+      addCategoryBtn.textContent = "Creating...";
+    }
+
+    const response = await fetch(
+      `http://localhost:3001/api/canvas/courses/${currentCourseId}/group_categories`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: categoryName.trim(),
+          description: categoryDescription?.trim() || "",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to create group category");
+    }
+
+    const newCategory = await response.json();
+
+    alert(`Group category "${categoryName}" created successfully!`);
+
+    // Reload the course categories to show the new one
+    await loadCourseCategories(currentCourseId);
+  } catch (error) {
+    console.error("Error creating group category:", error);
+    alert(`Error creating group category: ${error.message}`);
+  } finally {
+    // Reset button state
+    if (addCategoryBtn) {
+      addCategoryBtn.disabled = false;
+      addCategoryBtn.textContent = "+ Add Category";
+    }
+  }
+}
+
+// Handle adding a new group to a category
+async function handleAddGroup(categoryName) {
+  if (!currentCourseId) {
+    alert("No course selected");
+    return;
+  }
+
+  // First, we need to get the category ID from the category name
+  try {
+    const categories = await canvasApiRequest(
+      `/courses/${currentCourseId}/group_categories`
+    );
+    const category = categories.find(
+      (cat) => cat.name === categoryName || cat.id === categoryName
+    );
+
+    if (!category) {
+      alert(`Could not find category: ${categoryName}`);
+      return;
+    }
+
+    const groupName = prompt("Enter the name for the new group:");
+
+    if (!groupName || groupName.trim() === "") {
+      return; // User cancelled or entered empty name
+    }
+
+    const groupDescription = prompt("Enter a description (optional):", "");
+
+    // Show loading state
+    const addGroupBtn = document.querySelector("#add-group-btn");
+    if (addGroupBtn) {
+      addGroupBtn.disabled = true;
+      addGroupBtn.textContent = "Creating...";
+    }
+
+    const response = await fetch(
+      `http://localhost:3001/api/canvas/group_categories/${category.id}/groups`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: groupName.trim(),
+          description: groupDescription?.trim() || "",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to create group");
+    }
+
+    const newGroup = await response.json();
+
+    alert(`Group "${groupName}" created successfully!`);
+
+    // Reload the category content to show the new group
+    await loadCategoryContent(categoryName);
+  } catch (error) {
+    console.error("Error creating group:", error);
+    alert(`Error creating group: ${error.message}`);
+
+    // Reset button state
+    const addGroupBtn = document.querySelector("#add-group-btn");
+    if (addGroupBtn) {
+      addGroupBtn.disabled = false;
+      addGroupBtn.textContent = "+ Add Group";
+    }
+  }
+}
+
 // Show initial empty state
 function showInitialState() {
   const courseCardHeader = document.getElementById("course-card-header");
@@ -443,6 +583,12 @@ async function loadCourseCategories(courseId) {
     // Display category tabs
     displayCategoryTabs(categories);
 
+    // Show the Add Category button
+    const addCategoryBtn = document.getElementById("add-category-btn");
+    if (addCategoryBtn) {
+      addCategoryBtn.style.display = "block";
+    }
+
     // Show the card now that data is loaded
     if (groupCategoriesCard) {
       groupCategoriesCard.style.display = "block";
@@ -503,8 +649,13 @@ function displayCategoryTabs(categories) {
 
   categories.forEach((category, index) => {
     const radio = document.createElement("ds-radio");
-    radio.value = category;
-    radio.label = category;
+    // Handle both string categories (legacy) and object categories
+    const categoryName =
+      typeof category === "string" ? category : category.name;
+    const categoryId = typeof category === "string" ? category : category.id;
+    radio.value = categoryName;
+    radio.label = categoryName;
+    radio.setAttribute("data-category-id", categoryId);
     if (index === 0) {
       radio.checked = true;
     }
@@ -530,7 +681,9 @@ function displayCategoryTabs(categories) {
 
   // Load first category by default
   if (categories.length > 0) {
-    loadCategoryContent(categories[0]);
+    const firstCategory =
+      typeof categories[0] === "string" ? categories[0] : categories[0].name;
+    loadCategoryContent(firstCategory);
   }
 }
 
@@ -551,7 +704,7 @@ async function loadCategoryContent(categoryName) {
     categoryContent.innerHTML = `
       <ds-stack gap="4" align="center" style="padding: var(--space-8); text-align: center;">
         <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid var(--color-border-primary); border-top: 4px solid var(--color-primary-main); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <p style="color: var(--color-text-secondary);">Loading groups...</p>
+        <p style="color: var(--color-text-secondary);">Loading groups and students...</p>
       </ds-stack>
     `;
 
@@ -561,13 +714,53 @@ async function loadCategoryContent(categoryName) {
       categoryName
     );
 
-    // Generate and display HTML content for groups
-    const content = generateGroupsContent(groups, categoryName);
+    // Fetch all students in the course
+    const allStudents = await fetchCourseStudents(currentCourseId);
+
+    // Fetch members for each group
+    const groupsWithMembers = await Promise.all(
+      groups.map(async (group) => {
+        const members = await fetchGroupMembers(group.id);
+        return {
+          ...group,
+          members: members.map((m) => ({
+            id: m.user_id,
+            name:
+              allStudents.find((s) => s.id === m.user_id)?.name ||
+              `User ${m.user_id}`,
+            sortable_name:
+              allStudents.find((s) => s.id === m.user_id)?.sortable_name || "",
+          })),
+        };
+      })
+    );
+
+    // Find unassigned students
+    const assignedStudentIds = new Set();
+    groupsWithMembers.forEach((group) => {
+      group.members.forEach((member) => assignedStudentIds.add(member.id));
+    });
+
+    const unassignedStudents = allStudents
+      .filter((student) => !assignedStudentIds.has(student.id))
+      .map((student) => ({
+        id: student.id,
+        name: student.name,
+        sortable_name: student.sortable_name || student.name,
+      }))
+      .sort((a, b) => a.sortable_name.localeCompare(b.sortable_name));
+
+    // Generate and display drag-and-drop interface
+    const content = generateDragDropGroupsInterface(
+      groupsWithMembers,
+      unassignedStudents,
+      categoryName
+    );
     categoryContent.innerHTML = content;
 
     // Wait for DOM to update, then attach event listeners
     setTimeout(() => {
-      setupGroupSelectionHandlers(categoryName);
+      setupDragDropHandlers(categoryName);
     }, 100);
   } catch (error) {
     console.error("Error loading groups for category:", error);
@@ -682,6 +875,183 @@ function generateGroupsContent(groups, categoryName) {
   `;
 
   return html;
+}
+
+// Generate drag-and-drop interface for managing group memberships
+function generateDragDropGroupsInterface(
+  groups,
+  unassignedStudents,
+  categoryName
+) {
+  return `
+    <ds-card>
+      <ds-card-header
+        title="Övningsgrupper - ${categoryName}"
+        meta="Drag students between groups and unassigned list"
+      >
+        <ds-button
+          slot="stats"
+          id="add-group-btn"
+          size="sm"
+          variant="primary"
+          data-category="${categoryName}"
+        >
+          + Add Group
+        </ds-button>
+      </ds-card-header>
+      <ds-card-content>
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-6); align-items: start;">
+          <!-- First Column: Unassigned Students -->
+          <div>
+            <div style="
+              padding: var(--space-4);
+              background: var(--color-surface-secondary);
+              border-radius: var(--radius-md);
+              border: 2px solid var(--color-border);
+            ">
+              <div style="
+                font-weight: var(--weight-semibold);
+                font-size: var(--text-lg);
+                color: var(--color-text-primary);
+                margin-bottom: var(--space-3);
+              ">
+                Unassigned Students (${unassignedStudents.length})
+              </div>
+              <ds-stack 
+                gap="2" 
+                class="drop-zone unassigned-zone" 
+                data-zone-type="unassigned"
+                style="
+                  min-height: 200px;
+                  padding: var(--space-3);
+                  background: var(--color-surface);
+                  border-radius: var(--radius-sm);
+                  border: 2px dashed var(--color-border);
+                  transition: all 0.2s ease;
+                "
+              >
+                ${
+                  unassignedStudents.length === 0
+                    ? '<div style="color: var(--color-text-secondary); font-size: var(--text-sm); text-align: center; padding: var(--space-4);">All students are assigned to groups</div>'
+                    : unassignedStudents
+                        .map(
+                          (student) => `
+                    <div
+                      draggable="true"
+                      class="student-badge draggable-student"
+                      data-student-id="${student.id}"
+                      data-student-name="${student.name}"
+                      data-student-sortable-name="${student.sortable_name}"
+                      data-current-group="unassigned"
+                      style="
+                        cursor: move;
+                        transition: all 0.2s ease;
+                      "
+                    >
+                      <ds-badge variant="default" size="md">
+                        ${student.name}
+                      </ds-badge>
+                    </div>
+                  `
+                        )
+                        .join("")
+                }
+              </ds-stack>
+            </div>
+          </div>
+
+          <!-- Second Column: Groups -->
+          <div>
+            <ds-grid cols="2" gap="sm">
+              ${
+                groups.length === 0
+                  ? '<ds-alert variant="info" title="No Groups">No groups found in this category.</ds-alert>'
+                  : groups
+                      .map(
+                        (group) => `
+                <div class="group-container drop-zone" data-group-id="${
+                  group.id
+                }" data-zone-type="group" data-group-name="${group.name}">
+                  <div style="
+                    padding: var(--space-4);
+                    background: var(--color-surface-secondary);
+                    border-radius: var(--radius-md);
+                    border: 2px solid var(--color-border);
+                    transition: all 0.2s ease;
+                  ">
+                    <ds-flex justify="space-between" align="center" class="group-header">
+                      <div style="
+                        font-weight: var(--weight-semibold);
+                        font-size: var(--text-base);
+                        color: var(--color-text-primary);
+                      ">
+                        ${group.name} (${group.members.length})
+                      </div>
+                      <ds-button 
+                        size="sm" 
+                        variant="ghost"
+                        class="toggle-group-btn"
+                        data-group-id="${group.id}"
+                        style="min-width: 80px;"
+                      >
+                        <span class="toggle-text">Expand</span>
+                      </ds-button>
+                    </ds-flex>
+                    
+                    <ds-stack 
+                      gap="2"
+                      class="group-members"
+                      data-group-id="${group.id}"
+                      style="
+                        display: none;
+                        min-height: 100px;
+                        padding: var(--space-3);
+                        background: var(--color-surface);
+                        border-radius: var(--radius-sm);
+                        border: 2px dashed var(--color-border);
+                        transition: all 0.2s ease;
+                        margin-top: var(--space-3);
+                      "
+                    >
+                      ${
+                        group.members.length === 0
+                          ? '<div style="color: var(--color-text-secondary); font-size: var(--text-sm); text-align: center; padding: var(--space-4);">No members in this group</div>'
+                          : group.members
+                              .map(
+                                (member) => `
+                          <div
+                            draggable="true"
+                            class="student-badge draggable-student"
+                            data-student-id="${member.id}"
+                            data-student-name="${member.name}"
+                            data-student-sortable-name="${member.sortable_name}"
+                            data-current-group="${group.id}"
+                            style="
+                              cursor: move;
+                              transition: all 0.2s ease;
+                            "
+                          >
+                            <ds-badge variant="primary" size="md">
+                              ${member.name}
+                            </ds-badge>
+                          </div>
+                        `
+                              )
+                              .join("")
+                      }
+                    </ds-stack>
+                  </div>
+                </div>
+              `
+                      )
+                      .join("")
+              }
+            </ds-grid>
+          </div>
+        </div>
+      </ds-card-content>
+    </ds-card>
+  `;
 }
 
 // Fetch members for a specific group
@@ -922,6 +1292,391 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
         Failed to load group members. Please try again.
       </ds-alert>
     `;
+  }
+}
+
+// Setup drag-and-drop event handlers for student management
+function setupDragDropHandlers(categoryName) {
+  const categoryContent = document.getElementById("category-content");
+  if (!categoryContent) {
+    console.error("category-content element not found");
+    return;
+  }
+
+  let draggedStudent = null;
+
+  // Setup "+ Add Group" button handler
+  const addGroupBtn = categoryContent.querySelector("#add-group-btn");
+  if (addGroupBtn) {
+    addGroupBtn.addEventListener("click", async (e) => {
+      await handleAddGroup(categoryName);
+    });
+  }
+
+  // Setup expand/collapse for groups
+  const toggleButtons = categoryContent.querySelectorAll(".toggle-group-btn");
+  toggleButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const groupId = btn.getAttribute("data-group-id");
+      const membersContainer = categoryContent.querySelector(
+        `.group-members[data-group-id="${groupId}"]`
+      );
+      const toggleText = btn.querySelector(".toggle-text");
+
+      if (
+        membersContainer.style.display === "none" ||
+        !membersContainer.style.display
+      ) {
+        membersContainer.style.display = "flex";
+        toggleText.textContent = "Collapse";
+      } else {
+        membersContainer.style.display = "none";
+        toggleText.textContent = "Expand";
+      }
+    });
+  });
+
+  // Setup drag events for all student badges
+  function setupDraggableStudents() {
+    const students = categoryContent.querySelectorAll(".draggable-student");
+
+    students.forEach((student) => {
+      student.addEventListener("dragstart", (e) => {
+        draggedStudent = {
+          id: student.getAttribute("data-student-id"),
+          name: student.getAttribute("data-student-name"),
+          sortable_name:
+            student.getAttribute("data-student-sortable-name") ||
+            student.getAttribute("data-student-name"),
+          currentGroup: student.getAttribute("data-current-group"),
+          element: student,
+        };
+
+        student.style.opacity = "0.5";
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/html", student.innerHTML);
+      });
+
+      student.addEventListener("dragend", (e) => {
+        student.style.opacity = "1";
+
+        // Remove all drop zone highlights
+        categoryContent.querySelectorAll(".drop-zone").forEach((zone) => {
+          zone.style.borderColor = "var(--color-border)";
+          zone.style.background = "var(--color-surface)";
+        });
+      });
+    });
+  }
+
+  // Setup drop zones
+  const dropZones = categoryContent.querySelectorAll(".drop-zone");
+
+  dropZones.forEach((zone) => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+
+      // Highlight drop zone
+      zone.style.borderColor = "var(--color-primary-main)";
+      zone.style.background = "var(--color-primary-surface)";
+    });
+
+    zone.addEventListener("dragleave", (e) => {
+      // Only reset if we're actually leaving the zone (not entering a child)
+      if (e.target === zone) {
+        zone.style.borderColor = "var(--color-border)";
+        zone.style.background = "var(--color-surface)";
+      }
+    });
+
+    zone.addEventListener("drop", async (e) => {
+      e.preventDefault();
+
+      if (!draggedStudent) return;
+
+      const zoneType = zone.getAttribute("data-zone-type");
+      const targetGroupId = zone.getAttribute("data-group-id");
+      const targetGroupName = zone.getAttribute("data-group-name");
+
+      // Reset zone styling
+      zone.style.borderColor = "var(--color-border)";
+      zone.style.background = "var(--color-surface)";
+
+      // Determine if this is a valid move
+      const sourceGroup = draggedStudent.currentGroup;
+      const targetGroup =
+        zoneType === "unassigned" ? "unassigned" : targetGroupId;
+
+      if (sourceGroup === targetGroup) {
+        console.log("Dropped in same location, no action needed");
+        return;
+      }
+
+      console.log(
+        `Moving student ${draggedStudent.name} from ${sourceGroup} to ${targetGroup}`
+      );
+
+      // Update the UI immediately for responsiveness
+      const studentElement = draggedStudent.element;
+
+      // Remove from current location
+      studentElement.remove();
+
+      // Add to new location
+      const newBadgeHTML = `
+        <div
+          draggable="true"
+          class="student-badge draggable-student"
+          data-student-id="${draggedStudent.id}"
+          data-student-name="${draggedStudent.name}"
+          data-student-sortable-name="${draggedStudent.sortable_name}"
+          data-current-group="${targetGroup}"
+          style="cursor: move; transition: all 0.2s ease;"
+        >
+          <ds-badge variant="${
+            zoneType === "unassigned" ? "default" : "primary"
+          }" size="md">
+            ${draggedStudent.name}
+          </ds-badge>
+        </div>
+      `;
+
+      // Remove "no members" message if it exists
+      const noMembersMsg = zone.querySelector('div[style*="No members"]');
+      if (noMembersMsg) {
+        noMembersMsg.remove();
+      }
+
+      // If dropping into unassigned zone, insert in alphabetical order by sortable_name
+      if (zoneType === "unassigned") {
+        const existingStudents = Array.from(
+          zone.querySelectorAll(".draggable-student")
+        );
+        let inserted = false;
+
+        for (const existingStudent of existingStudents) {
+          const existingSortableName =
+            existingStudent.getAttribute("data-student-sortable-name") ||
+            existingStudent.getAttribute("data-student-name");
+          if (
+            draggedStudent.sortable_name.localeCompare(existingSortableName) < 0
+          ) {
+            existingStudent.insertAdjacentHTML("beforebegin", newBadgeHTML);
+            inserted = true;
+            break;
+          }
+        }
+
+        // If not inserted yet, add at the end
+        if (!inserted) {
+          zone.insertAdjacentHTML("beforeend", newBadgeHTML);
+        }
+      } else {
+        // For groups, find the members container (might be collapsed)
+        let membersContainer;
+        let wasCollapsed = false;
+
+        if (zone.classList.contains("group-container")) {
+          // Dropped into the group container itself (collapsed group)
+          membersContainer = zone.querySelector(".group-members");
+          wasCollapsed =
+            membersContainer.style.display === "none" ||
+            !membersContainer.style.display;
+        } else {
+          // Dropped directly into the members area (expanded group)
+          membersContainer = zone;
+        }
+
+        if (membersContainer) {
+          membersContainer.insertAdjacentHTML("beforeend", newBadgeHTML);
+
+          // If the group was collapsed, expand it
+          if (wasCollapsed) {
+            membersContainer.style.display = "flex";
+            const toggleBtn = zone.querySelector(".toggle-group-btn");
+            if (toggleBtn) {
+              const toggleText = toggleBtn.querySelector(".toggle-text");
+              if (toggleText) {
+                toggleText.textContent = "Collapse";
+              }
+            }
+          }
+        } else {
+          console.error("Could not find members container for group");
+        }
+      }
+
+      // Check if source group is now empty and collapse it
+      if (sourceGroup !== "unassigned") {
+        const sourceGroupContainer = categoryContent.querySelector(
+          `.group-container[data-group-id="${sourceGroup}"]`
+        );
+        if (sourceGroupContainer) {
+          const sourceMembersContainer =
+            sourceGroupContainer.querySelector(".group-members");
+          const remainingMembers =
+            sourceMembersContainer.querySelectorAll(".draggable-student");
+
+          if (remainingMembers.length === 0) {
+            // Collapse the empty group
+            sourceMembersContainer.style.display = "none";
+            const toggleBtn =
+              sourceGroupContainer.querySelector(".toggle-group-btn");
+            if (toggleBtn) {
+              const toggleText = toggleBtn.querySelector(".toggle-text");
+              if (toggleText) {
+                toggleText.textContent = "Expand";
+              }
+            }
+          }
+        }
+      }
+
+      // Re-setup drag handlers for the newly added element
+      setupDraggableStudents();
+
+      // Update member counts
+      updateGroupMemberCounts();
+
+      // Make API call to update Canvas
+      try {
+        if (sourceGroup !== "unassigned") {
+          // Remove from old group
+          await removeStudentFromGroup(sourceGroup, draggedStudent.id);
+        }
+
+        if (targetGroup !== "unassigned") {
+          // Add to new group
+          await addStudentToGroup(targetGroup, draggedStudent.id);
+        }
+
+        console.log("Successfully updated group membership in Canvas");
+      } catch (error) {
+        console.error("Error updating group membership:", error);
+
+        // Show error alert
+        const alertHTML = `
+          <ds-alert variant="error" title="Error" style="margin-bottom: var(--space-4);">
+            Failed to update group membership: ${error.message}
+          </ds-alert>
+        `;
+        categoryContent.insertAdjacentHTML("afterbegin", alertHTML);
+
+        // Reload the category to get correct state
+        setTimeout(() => {
+          loadCategoryContent(categoryName);
+        }, 3000);
+      }
+
+      draggedStudent = null;
+    });
+  });
+
+  // Initial setup of draggable students
+  setupDraggableStudents();
+
+  // Helper function to update member counts in group headers
+  function updateGroupMemberCounts() {
+    const groupContainers =
+      categoryContent.querySelectorAll(".group-container");
+    groupContainers.forEach((container) => {
+      const groupId = container.getAttribute("data-group-id");
+      const membersZone = container.querySelector(
+        `.group-members[data-group-id="${groupId}"]`
+      );
+      const memberCount =
+        membersZone.querySelectorAll(".draggable-student").length;
+      const headerText = container.querySelector(
+        "div[style*='font-weight: var(--weight-semibold)']"
+      );
+
+      if (headerText) {
+        const groupName = headerText.textContent.replace(/\s*\(\d+\)\s*$/, "");
+        headerText.textContent = `${groupName} (${memberCount})`;
+      }
+    });
+
+    // Update unassigned count
+    const unassignedZone = categoryContent.querySelector(".unassigned-zone");
+    const unassignedCount =
+      unassignedZone.querySelectorAll(".draggable-student").length;
+    const unassignedHeader = categoryContent.querySelector(
+      "div[style*='Unassigned Students']"
+    );
+    if (unassignedHeader) {
+      unassignedHeader.textContent = `Unassigned Students (${unassignedCount})`;
+    }
+  }
+}
+
+// Add student to group via Canvas API
+async function addStudentToGroup(groupId, studentId) {
+  try {
+    const response = await fetch(
+      `${CANVAS_API_BASE}/groups/${groupId}/memberships`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: studentId,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to add student to group: ${response.status} ${errorText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error adding student to group:", error);
+    throw error;
+  }
+}
+
+// Remove student from group via Canvas API
+async function removeStudentFromGroup(groupId, studentId) {
+  try {
+    // First, get the membership ID
+    const memberships = await canvasApiRequest(
+      `/groups/${groupId}/memberships`
+    );
+    const membership = memberships.find(
+      (m) => m.user_id === parseInt(studentId)
+    );
+
+    if (!membership) {
+      console.warn("Membership not found, may already be removed");
+      return;
+    }
+
+    const response = await fetch(
+      `${CANVAS_API_BASE}/groups/${groupId}/memberships/${membership.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to remove student from group: ${response.status} ${errorText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error removing student from group:", error);
+    throw error;
   }
 }
 

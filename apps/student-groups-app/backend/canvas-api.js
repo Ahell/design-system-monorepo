@@ -30,17 +30,21 @@ function parseLinkHeader(linkHeader) {
  * @param {string} fullUrl - Complete URL to request
  * @param {string} authToken - Canvas access token
  * @param {Object} config - Configuration object
+ * @param {Object} requestOptions - Additional request options (method, body, etc.)
  * @returns {Promise} Promise that resolves with response data and headers
  */
-function makeSingleRequest(fullUrl, authToken, config) {
+function makeSingleRequest(fullUrl, authToken, config, requestOptions = {}) {
   const { REQUEST_TIMEOUT, LOG_LEVEL } = config;
 
   return new Promise((resolve, reject) => {
     const url = new URL(fullUrl);
+    const method = requestOptions.method || "GET";
+    const body = requestOptions.body || null;
+
     const options = {
       hostname: url.hostname,
       path: url.pathname + url.search,
-      method: "GET",
+      method: method,
       timeout: REQUEST_TIMEOUT,
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -49,8 +53,13 @@ function makeSingleRequest(fullUrl, authToken, config) {
       },
     };
 
+    if (body && method !== "GET") {
+      options.headers["Content-Length"] = Buffer.byteLength(body);
+    }
+
     if (LOG_LEVEL === "debug") {
-      console.log(`🔍 Making request to: ${fullUrl}`);
+      console.log(`🔍 Making ${method} request to: ${fullUrl}`);
+      if (body) console.log(`📤 Request body:`, body);
     }
 
     const request = https.request(options, (response) => {
@@ -62,7 +71,7 @@ function makeSingleRequest(fullUrl, authToken, config) {
 
       response.on("end", () => {
         try {
-          const jsonData = JSON.parse(data);
+          const jsonData = data ? JSON.parse(data) : {};
           resolve({
             statusCode: response.statusCode,
             data: jsonData,
@@ -107,6 +116,11 @@ function makeSingleRequest(fullUrl, authToken, config) {
       });
     });
 
+    // Write body for POST/PUT/PATCH requests
+    if (body && method !== "GET") {
+      request.write(body);
+    }
+
     request.end();
   });
 }
@@ -116,14 +130,46 @@ function makeSingleRequest(fullUrl, authToken, config) {
  * @param {string} path - API endpoint path (without /api/v1 prefix)
  * @param {string} authToken - Canvas access token
  * @param {Object} config - Configuration object
+ * @param {Object} requestOptions - Additional request options (method, body, etc.)
  * @returns {Promise} Promise that resolves with complete paginated response
  */
-async function makeCanvasRequest(path, authToken, config) {
+async function makeCanvasRequest(path, authToken, config, requestOptions = {}) {
   const { CANVAS_HOST, LOG_LEVEL } = config;
   const startTime = Date.now();
   const baseUrl = `https://${CANVAS_HOST}`;
   const fullUrl = `${baseUrl}/api/v1${path}`;
+  const method = requestOptions.method || "GET";
 
+  // For non-GET requests, don't paginate - just make a single request
+  if (method !== "GET") {
+    try {
+      const response = await makeSingleRequest(
+        fullUrl,
+        authToken,
+        config,
+        requestOptions
+      );
+
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw {
+          statusCode: response.statusCode,
+          error: "Canvas API error",
+          details: response.data,
+          url: fullUrl,
+        };
+      }
+
+      return {
+        statusCode: response.statusCode,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error(`❌ Canvas API request failed:`, error);
+      throw error;
+    }
+  }
+
+  // Original pagination logic for GET requests
   let allData = [];
   let currentUrl = fullUrl;
   let pageCount = 0;
@@ -138,7 +184,12 @@ async function makeCanvasRequest(path, authToken, config) {
         await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
       }
 
-      const response = await makeSingleRequest(currentUrl, authToken, config);
+      const response = await makeSingleRequest(
+        currentUrl,
+        authToken,
+        config,
+        requestOptions
+      );
 
       if (response.statusCode !== 200) {
         throw {

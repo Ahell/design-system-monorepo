@@ -163,21 +163,132 @@ function setupRoutes(app, config) {
     async (req, res) => {
       try {
         const { courseId } = req.params;
+        // Fetch actual group categories endpoint from Canvas
         const result = await makeCanvasRequest(
-          `/courses/${courseId}/groups?include[]=group_category`,
+          `/courses/${courseId}/group_categories`,
           CANVAS_ACCESS_TOKEN,
           config
         );
 
-        // Extract unique categories
-        const categories = new Set();
-        result.data.forEach((group) => {
-          if (group.group_category && group.group_category.name) {
-            categories.add(group.group_category.name);
-          }
-        });
+        res.status(result.statusCode).json(result.data);
+      } catch (error) {
+        res.status(error.statusCode || 500).json(error);
+      }
+    }
+  );
 
-        res.status(200).json(Array.from(categories).sort());
+  // Create a new group category
+  app.post(
+    "/api/canvas/courses/:courseId/group_categories",
+    async (req, res) => {
+      try {
+        const { courseId } = req.params;
+        const { name, description, self_signup } = req.body;
+
+        if (!name) {
+          return res
+            .status(400)
+            .json({ error: "Group category name is required" });
+        }
+
+        const result = await makeCanvasRequest(
+          `/courses/${courseId}/group_categories`,
+          CANVAS_ACCESS_TOKEN,
+          config,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name,
+              description: description || "",
+              self_signup: self_signup || null,
+            }),
+          }
+        );
+
+        res.status(result.statusCode).json(result.data);
+      } catch (error) {
+        res.status(error.statusCode || 500).json(error);
+      }
+    }
+  );
+
+  // Create a new group within a category
+  app.post(
+    "/api/canvas/group_categories/:categoryId/groups",
+    async (req, res) => {
+      try {
+        const { categoryId } = req.params;
+        const { name, description, join_level, max_membership } = req.body;
+
+        if (!name) {
+          return res.status(400).json({ error: "Group name is required" });
+        }
+
+        const result = await makeCanvasRequest(
+          `/group_categories/${categoryId}/groups`,
+          CANVAS_ACCESS_TOKEN,
+          config,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name,
+              description: description || "",
+              join_level: join_level || null,
+              max_membership: max_membership || null,
+            }),
+          }
+        );
+
+        res.status(result.statusCode).json(result.data);
+      } catch (error) {
+        res.status(error.statusCode || 500).json(error);
+      }
+    }
+  );
+
+  // Add student to group
+  app.post("/api/canvas/groups/:groupId/memberships", async (req, res) => {
+    try {
+      const { groupId } = req.params;
+      const { user_id } = req.body;
+
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
+
+      const result = await makeCanvasRequest(
+        `/groups/${groupId}/memberships`,
+        CANVAS_ACCESS_TOKEN,
+        config,
+        {
+          method: "POST",
+          body: JSON.stringify({ user_id }),
+        }
+      );
+
+      res.status(result.statusCode).json(result.data);
+    } catch (error) {
+      res.status(error.statusCode || 500).json(error);
+    }
+  });
+
+  // Remove student from group
+  app.delete(
+    "/api/canvas/groups/:groupId/memberships/:membershipId",
+    async (req, res) => {
+      try {
+        const { groupId, membershipId } = req.params;
+
+        const result = await makeCanvasRequest(
+          `/groups/${groupId}/memberships/${membershipId}`,
+          CANVAS_ACCESS_TOKEN,
+          config,
+          {
+            method: "DELETE",
+          }
+        );
+
+        res.status(result.statusCode).json(result.data);
       } catch (error) {
         res.status(error.statusCode || 500).json(error);
       }

@@ -30,6 +30,29 @@
       ds-container {
         flex: 1;
       }
+
+      /* Drag and drop styling */
+      .draggable-student {
+        user-select: none;
+      }
+
+      .draggable-student:hover {
+        transform: translateY(-1px);
+      }
+
+      .draggable-student.dragging {
+        opacity: 0.5;
+      }
+
+      .drop-zone.drag-over {
+        border-color: var(--color-primary-main) !important;
+        background: var(--color-primary-surface) !important;
+        border-style: solid !important;
+      }
+
+      .student-badge ds-badge {
+        width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -69,12 +92,22 @@
             title="Group Categories"
             meta="Select a course above to load student group assignments"
           >
+            <ds-button
+              slot="stats"
+              id="add-category-btn"
+              size="sm"
+              variant="primary"
+              style="display: none"
+            >
+              + Add Category
+            </ds-button>
             <div
               slot="stats"
               id="selection-status"
               style="
                 font-size: var(--text-sm);
                 color: var(--color-text-secondary);
+                display: none;
               "
             ></div>
           </ds-card-header>
