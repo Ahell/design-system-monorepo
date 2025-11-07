@@ -5,11 +5,7 @@
  * Supports labels, disabled state, and improved accessibility.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSCheckbox extends LitElement {
   static properties = {
@@ -36,6 +32,7 @@ export class DSCheckbox extends LitElement {
       display: inline-block;
       align-self: flex-start;
       color: var(--color-text-primary);
+      font-family: var(--font-sans);
     }
 
     .checkbox-wrapper {

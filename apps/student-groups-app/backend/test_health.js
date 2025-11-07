@@ -1,0 +1,1 @@
+const http = require("http"); http.get("http://localhost:3001/health", (res) => { let d=""; res.on("data", c=>d+=c); res.on("end", () => console.log("Health OK:", JSON.parse(d).status)); process.exit(0); }).on("error", e => { console.error("Error:", e.message); process.exit(1); });

@@ -5,11 +5,7 @@
  * Provides consistent header layout with title, meta text, and stats slot.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 /**
  * CardHeader - Enhanced card header with professional styling
@@ -26,6 +22,7 @@ class CardHeader extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .card-header {

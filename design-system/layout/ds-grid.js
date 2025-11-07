@@ -5,11 +5,7 @@
  * Uses design tokens for gap values.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSGrid extends LitElement {
   static properties = {
@@ -30,6 +26,7 @@ export class DSGrid extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .grid {

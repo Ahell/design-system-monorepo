@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design System Test App (v1.0.7)</title>
+    <link rel="stylesheet" href="/src/tokens/index.css" />
+    <style>
+      body {
+        font-family: var(--font-sans);
+        margin: 0;
+        padding: 2rem;
+        line-height: 1.6;
+      }
+      h1,
+      h2 {
+        font-family: var(--font-sans);
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Design System Test App - Locked to v1.0.7</h1>
+
+    <h2>Alert Components</h2>
+    <ds-alert variant="info"
+      >This is an info alert from the published design system!</ds-alert
+    >
+    <ds-alert variant="success"
+      >Success! The design system is working.</ds-alert
+    >
+    <ds-alert variant="warning"
+      >Warning: This is a test of the warning variant.</ds-alert
+    >
+    <ds-alert variant="error">Error: This tests the error variant.</ds-alert>
+
+    <h2>Button Components</h2>
+    <ds-button>Default Button</ds-button>
+    <ds-button variant="primary">Primary Button</ds-button>
+    <ds-button variant="secondary">Secondary Button</ds-button>
+    <ds-button variant="outline">Outline Button</ds-button>
+
+    <h2>Card Component</h2>
+    <ds-card>
+      <h3 slot="header">Test Card Header</h3>
+      <p>This is a test card using the published design system components.</p>
+      <div slot="footer">
+        <ds-button variant="primary">Action</ds-button>
+      </div>
+    </ds-card>
+
+    <h2>Input Component</h2>
+    <ds-input label="Test Input" placeholder="Type something..."></ds-input>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

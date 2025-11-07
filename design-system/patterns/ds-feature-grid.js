@@ -5,11 +5,7 @@
  * Fully configurable via props array.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSFeatureGrid extends LitElement {
   static properties = {
@@ -30,6 +26,7 @@ export class DSFeatureGrid extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .feature-grid {

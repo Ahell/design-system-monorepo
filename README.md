@@ -1,139 +1,116 @@
 # Design System Monorepo
 
-A hybrid design system setup that supports both rapid development and stable production deployments.
-
-## 🧭 Hybrid Development Model
-
-### Development Phase
-
-- Apps use `workspace:*` to link directly to the local design system
-- Changes in design system are reflected immediately in apps
-- Perfect for rapid iteration and component development
-
-### Production Phase
-
-- Design system is published to npm/GitHub Packages
-- Apps lock to specific versions (e.g., `^1.2.0`)
-- Stable, predictable deployments
+A pnpm workspace monorepo containing a design system and multiple apps that consume it.
 
 ## 📁 Structure
 
 ```
-design-system-workspace/
-├── .npmrc                    # GitHub Packages config
+design-system-monorepo/
 ├── package.json             # Root workspace config
-├── design-system/           # Design system package
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tokens/             # CSS design tokens
-│   ├── primitives/         # UI components
-│   ├── layout/             # Layout components
-│   ├── patterns/           # Composite patterns
-│   └── dist/               # Built files (published)
+├── pnpm-workspace.yaml      # Workspace definition
+├── design-system/           # Design system source (no build needed for dev)
+│   ├── package.json         # Points to source files (./index.js)
+│   ├── vite.config.js       # Only for production builds
+│   ├── tokens/              # CSS design tokens
+│   ├── primitives/          # UI components
+│   ├── layout/              # Layout components
+│   └── patterns/            # Composite patterns
 └── apps/
-    └── web-app/            # Example application
-        ├── package.json
-        ├── index.html
-        └── src/
+    ├── web-app/             # Design system showcase (port 3000)
+    ├── test-app/            # Testing app (port 3002)
+    └── student-groups-app/  # Canvas LMS integration
+        ├── src/             # Frontend (port 3015)
+        └── backend/         # API proxy (port 3001)
 ```
 
 ## 🚀 Quick Start
 
 ```bash
 # Install all dependencies
-npm run install:all
+pnpm install
 
-# Develop design system
-npm run dev:ds
-
-# Develop web app (in another terminal)
-npm run dev:web
+# Run specific app
+pnpm --filter web-app dev              # Port 3000
+pnpm --filter test-app dev             # Port 3002
+pnpm --filter student-groups-app dev   # Port 3015
 ```
 
-## 🔄 Publishing Workflow
+## � Development Workflow
 
-### 1. Make changes to design system
+### Working on Design System
 
-```bash
-cd design-system
-# Edit components, update tokens, etc.
-```
+All apps use `workspace:*` dependency which points to **live source files**:
 
-### 2. Test locally
+- Changes to design system are reflected immediately
+- No build step needed during development
+- Hot module reloading works across workspace
 
-```bash
-npm run dev  # Test design system
-cd ../apps/web-app
-npm run dev  # Test in app
-```
+### Port Assignments
 
-### 3. Build for production
+- `web-app`: 3000
+- `test-app`: 3002
+- `student-groups-app` frontend: 3015
+- `student-groups-app` backend: 3001
 
-```bash
-cd ../design-system
-npm run build
-```
+## 📦 Apps
 
-### 4. Version and publish
+### web-app
 
-```bash
-npm version patch  # or minor/major
-npm publish --registry=https://npm.pkg.github.com
-```
+Interactive showcase of all design system components.
 
-### 5. Update apps to use published version
+### test-app
+
+Testing ground for design system features.
+
+### student-groups-app
+
+Canvas LMS integration displaying student groups in data tables with advanced features:
+
+- Backend Express.js proxy for Canvas API
+- Frontend with Lit components
+- Enhanced ds-table with sorting, selection, actions, loading states
+
+See [student-groups-app README](apps/student-groups-app/README.md) for details.
+
+## 🧰 Available Scripts
+
+### Root
+
+- `pnpm dev:web` - Start web-app showcase
+- `pnpm dev:test` - Start test-app
+- `pnpm dev:student-groups` - Start student-groups-app frontend only
+- `pnpm dev:student-groups-backend` - Start student-groups-app backend
+- `pnpm build:ds` - Build design system for production (creates dist/)
+
+### Design System
+
+- `pnpm build` - Build for production/publishing
+
+### Apps
+
+Each app has:
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+
+## 🔗 Workspace Dependencies
+
+Apps use `workspace:*` to consume the design system during development:
 
 ```json
-// In apps/web-app/package.json
 {
   "dependencies": {
-    "@yourorg/design-system": "^1.2.0" // Instead of "workspace:*"
+    "@ahell/design-system": "workspace:*"
   }
 }
 ```
 
-## 🧰 Available Scripts
+This links directly to source files (not dist/), enabling instant updates.
 
-### Root workspace
+## ✨ Key Features
 
-- `npm run install:all` - Install all workspace dependencies
-- `npm run dev:ds` - Develop design system
-- `npm run dev:web` - Develop web app
-- `npm run build:ds` - Build design system
-
-### Design system
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview built version
-
-### Apps
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview built version
-
-## 📦 Publishing to GitHub Packages
-
-1. Create a GitHub Personal Access Token with `packages:write` permission
-2. Set `GITHUB_TOKEN` environment variable
-3. Run `npm publish --registry=https://npm.pkg.github.com`
-
-## 🔗 Temporary Local Linking
-
-If an app uses a published version but you need to test local changes:
-
-```bash
-cd design-system && npm link
-cd ../apps/web-app && npm link @yourorg/design-system
-# Test your changes...
-cd ../apps/web-app && npm unlink @yourorg/design-system && npm install
-```
-
-## ✨ Benefits
-
-- **Rapid Development**: Direct local linking during development
-- **Stable Production**: Versioned releases for production apps
-- **Flexible Deployment**: Mix published and local versions per app
-- **Single Repository**: Everything in one place with proper tooling
-- **No Extra Tools**: Works with standard npm workspaces
+- **Zero Build Step**: Design system source files used directly during development
+- **Hot Module Reload**: Changes propagate instantly across workspace
+- **Simple Setup**: Standard pnpm workspaces, no custom tooling
+- **Vite-Powered**: Fast dev servers for all apps
+- **Monorepo Benefits**: Shared dependencies, unified tooling

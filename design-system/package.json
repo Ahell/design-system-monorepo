@@ -1,6 +1,6 @@
 {
-  "name": "@yourorg/design-system",
-  "version": "1.0.1",
+  "name": "@ahell/design-system",
+  "version": "1.0.9",
   "type": "module",
   "main": "./index.js",
   "files": [

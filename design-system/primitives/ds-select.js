@@ -5,11 +5,7 @@
  * Supports options array, placeholder, validation states, and labels.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSSelect extends LitElement {
   static properties = {
@@ -232,7 +228,7 @@ export class DSSelect extends LitElement {
 
   _handleChange(e) {
     const selectedValue = e.target.value;
-    const allOptions = this._getOptions();
+    const allOptions = this._getAllOptionsFlat();
     const selectedOption = allOptions.find(
       (opt) => opt.value === selectedValue
     );
@@ -265,6 +261,55 @@ export class DSSelect extends LitElement {
       label: option.textContent.trim(),
       disabled: option.disabled,
     }));
+  }
+
+  _renderOptions(options) {
+    return options.map((item) => {
+      // Check if this is an option group
+      if (item.group && item.options) {
+        return html`
+          <optgroup label=${item.group}>
+            ${item.options.map(
+              (option) => html`
+                <option
+                  value=${option.value}
+                  ?selected=${option.value === this.value}
+                  ?disabled=${option.disabled || false}
+                >
+                  ${option.label}
+                </option>
+              `
+            )}
+          </optgroup>
+        `;
+      }
+      // Regular option
+      return html`
+        <option
+          value=${item.value}
+          ?selected=${item.value === this.value}
+          ?disabled=${item.disabled || false}
+        >
+          ${item.label}
+        </option>
+      `;
+    });
+  }
+
+  _getAllOptionsFlat() {
+    // Flatten grouped options for the change handler
+    const allOptions = this._getOptions();
+    const flatOptions = [];
+
+    allOptions.forEach((item) => {
+      if (item.group && item.options) {
+        flatOptions.push(...item.options);
+      } else {
+        flatOptions.push(item);
+      }
+    });
+
+    return flatOptions;
   }
 
   render() {
@@ -306,17 +351,7 @@ export class DSSelect extends LitElement {
                   ${this.placeholder}
                 </option>`
               : ""}
-            ${allOptions.map(
-              (option) => html`
-                <option
-                  value=${option.value}
-                  ?selected=${option.value === this.value}
-                  ?disabled=${option.disabled || false}
-                >
-                  ${option.label}
-                </option>
-              `
-            )}
+            ${this._renderOptions(allOptions)}
           </select>
           <span class="dropdown-arrow">▼</span>
         </div>

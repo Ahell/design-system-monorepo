@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Groups - Canvas LMS</title>
+    <link rel="stylesheet" href="./src/tokens/index.css" />
+    <link rel="stylesheet" href="./src/tokens/theme.css" />
+    <link rel="stylesheet" href="./src/tokens/tokens.css" />
+    <style>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <ds-container>
+      <ds-hero>
+        <h1 slot="title">Student Groups Management</h1>
+        <p slot="subtitle">
+          View and manage student group assignments in Canvas LMS
+        </p>
+      </ds-hero>
+
+      <ds-card>
+        <ds-card-header>
+          <h3>Course Selection</h3>
+          <p>Select a Canvas course to load student groups</p>
+        </ds-card-header>
+        <ds-card-content>
+          <div
+            style="display: flex; gap: var(--space-4); align-items: flex-end"
+          >
+            <div style="flex: 1">
+              <ds-select
+                id="course-select"
+                label="Select Course"
+                placeholder="Loading courses..."
+                full-width
+              ></ds-select>
+            </div>
+            <ds-button id="load-course-btn" variant="primary">
+              Load Groups
+            </ds-button>
+          </div>
+        </ds-card-content>
+      </ds-card>
+
+      <ds-card>
+        <ds-card-header>
+          <h2 id="course-title">Course: Select a course above</h2>
+          <p>Student Group Assignments</p>
+        </ds-card-header>
+
+        <ds-card-content>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: var(--space-4);
+            "
+          >
+            <h3>Group Categories</h3>
+            <div
+              id="selection-status"
+              style="
+                font-size: var(--text-sm);
+                color: var(--color-text-secondary);
+              "
+            ></div>
+          </div>
+
+          <!-- Category Tabs -->
+          <div
+            id="tabs-section"
+            style="
+              margin-bottom: var(--space-4);
+              padding: var(--space-4);
+              background: var(--color-surface-secondary);
+              border-radius: var(--radius-md);
+              display: none;
+            "
+          >
+            <div id="tabs-container">
+              <!-- Tabs will be dynamically inserted here -->
+            </div>
+          </div>
+
+          <!-- Groups Overview Table (appears after Apply Selection) -->
+          <div
+            id="groups-overview"
+            style="display: none; margin-top: var(--space-6)"
+          >
+            <!-- Table will be dynamically inserted here -->
+          </div>
+        </ds-card-content>
+      </ds-card>
+    </ds-container>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

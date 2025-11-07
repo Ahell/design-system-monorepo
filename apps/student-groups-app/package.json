@@ -1,0 +1,22 @@
+{
+  "name": "student-groups-app",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite --port 3015",
+    "build": "vite build",
+    "preview": "vite preview",
+    "backend": "cd backend && node server.js",
+    "start": "concurrently \"npm run backend\" \"npm run dev\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ahell/design-system": "workspace:*",
+    "vite": "^7.1.12"
+  }
+}

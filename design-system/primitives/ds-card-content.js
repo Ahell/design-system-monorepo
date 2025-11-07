@@ -5,11 +5,7 @@
  * Provides DataCard, TableCard, and InfoCard with consistent theming.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 import "./ds-card-header.js";
 import "./ds-card-footer.js";
 import "./ds-card.js";
@@ -31,6 +27,7 @@ class DataCard extends LitElement {
     :host {
       display: block;
       margin-top: var(--margin-top, var(--space-3));
+      font-family: var(--font-sans);
     }
 
     .card-title {
@@ -100,6 +97,7 @@ class TableCard extends LitElement {
     :host {
       display: block;
       margin-top: var(--margin-top, var(--space-3));
+      font-family: var(--font-sans);
     }
 
     /* Enhanced table card styling */
@@ -159,6 +157,7 @@ class InfoCard extends LitElement {
     :host {
       display: block;
       margin-top: var(--margin-top, var(--space-3));
+      font-family: var(--font-sans);
     }
 
     ::slotted(.budget-table-wrapper) {

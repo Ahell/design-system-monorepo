@@ -5,11 +5,7 @@
  * Uses design tokens for sizing and spacing.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSContainer extends LitElement {
   static properties = {
@@ -29,6 +25,7 @@ export class DSContainer extends LitElement {
     :host {
       display: block;
       width: 100%;
+      font-family: var(--font-sans);
     }
 
     .container {

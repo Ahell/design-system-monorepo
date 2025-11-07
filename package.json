@@ -1,16 +1,14 @@
 {
   "name": "design-system-workspace",
   "private": true,
-  "workspaces": [
-    "design-system",
-    "apps/*"
-  ],
   "scripts": {
-    "dev:ds": "npm run dev --workspace=design-system",
-    "dev:web": "npm run dev --workspace=apps/web-app",
-    "build:ds": "npm run build --workspace=design-system",
-    "install:all": "npm install",
-    "version:ds": "npm version --workspace=design-system",
-    "publish:ds": "npm publish --workspace=design-system --registry=https://npm.pkg.github.com"
+    "dev:web": "pnpm --filter web-app dev",
+    "dev:test": "pnpm --filter test-app dev",
+    "dev:student-groups": "pnpm --filter student-groups-app dev",
+    "dev:student-groups-backend": "cd apps/student-groups-app/backend && node server.js",
+    "build:ds": "pnpm --filter design-system build",
+    "install:all": "pnpm install",
+    "version:ds": "pnpm --filter design-system version",
+    "publish:ds": "pnpm publish --filter design-system --registry=https://npm.pkg.github.com"
   }
 }

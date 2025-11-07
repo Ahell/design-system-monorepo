@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@yourorg/design-system": "workspace:*"
+    "@ahell/design-system": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.0.0"

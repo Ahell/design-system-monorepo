@@ -5,11 +5,7 @@
  * Groups radio buttons together and manages selection state.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSRadioGroup extends LitElement {
   static properties = {
@@ -40,6 +36,7 @@ export class DSRadioGroup extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .radio-group-wrapper {

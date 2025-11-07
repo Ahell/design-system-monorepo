@@ -11,6 +11,7 @@ export { DSInput } from "./ds-input.js";
 export { DSRadio } from "./ds-radio.js";
 export { DSRadioGroup } from "./ds-radio-group.js";
 export { DSSelect } from "./ds-select.js";
+export { DSTabs } from "./ds-tabs.js";
 export { DSTextarea } from "./ds-textarea.js";
 export { DataTable } from "./ds-table.js";
 export { DSStatCard } from "./ds-stat-card.js";

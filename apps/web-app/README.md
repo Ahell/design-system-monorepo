@@ -12,6 +12,7 @@ An interactive showcase of all design system components, similar to Storybook bu
 ## Available Components
 
 ### Primitives
+
 - **Alert**: Info, success, warning, error variants with dismissible option
 - **Button**: Primary, secondary, outline, ghost variants with disabled state
 - **Badge**: Default, success, warning, error variants
@@ -19,11 +20,13 @@ An interactive showcase of all design system components, similar to Storybook bu
 - **Card**: Header, content, footer sections
 
 ### Layout
+
 - **Container**: Small, medium, large responsive containers
 - **Stack**: Vertical spacing with configurable gaps
 - **Grid**: Coming soon
 
 ### Patterns
+
 - **Hero**: Large banner sections for landing pages
 - **CTA**: Call-to-action sections
 - **Feature Grid**: Coming soon
@@ -45,25 +48,25 @@ After exploring the showcase, use components in your applications:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="stylesheet" href="../design-system/tokens/index.css">
-</head>
-<body>
-  <ds-container size="lg">
-    <ds-alert variant="success" title="Welcome!">
-      Your app is ready.
-    </ds-alert>
-    <ds-button variant="primary">Get Started</ds-button>
-  </ds-container>
+  <head>
+    <link rel="stylesheet" href="../design-system/tokens/index.css" />
+  </head>
+  <body>
+    <ds-container size="lg">
+      <ds-alert variant="success" title="Welcome!">
+        Your app is ready.
+      </ds-alert>
+      <ds-button variant="primary">Get Started</ds-button>
+    </ds-container>
 
-  <script type="module" src="/src/main.js"></script>
-</body>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
 ```
 
 ```javascript
 // src/main.js
-import '@yourorg/design-system';
+import "@yourorg/design-system";
 ```
 
 ## Adding New Components

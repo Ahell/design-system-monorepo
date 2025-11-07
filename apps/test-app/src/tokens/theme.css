@@ -1,0 +1,524 @@
+/**
+ * Design System Color Theme
+ *
+ * Professional color scheme based on warm earthy tones with teal accents.
+ * Supports light and dark themes with semantic color mappings.
+ *
+ * Updated: 2025-10-17
+ */
+
+@import url("./tokens.css");
+
+:root {
+  /* ========================================
+     BASE COLORS (from provided palette)
+     ======================================== */
+
+  /* Warm beige - primary neutral */
+  --color-warm-beige: #dcaa89;
+
+  /* Dark teal - primary dark */
+  --color-dark-teal: #30525c;
+
+  /* Burnt orange - accent/warning */
+  --color-burnt-orange: #c35627;
+
+  /* Light orange - secondary accent */
+  --color-light-orange: #d6794d;
+
+  /* Medium teal - secondary */
+  --color-medium-teal: #4c848d;
+
+  /* Light gray-beige - neutral light */
+  --color-light-gray-beige: #bfb9b5;
+
+  /* Pure white and black for text elements */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* ========================================
+     LIGHT THEME COLORS
+     ======================================== */
+
+  /* Primary colors */
+  --color-primary-50: #f0f9fa;
+  --color-primary-100: #e0f2f4;
+  --color-primary-200: #bae4e8;
+  --color-primary-300: #7ccbd2;
+  --color-primary-400: #4c848d; /* medium-teal */
+  --color-primary-500: #3a6b73;
+  --color-primary-600: #30525c; /* dark-teal */
+  --color-primary-700: #284249;
+  --color-primary-800: #22353a;
+  --color-primary-900: #1e2e32;
+  --color-primary-950: #0f171a;
+
+  /* Secondary colors */
+  --color-secondary-50: #fef7f3;
+  --color-secondary-100: #fef0e7;
+  --color-secondary-200: #fde1cf;
+  --color-secondary-300: #fac39f;
+  --color-secondary-400: #f7a06f;
+  --color-secondary-500: #d6794d; /* light-orange */
+  --color-secondary-600: #c75f2e;
+  --color-secondary-700: #c35627; /* burnt-orange */
+  --color-secondary-800: #9f4522;
+  --color-secondary-900: #823a1d;
+  --color-secondary-950: #461c0e;
+
+  /* Neutral colors */
+  --color-neutral-50: #faf9f8;
+  --color-neutral-100: #f5f3f1;
+  --color-neutral-200: #edeae7;
+  --color-neutral-300: #ddd8d4;
+  --color-neutral-400: #bfb9b5; /* light-gray-beige */
+  --color-neutral-500: #a8a29e;
+  --color-neutral-600: #8b8682;
+  --color-neutral-700: #6f6b67;
+  --color-neutral-800: #5a5652;
+  --color-neutral-900: #4a4642;
+  --color-neutral-950: #292623;
+
+  /* Accent colors */
+  --color-accent-50: #fef9f5;
+  --color-accent-100: #fef2eb;
+  --color-accent-200: #fde4d1;
+  --color-accent-300: #fbd0a9;
+  --color-accent-400: #f7b781;
+  --color-accent-500: #dcaa89; /* warm-beige */
+  --color-accent-600: #c8946d;
+  --color-accent-700: #a67855;
+  --color-accent-800: #866147;
+  --color-accent-900: #6e503c;
+  --color-accent-950: #3a271e;
+
+  /* Semantic colors (based on base color variants) */
+  --color-success: #4c848d; /* medium-teal - success */
+  --color-success-rgb: 76, 132, 141;
+  --color-warning: #d6794d; /* light-orange - warning */
+  --color-warning-rgb: 214, 121, 77;
+  --color-error: #c35627; /* burnt-orange - error */
+  --color-error-rgb: 195, 86, 39;
+  --color-info: #30525c; /* dark-teal - info */
+  --color-info-rgb: 48, 82, 92;
+
+  /* Background colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #faf9f8;
+  --color-bg-tertiary: #f5f3f1;
+  --color-bg-overlay: rgba(255, 255, 255, 0.8);
+
+  /* Surface colors */
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #faf9f8;
+  --color-surface-tertiary: #f5f3f1;
+  --color-surface-elevated: #ffffff;
+
+  /* Text colors */
+  --color-text-primary: #292623; /* neutral-950 */
+  --color-text-secondary: #5a5652; /* neutral-800 */
+  --color-text-tertiary: #8b8682; /* neutral-600 */
+  --color-text-inverse: #ffffff;
+
+  /* Border colors */
+  --color-border-primary: #edeae7; /* neutral-200 */
+  --color-border-secondary: #ddd8d4; /* neutral-300 */
+  --color-border-tertiary: #bfb9b5; /* neutral-400 */
+
+  /* ========================================
+     DARK THEME COLORS
+     ======================================== */
+
+  /* Primary colors (dark theme) */
+  --color-primary-50-dark: #0f171a;
+  --color-primary-100-dark: #1e2e32;
+  --color-primary-200-dark: #22353a;
+  --color-primary-300-dark: #284249;
+  --color-primary-400-dark: #30525c; /* dark-teal */
+  --color-primary-500-dark: #3a6b73;
+  --color-primary-600-dark: #4c848d; /* medium-teal */
+  --color-primary-700-dark: #7ccbd2;
+  --color-primary-800-dark: #bae4e8;
+  --color-primary-900-dark: #e0f2f4;
+  --color-primary-950-dark: #f0f9fa;
+
+  /* Secondary colors (dark theme) */
+  --color-secondary-50-dark: #461c0e;
+  --color-secondary-100-dark: #823a1d;
+  --color-secondary-200-dark: #9f4522;
+  --color-secondary-300-dark: #c35627; /* burnt-orange */
+  --color-secondary-400-dark: #c75f2e;
+  --color-secondary-500-dark: #d6794d; /* light-orange */
+  --color-secondary-600-dark: #f7a06f;
+  --color-secondary-700-dark: #fac39f;
+  --color-secondary-800-dark: #fde1cf;
+  --color-secondary-900-dark: #fef0e7;
+  --color-secondary-950-dark: #fef7f3;
+
+  /* Neutral colors (dark theme) */
+  --color-neutral-50-dark: #292623;
+  --color-neutral-100-dark: #4a4642;
+  --color-neutral-200-dark: #5a5652;
+  --color-neutral-300-dark: #6f6b67;
+  --color-neutral-400-dark: #8b8682;
+  --color-neutral-500-dark: #a8a29e;
+  --color-neutral-600-dark: #bfb9b5; /* light-gray-beige */
+  --color-neutral-700-dark: #ddd8d4;
+  --color-neutral-800-dark: #edeae7;
+  --color-neutral-900-dark: #f5f3f1;
+  --color-neutral-950-dark: #faf9f8;
+
+  /* Accent colors (dark theme) */
+  --color-accent-50-dark: #3a271e;
+  --color-accent-100-dark: #6e503c;
+  --color-accent-200-dark: #866147;
+  --color-accent-300-dark: #a67855;
+  --color-accent-400-dark: #c8946d;
+  --color-accent-500-dark: #dcaa89; /* warm-beige */
+  --color-accent-600-dark: #f7b781;
+  --color-accent-700-dark: #fbd0a9;
+  --color-accent-800-dark: #fde4d1;
+  --color-accent-900-dark: #fef2eb;
+  --color-accent-950-dark: #fef9f5;
+
+  /* Semantic colors (based on base color variants, same for dark theme) */
+  --color-success-dark: #4c848d; /* medium-teal - success */
+  --color-warning-dark: #d6794d; /* light-orange - warning */
+  --color-error-dark: #c35627; /* burnt-orange - error */
+  --color-info-dark: #30525c; /* dark-teal - info */
+
+  /* Background colors (dark theme) */
+  --color-bg-primary-dark: #1a1a1a;
+  --color-bg-secondary-dark: #262626;
+  --color-bg-tertiary-dark: #333333;
+  --color-bg-overlay-dark: rgba(26, 26, 26, 0.8);
+
+  /* Surface colors (dark theme) */
+  --color-surface-primary-dark: #262626;
+  --color-surface-secondary-dark: #333333;
+  --color-surface-tertiary-dark: #404040;
+  --color-surface-elevated-dark: #333333;
+
+  /* Text colors (dark theme) */
+  --color-text-primary-dark: #faf9f8; /* neutral-50-dark */
+  --color-text-secondary-dark: #edeae7; /* neutral-200-dark */
+  --color-text-tertiary-dark: #ddd8d4; /* neutral-300-dark */
+  --color-text-inverse-dark: #1a1a1a;
+
+  /* Border colors (dark theme) */
+  --color-border-primary-dark: #404040; /* neutral-700-dark approx */
+  --color-border-secondary-dark: #525252;
+  --color-border-tertiary-dark: #737373;
+
+  /* ========================================
+     DEFAULT THEME APPLICATION (LIGHT)
+     ======================================== */
+
+  /* Default theme variables (light theme by default) */
+  --color-primary: var(--color-primary-600);
+  --color-secondary: var(--color-secondary-600);
+  --color-accent: var(--color-accent-600);
+  --color-neutral: var(--color-neutral-600);
+  --color-bg: var(--color-bg-primary);
+  --color-surface: var(--color-surface-primary);
+  --color-text: var(--color-text-primary);
+  --color-border: var(--color-border-primary);
+
+  /* ========================================
+     SEMANTIC COLOR MAPPINGS
+     ======================================== */
+
+  /* Primary colors */
+  --color-primary-main: var(--color-primary-600);
+  --color-primary-light: var(--color-primary-400);
+  --color-primary-dark: var(--color-primary-700);
+
+  /* Secondary colors */
+  --color-secondary-main: var(--color-secondary-600);
+  --color-secondary-light: var(--color-secondary-400);
+  --color-secondary-dark: var(--color-secondary-700);
+
+  /* Surface colors */
+  --color-surface-primary: var(--color-bg-primary);
+  --color-surface-secondary: var(--color-bg-secondary);
+  --color-surface-tertiary: var(--color-bg-tertiary);
+  --color-surface-elevated: #ffffff;
+
+  /* Text colors */
+  --color-text-primary: var(--color-neutral-950);
+  --color-text-secondary: var(--color-neutral-800);
+  --color-text-tertiary: var(--color-neutral-600);
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-muted: rgba(255, 255, 255, 0.9);
+
+  /* Border colors */
+  --color-border-primary: var(--color-neutral-200);
+  --color-border-secondary: var(--color-neutral-300);
+
+  /* Semantic colors */
+  --color-success-main: var(--color-success);
+  --color-warning-main: var(--color-warning);
+  --color-error-main: var(--color-error);
+  --color-info-main: var(--color-info);
+
+  /* ========================================
+     COMPONENT-SPECIFIC COLORS
+     ======================================== */
+
+  /* Button variants */
+  --color-btn-primary: var(--color-primary);
+  --color-btn-secondary: var(--color-secondary);
+  --color-btn-accent: var(--color-accent);
+  --color-btn-neutral: var(--color-neutral);
+  --color-btn-success: var(--color-success);
+  --color-btn-warning: var(--color-warning);
+  --color-btn-error: var(--color-error);
+  --color-btn-danger: var(--color-error); /* Alias for error */
+  --color-btn-info: var(--color-info);
+
+  /* Interactive states */
+  --color-hover: var(--color-primary-500);
+  --color-active: var(--color-primary-600);
+  --color-focus: var(--color-primary-400);
+  --color-disabled: var(--color-neutral-400);
+
+  /* Form states */
+  --color-input-border: var(--color-border-primary);
+  --color-input-focus: var(--color-primary-400);
+  --color-input-focus-ring: rgba(var(--color-info-rgb), 0.1);
+  --color-input-error: var(--color-error);
+  --color-input-success: var(--color-success);
+
+  /* Status indicators */
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-error);
+  --color-status-info: var(--color-info);
+
+  /* Alert backgrounds (15% opacity) */
+  --color-alert-info-bg: rgba(var(--color-info-rgb), 0.15);
+  --color-alert-warning-bg: rgba(var(--color-warning-rgb), 0.15);
+  --color-alert-success-bg: rgba(var(--color-success-rgb), 0.15);
+  --color-alert-error-bg: rgba(var(--color-error-rgb), 0.15);
+
+  /* Card variant backgrounds (10% opacity mixed with surface) */
+  --color-card-primary-bg: rgba(var(--color-info-rgb), 0.1);
+  --color-card-success-bg: rgba(var(--color-success-rgb), 0.1);
+  --color-card-warning-bg: rgba(var(--color-warning-rgb), 0.1);
+  --color-card-danger-bg: rgba(var(--color-error-rgb), 0.1);
+
+  /* Badge backgrounds (10% opacity mixed with surface-secondary) */
+  --color-badge-default-bg: rgba(42, 63, 95, 0.1);
+  --color-badge-default-border: rgba(42, 63, 95, 0.5);
+  --color-badge-success-bg: rgba(var(--color-success-rgb), 0.1);
+  --color-badge-danger-bg: rgba(var(--color-error-rgb), 0.1);
+
+  /* Radio group error background (5% opacity) */
+  --color-radio-error-bg: rgba(var(--color-error-rgb), 0.05);
+
+  /* ========================================
+     BACKWARD COMPATIBILITY ALIASES
+     ======================================== */
+
+  /* Old theme system compatibility */
+  --border: var(--color-border);
+  --bg: var(--color-bg);
+  --text: var(--color-text);
+  --primary: var(--color-primary);
+  --secondary: var(--color-secondary);
+  --success: var(--color-success);
+  --warning: var(--color-warning);
+  --error: var(--color-error);
+  --info: var(--color-info);
+}
+
+/* ========================================
+   THEME OVERRIDES
+   ======================================== */
+
+.theme-light {
+  --color-primary: var(--color-primary-600);
+  --color-secondary: var(--color-secondary-600);
+  --color-accent: var(--color-accent-600);
+  --color-neutral: var(--color-neutral-600);
+  --color-bg: var(--color-bg-primary);
+  --color-surface: var(--color-surface-primary);
+  --color-text: var(--color-text-primary);
+  --color-border: var(--color-border-primary);
+
+  /* Update semantic mappings for light theme */
+  --color-primary-main: var(--color-primary-600);
+  --color-primary-light: var(--color-primary-400);
+  --color-primary-dark: var(--color-primary-700);
+  --color-secondary-main: var(--color-secondary-600);
+  --color-secondary-light: var(--color-secondary-400);
+  --color-secondary-dark: var(--color-secondary-700);
+  --color-surface-primary: var(--color-bg-primary);
+  --color-surface-secondary: var(--color-bg-secondary);
+  --color-surface-tertiary: var(--color-bg-tertiary);
+  --color-surface-elevated: #ffffff;
+  --color-text-primary: var(--color-neutral-950);
+  --color-text-secondary: var(--color-neutral-800);
+  --color-text-tertiary: var(--color-neutral-600);
+  --color-text-inverse: #ffffff;
+  --color-border-primary: var(--color-neutral-200);
+  --color-border-secondary: var(--color-neutral-300);
+  --color-success-main: var(--color-success);
+  --color-warning-main: var(--color-warning);
+  --color-error-main: var(--color-error);
+  --color-info-main: var(--color-info);
+
+  /* Component-specific colors for light theme */
+  --color-btn-primary: var(--color-primary-600);
+  --color-btn-secondary: var(--color-secondary-600);
+  --color-btn-accent: var(--color-accent-600);
+  --color-btn-neutral: var(--color-neutral-600);
+  --color-btn-success: var(--color-success);
+  --color-btn-warning: var(--color-warning);
+  --color-btn-error: var(--color-error);
+  --color-btn-danger: var(--color-error);
+  --color-btn-info: var(--color-info);
+  --color-hover: var(--color-primary-500);
+  --color-active: var(--color-primary-600);
+  --color-focus: var(--color-primary-400);
+  --color-disabled: var(--color-neutral-400);
+  --color-input-border: var(--color-neutral-200);
+  --color-input-focus: var(--color-primary-400);
+  --color-input-error: var(--color-error);
+  --color-input-success: var(--color-success);
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-error);
+  --color-status-info: var(--color-info);
+}
+
+.theme-dark {
+  --color-primary: var(--color-primary-400-dark);
+  --color-secondary: var(--color-secondary-400-dark);
+  --color-accent: var(--color-accent-400-dark);
+  --color-neutral: var(--color-neutral-400-dark);
+  --color-bg: var(--color-bg-primary-dark);
+  --color-surface: var(--color-surface-primary-dark);
+  --color-text: var(--color-text-primary-dark);
+  --color-border: var(--color-border-primary-dark);
+
+  /* Update semantic mappings for dark theme */
+  --color-primary-main: var(--color-primary-400-dark);
+  --color-primary-light: var(--color-primary-600-dark);
+  --color-primary-dark: var(--color-primary-300-dark);
+  --color-secondary-main: var(--color-secondary-400-dark);
+  --color-secondary-light: var(--color-secondary-600-dark);
+  --color-secondary-dark: var(--color-secondary-300-dark);
+  --color-surface-primary: var(--color-bg-primary-dark);
+  --color-surface-secondary: var(--color-bg-secondary-dark);
+  --color-surface-tertiary: var(--color-bg-tertiary-dark);
+  --color-surface-elevated: var(--color-surface-elevated-dark);
+  --color-text-primary: var(--color-neutral-50-dark);
+  --color-text-secondary: var(--color-neutral-200-dark);
+  --color-text-tertiary: var(--color-neutral-300-dark);
+  --color-text-inverse: var(--color-text-inverse-dark);
+  --color-border-primary: var(--color-neutral-700-dark);
+  --color-border-secondary: var(--color-neutral-600-dark);
+  --color-success-main: var(--color-success-dark);
+  --color-warning-main: var(--color-warning-dark);
+  --color-error-main: var(--color-error-dark);
+  --color-info-main: var(--color-info-dark);
+
+  /* Component-specific colors for dark theme */
+  --color-btn-primary: var(--color-primary-400-dark);
+  --color-btn-secondary: var(--color-secondary-400-dark);
+  --color-btn-accent: var(--color-accent-400-dark);
+  --color-btn-neutral: var(--color-neutral-400-dark);
+  --color-btn-success: var(--color-success-dark);
+  --color-btn-warning: var(--color-warning-dark);
+  --color-btn-error: var(--color-error-dark);
+  --color-btn-danger: var(--color-error-dark);
+  --color-btn-info: var(--color-info-dark);
+  --color-hover: var(--color-primary-500-dark);
+  --color-active: var(--color-primary-400-dark);
+  --color-focus: var(--color-primary-600-dark);
+  --color-disabled: var(--color-neutral-400-dark);
+  --color-input-border: var(--color-neutral-700-dark);
+  --color-input-focus: var(--color-primary-600-dark);
+  --color-input-focus-ring: rgba(var(--color-info-rgb), 0.2);
+  --color-input-error: var(--color-error-dark);
+  --color-input-success: var(--color-success-dark);
+  --color-status-success: var(--color-success-dark);
+  --color-status-warning: var(--color-warning-dark);
+  --color-status-error: var(--color-error-dark);
+  --color-status-info: var(--color-info-dark);
+}
+
+/* ========================================
+   SHADOW TOKENS
+   ======================================== */
+
+:root {
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-focus: 0 0 0 3px var(--color-focus);
+}
+
+/* ========================================
+   GRADIENT TOKENS
+   ======================================== */
+
+:root {
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-main) 0%,
+    var(--color-primary-dark) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--color-secondary-main) 0%,
+    var(--color-secondary-dark) 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--color-accent-main) 0%,
+    var(--color-accent-dark) 100%
+  );
+  --gradient-neutral: linear-gradient(
+    135deg,
+    var(--color-neutral-100) 0%,
+    var(--color-neutral-200) 100%
+  );
+  --gradient-warm: linear-gradient(
+    135deg,
+    var(--color-warm-beige) 0%,
+    var(--color-burnt-orange) 100%
+  );
+  --gradient-cool: linear-gradient(
+    135deg,
+    var(--color-dark-teal) 0%,
+    var(--color-medium-teal) 100%
+  );
+  --gradient-surface: linear-gradient(
+    135deg,
+    var(--color-surface-primary) 0%,
+    var(--color-surface-secondary) 100%
+  );
+}
+
+/* ========================================
+   ANIMATION TOKENS
+   ======================================== */
+
+:root {
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-colors: color 0.15s ease, background-color 0.15s ease,
+    border-color 0.15s ease;
+  --transition-transform: transform 0.15s ease;
+  --easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}

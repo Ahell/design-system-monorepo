@@ -26,6 +26,7 @@ export class DSAlert extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .alert {

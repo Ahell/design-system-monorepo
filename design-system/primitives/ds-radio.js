@@ -5,11 +5,7 @@
  * Should be used within ds-radio-group for proper group management.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSRadio extends LitElement {
   static properties = {
@@ -37,6 +33,7 @@ export class DSRadio extends LitElement {
     :host {
       display: block;
       color: var(--color-text-primary);
+      font-family: var(--font-sans);
     }
 
     .radio-wrapper {

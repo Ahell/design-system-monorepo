@@ -5,11 +5,7 @@
  * Provides accordion-style expandable sections with smooth animations.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSExpandableDetails extends LitElement {
   static properties = {
@@ -31,6 +27,7 @@ export class DSExpandableDetails extends LitElement {
     :host {
       display: block;
       width: 100%;
+      font-family: var(--font-sans);
     }
 
     .expandable-container {

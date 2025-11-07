@@ -5,11 +5,7 @@
  * Supports multiple variants and flexible content via slots.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 export class DSCard extends LitElement {
   static properties = {
@@ -32,6 +28,7 @@ export class DSCard extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .card {

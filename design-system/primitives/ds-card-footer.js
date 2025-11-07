@@ -5,11 +5,7 @@
  * Provides consistent footer layout with notes and custom content.
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 /**
  * CardFooter - Enhanced card footer with professional styling
@@ -26,6 +22,7 @@ class CardFooter extends LitElement {
   static styles = css`
     :host {
       display: block;
+      font-family: var(--font-sans);
     }
 
     .card-footer {
