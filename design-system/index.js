@@ -36,6 +36,7 @@ import "./patterns/ds-hero.js";
 import "./patterns/ds-feature-grid.js";
 import "./patterns/ds-two-column.js";
 import "./patterns/ds-cta.js";
+import "./patterns/ds-footer.js";
 
 // Also export classes for programmatic use
 export { DSAlert } from "./primitives/ds-alert.js";
@@ -64,3 +65,4 @@ export { DSHero } from "./patterns/ds-hero.js";
 export { DSFeatureGrid } from "./patterns/ds-feature-grid.js";
 export { DSTwoColumn } from "./patterns/ds-two-column.js";
 export { DSCTA } from "./patterns/ds-cta.js";
+export { DSFooter } from "./patterns/ds-footer.js";

@@ -595,10 +595,10 @@ function generateGroupsContent(groups, categoryName) {
         meta="${groups.length} group${groups.length === 1 ? "" : "s"}"
       >
         <ds-inline slot="stats" gap="2">
-          <ds-button size="sm" variant="ghost" class="select-all-btn" data-category="${categoryName}">
+          <ds-button size="sm" variant="warning" class="select-all-btn" data-category="${categoryName}">
             Select All
           </ds-button>
-          <ds-button size="sm" variant="ghost" class="deselect-all-btn" data-category="${categoryName}">
+          <ds-button size="sm" variant="warning" class="deselect-all-btn" data-category="${categoryName}">
             Deselect All
           </ds-button>
         </ds-inline>
@@ -863,7 +863,7 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
         </ds-card-header>
         <ds-card-content>
           <div style="overflow-x: auto;">
-            <ds-table id="group-memberships-table"></ds-table>
+            <ds-table id="group-memberships-table" sortable></ds-table>
           </div>
         </ds-card-content>
       </ds-card>
@@ -986,12 +986,8 @@ function setupGroupSelectionHandlers(categoryName) {
       const groupId = card.getAttribute("data-group-id");
       if (selectedGroups.has(groupId)) {
         card.style.borderColor = "var(--color-primary-main)";
-        card.style.backgroundColor = "var(--color-card-secondary-bg)";
-        card.style.boxShadow = "var(--shadow-sm)";
       } else {
         card.style.borderColor = "var(--color-border-primary)";
-        card.style.backgroundColor = "var(--color-card-secondary-bg)";
-        card.style.boxShadow = "none";
       }
     });
   }
