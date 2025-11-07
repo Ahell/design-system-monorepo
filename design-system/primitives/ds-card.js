@@ -32,9 +32,10 @@ export class DSCard extends LitElement {
     }
 
     .card {
-      background-color: var(--color-surface-secondary);
+      background-color: var(--card-bg-color, var(--color-surface-secondary));
       border-radius: var(--radius-xl);
-      border: var(--border-width-thin) solid var(--color-border-primary);
+      border: var(--border-width-thin) solid
+        var(--card-border-color, var(--color-border-primary));
       transition: var(--transition-all);
       position: relative;
     }

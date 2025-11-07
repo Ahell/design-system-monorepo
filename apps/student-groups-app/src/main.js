@@ -761,6 +761,7 @@ async function loadCategoryContent(categoryName) {
     // Wait for DOM to update, then attach event listeners
     setTimeout(() => {
       setupDragDropHandlers(categoryName);
+      setupGroupSelectionHandlers(categoryName);
     }, 100);
   } catch (error) {
     console.error("Error loading groups for category:", error);
@@ -959,6 +960,36 @@ function generateDragDropGroupsInterface(
           
           <!-- Second Column: Groups -->
           <div>
+            <!-- Group Selection Controls -->
+            <ds-card variant="secondary" style="margin-bottom: var(--space-3);">
+              <ds-card-content>
+                <ds-stack gap="3">
+                  <div style="font-weight: var(--weight-semibold); font-size: var(--text-sm); color: var(--color-text-secondary);">
+                    Select Groups
+                  </div>
+                  <ds-flex gap="2" wrap>
+                    <ds-button size="sm" variant="outline" class="select-all-btn">
+                      Select All
+                    </ds-button>
+                    <ds-button size="sm" variant="outline" class="deselect-all-btn">
+                      Deselect All
+                    </ds-button>
+                    <ds-button size="sm" variant="primary" class="apply-selection-btn" disabled>
+                      View Members
+                    </ds-button>
+                  </ds-flex>
+                  <div>
+                    <div style="font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-2);">
+                      Selected Groups:
+                    </div>
+                    <div class="selected-groups-list" style="min-height: 24px; display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: center;">
+                      <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">None</span>
+                    </div>
+                  </div>
+                </ds-stack>
+              </ds-card-content>
+            </ds-card>
+            
             <ds-grid cols="2" gap="sm" style="max-height: 600px; overflow-y: auto;">
               ${
                 groups.length === 0
@@ -966,18 +997,25 @@ function generateDragDropGroupsInterface(
                   : groups
                       .map(
                         (group) => `
-                <ds-card variant="secondary" class="group-container drop-zone" data-group-id="${
+                <ds-card variant="secondary" class="group-container group-card drop-zone" data-group-id="${
                   group.id
                 }" data-zone-type="group" data-group-name="${group.name}">
                   <ds-card-content>
                     <ds-flex justify="space-between" align="center" class="group-header">
-                      <div style="
-                        font-weight: var(--weight-semibold);
-                        font-size: var(--text-base);
-                        color: var(--color-text-primary);
-                      ">
-                        ${group.name} (${group.members.length})
-                      </div>
+                      <ds-flex align="center" gap="2">
+                        <ds-checkbox 
+                          class="group-checkbox" 
+                          data-group-id="${group.id}" 
+                          data-group-name="${group.name}"
+                        ></ds-checkbox>
+                        <div style="
+                          font-weight: var(--weight-semibold);
+                          font-size: var(--text-base);
+                          color: var(--color-text-primary);
+                        ">
+                          ${group.name} (${group.members.length})
+                        </div>
+                      </ds-flex>
                       <ds-button 
                         size="sm" 
                         variant="ghost"
@@ -1776,11 +1814,11 @@ function setupGroupSelectionHandlers(categoryName) {
     ".selected-groups-list"
   );
 
-  console.log("Setup handlers for", categoryName, {
+  console.log("Found elements:", {
     checkboxes: checkboxes.length,
+    checkboxesArray: Array.from(checkboxes).map(cb => ({ id: cb.getAttribute('data-group-id'), name: cb.getAttribute('data-group-name') })),
     groupCards: groupCards.length,
-    hasSelectAllBtn: !!selectAllBtn,
-    hasDeselectAllBtn: !!deselectAllBtn,
+    selectedGroupsList: !!selectedGroupsList
   });
 
   // Track selected groups
@@ -1788,6 +1826,9 @@ function setupGroupSelectionHandlers(categoryName) {
 
   // Update UI based on selection
   function updateSelectionUI() {
+    console.log("updateSelectionUI called, selectedGroups:", Array.from(selectedGroups));
+    console.log("selectedGroupsList element:", selectedGroupsList);
+    
     if (selectedGroups.size === 0) {
       selectedGroupsList.innerHTML =
         '<span style="color: var(--color-text-secondary); font-size: var(--text-sm);">None</span>';
@@ -1798,9 +1839,13 @@ function setupGroupSelectionHandlers(categoryName) {
           const checkbox = categoryContent.querySelector(
             `.group-checkbox[data-group-id="${id}"]`
           );
-          return checkbox?.getAttribute("data-group-name");
+          const name = checkbox?.getAttribute("data-group-name");
+          console.log("Group", id, "name:", name);
+          return name;
         })
         .filter(Boolean);
+
+      console.log("Group names:", groupNames);
 
       // Create badges for each selected group
       const badgesHTML = groupNames
@@ -1810,6 +1855,7 @@ function setupGroupSelectionHandlers(categoryName) {
         )
         .join("");
 
+      console.log("Badges HTML:", badgesHTML);
       selectedGroupsList.innerHTML = badgesHTML;
       applyBtn.disabled = false;
     }
@@ -1825,18 +1871,42 @@ function setupGroupSelectionHandlers(categoryName) {
     });
   }
 
-  // Handle checkbox changes
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", (e) => {
+  // Handle checkbox changes using event delegation on document
+  document.addEventListener("change", (e) => {
+    if (e.target.classList.contains("group-checkbox")) {
+      const checkbox = e.target;
       const groupId = checkbox.getAttribute("data-group-id");
-      console.log("Checkbox changed:", groupId, e.detail.checked);
-      if (e.detail.checked) {
+      const isChecked = e.detail ? e.detail.checked : checkbox.checked;
+      console.log("Checkbox changed (document):", groupId, isChecked, e.detail);
+      if (isChecked) {
         selectedGroups.add(groupId);
       } else {
         selectedGroups.delete(groupId);
       }
       updateSelectionUI();
-    });
+    }
+  });
+
+  // Also listen for clicks on checkbox wrappers as fallback
+  document.addEventListener("click", (e) => {
+    const checkboxWrapper = e.target.closest('.checkbox-wrapper');
+    if (checkboxWrapper) {
+      const checkbox = checkboxWrapper.closest('ds-checkbox');
+      if (checkbox && checkbox.classList.contains("group-checkbox")) {
+        // Wait a bit for the checkbox state to update
+        setTimeout(() => {
+          const groupId = checkbox.getAttribute("data-group-id");
+          const isChecked = checkbox.checked;
+          console.log("Checkbox wrapper clicked:", groupId, isChecked);
+          if (isChecked) {
+            selectedGroups.add(groupId);
+          } else {
+            selectedGroups.delete(groupId);
+          }
+          updateSelectionUI();
+        }, 10);
+      }
+    }
   });
 
   // Handle card clicks to toggle checkbox
@@ -1852,14 +1922,23 @@ function setupGroupSelectionHandlers(categoryName) {
       const groupId = card.getAttribute("data-group-id");
       const checkbox = card.querySelector(".group-checkbox");
       if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        // Manually trigger the change event
-        if (checkbox.checked) {
+        const newCheckedState = !checkbox.checked;
+        checkbox.checked = newCheckedState;
+        console.log("Card clicked, setting checkbox:", groupId, newCheckedState);
+        
+        // Manually update selection
+        if (newCheckedState) {
           selectedGroups.add(groupId);
         } else {
           selectedGroups.delete(groupId);
         }
         updateSelectionUI();
+        
+        // Also dispatch a change event to be safe
+        checkbox.dispatchEvent(new CustomEvent("change", {
+          detail: { checked: newCheckedState },
+          bubbles: true
+        }));
       }
     });
   });
