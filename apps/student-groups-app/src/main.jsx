@@ -1008,23 +1008,39 @@ function generateDragDropGroupsInterface(
                           data-group-id="${group.id}" 
                           data-group-name="${group.name}"
                         ></ds-checkbox>
-                        <div style="
-                          font-weight: var(--weight-semibold);
-                          font-size: var(--text-base);
-                          color: var(--color-text-primary);
-                        ">
+                        <div 
+                          class="group-name-display"
+                          style="
+                            font-weight: var(--weight-semibold);
+                            font-size: var(--text-base);
+                            color: var(--color-text-primary);
+                            cursor: pointer;
+                          "
+                          data-group-id="${group.id}"
+                        >
                           ${group.name} (${group.members.length})
                         </div>
                       </ds-flex>
-                      <ds-button 
-                        size="sm" 
-                        variant="ghost"
-                        class="toggle-group-btn"
-                        data-group-id="${group.id}"
-                        style="min-width: 80px;"
-                      >
-                        <span class="toggle-text">Expand</span>
-                      </ds-button>
+                      <ds-flex gap="1">
+                        <ds-button 
+                          size="sm" 
+                          variant="ghost"
+                          class="edit-group-btn"
+                          data-group-id="${group.id}"
+                          style="min-width: 60px;"
+                        >
+                          Edit
+                        </ds-button>
+                        <ds-button 
+                          size="sm" 
+                          variant="ghost"
+                          class="toggle-group-btn"
+                          data-group-id="${group.id}"
+                          style="min-width: 80px;"
+                        >
+                          <span class="toggle-text">Expand</span>
+                        </ds-button>
+                      </ds-flex>
                     </ds-flex>
                     
                     <ds-inline 
@@ -1418,6 +1434,246 @@ function setupDragDropHandlers(categoryName) {
       }
     });
   });
+
+  // Setup group name editing
+  const editButtons = categoryContent.querySelectorAll(".edit-group-btn");
+  editButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const groupId = btn.getAttribute("data-group-id");
+      startEditingGroupName(groupId);
+    });
+  });
+
+  // Also allow clicking on group name to edit
+  const groupNameDisplays = categoryContent.querySelectorAll(".group-name-display");
+  groupNameDisplays.forEach((display) => {
+    display.addEventListener("click", (e) => {
+      const groupId = display.getAttribute("data-group-id");
+      startEditingGroupName(groupId);
+    });
+  });
+
+  // Function to start editing a group name
+  function startEditingGroupName(groupId) {
+    const groupContainer = categoryContent.querySelector(
+      `.group-container[data-group-id="${groupId}"]`
+    );
+    if (!groupContainer) return;
+
+    const groupNameDisplay = groupContainer.querySelector(".group-name-display");
+    const editBtn = groupContainer.querySelector(".edit-group-btn");
+    const toggleBtn = groupContainer.querySelector(".toggle-group-btn");
+
+    if (!groupNameDisplay || !editBtn || !toggleBtn) return;
+
+    // Get current name (without member count)
+    const currentFullText = groupNameDisplay.textContent;
+    const currentName = currentFullText.replace(/\s*\(\d+\)\s*$/, "").trim();
+
+    // Replace display with input and buttons
+    const editHTML = `
+      <ds-flex align="center" gap="2" style="flex: 1;">
+        <ds-input
+          type="text"
+          value="${currentName}"
+          class="group-name-input"
+          data-group-id="${groupId}"
+          style="flex: 1; min-width: 150px;"
+        ></ds-input>
+        <ds-button 
+          size="sm" 
+          variant="primary"
+          class="save-group-name-btn"
+          data-group-id="${groupId}"
+        >
+          Save
+        </ds-button>
+        <ds-button 
+          size="sm" 
+          variant="ghost"
+          class="cancel-edit-btn"
+          data-group-id="${groupId}"
+        >
+          Cancel
+        </ds-button>
+      </ds-flex>
+    `;
+
+    // Hide original elements and show edit interface
+    groupNameDisplay.style.display = "none";
+    editBtn.style.display = "none";
+    toggleBtn.style.display = "none";
+
+    // Insert edit interface after the checkbox
+    const checkbox = groupContainer.querySelector(".group-checkbox");
+    if (checkbox) {
+      checkbox.insertAdjacentHTML("afterend", editHTML);
+    }
+
+    // Focus the input
+    setTimeout(() => {
+      const input = groupContainer.querySelector(".group-name-input");
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 100);
+
+    // Setup save and cancel handlers
+    const saveBtn = groupContainer.querySelector(".save-group-name-btn");
+    const cancelBtn = groupContainer.querySelector(".cancel-edit-btn");
+    const input = groupContainer.querySelector(".group-name-input");
+
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => saveGroupName(groupId));
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", () => cancelGroupNameEdit(groupId));
+    }
+
+    if (input) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          saveGroupName(groupId);
+        } else if (e.key === "Escape") {
+          cancelGroupNameEdit(groupId);
+        }
+      });
+    }
+  }
+
+  // Function to save group name changes
+  async function saveGroupName(groupId) {
+    const groupContainer = categoryContent.querySelector(
+      `.group-container[data-group-id="${groupId}"]`
+    );
+    if (!groupContainer) return;
+
+    const input = groupContainer.querySelector(".group-name-input");
+    if (!input) return;
+
+    const newName = input.value.trim();
+    if (!newName) {
+      alert("Group name cannot be empty");
+      return;
+    }
+
+    // Get current name to check if changed
+    const groupNameDisplay = groupContainer.querySelector(".group-name-display");
+    const currentFullText = groupNameDisplay.textContent;
+    const currentName = currentFullText.replace(/\s*\(\d+\)\s*$/, "").trim();
+
+    if (newName === currentName) {
+      // No change, just cancel edit
+      cancelGroupNameEdit(groupId);
+      return;
+    }
+
+    try {
+      // Show loading state
+      const saveBtn = groupContainer.querySelector(".save-group-name-btn");
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+      }
+
+      // Make API call to update group
+      const response = await fetch(`/api/canvas/groups/${groupId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newName,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update group name");
+      }
+
+      const updatedGroup = await response.json();
+
+      // Update all references to the group name in the UI
+      updateGroupNameInUI(groupId, updatedGroup.name);
+
+      // Notify selection handlers of the name change
+      document.dispatchEvent(new CustomEvent("group-name-changed", {
+        detail: { groupId, newName: updatedGroup.name }
+      }));
+
+      // Exit edit mode
+      cancelGroupNameEdit(groupId);
+
+      console.log("Successfully updated group name to:", updatedGroup.name);
+    } catch (error) {
+      console.error("Error updating group name:", error);
+      alert(`Failed to update group name: ${error.message}`);
+      
+      // Reset save button
+      const saveBtn = groupContainer.querySelector(".save-group-name-btn");
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save";
+      }
+    }
+  }
+
+  // Function to cancel group name editing
+  function cancelGroupNameEdit(groupId) {
+    const groupContainer = categoryContent.querySelector(
+      `.group-container[data-group-id="${groupId}"]`
+    );
+    if (!groupContainer) return;
+
+    // Remove edit interface
+    const editInterface = groupContainer.querySelector("ds-flex");
+    if (editInterface && editInterface.querySelector(".group-name-input")) {
+      editInterface.remove();
+    }
+
+    // Show original elements
+    const groupNameDisplay = groupContainer.querySelector(".group-name-display");
+    const editBtn = groupContainer.querySelector(".edit-group-btn");
+    const toggleBtn = groupContainer.querySelector(".toggle-group-btn");
+
+    if (groupNameDisplay) groupNameDisplay.style.display = "";
+    if (editBtn) editBtn.style.display = "";
+    if (toggleBtn) toggleBtn.style.display = "";
+  }
+
+  // Function to update group name throughout the UI
+  function updateGroupNameInUI(groupId, newName) {
+    // Update group name display
+    const groupNameDisplay = categoryContent.querySelector(
+      `.group-name-display[data-group-id="${groupId}"]`
+    );
+    if (groupNameDisplay) {
+      const memberCount = groupNameDisplay.textContent.match(/\((\d+)\)/)?.[1] || "0";
+      groupNameDisplay.textContent = `${newName} (${memberCount})`;
+    }
+
+    // Update checkbox data attribute
+    const checkbox = categoryContent.querySelector(
+      `.group-checkbox[data-group-id="${groupId}"]`
+    );
+    if (checkbox) {
+      checkbox.setAttribute("data-group-name", newName);
+    }
+
+    // Update group container data attribute
+    const groupContainer = categoryContent.querySelector(
+      `.group-container[data-group-id="${groupId}"]`
+    );
+    if (groupContainer) {
+      groupContainer.setAttribute("data-group-name", newName);
+    }
+
+    // Update selected groups list if this group is selected
+    // This will be handled by the selection handlers when they update
+  }
 
   // Setup drag events for all student badges
   function setupDraggableStudents() {
@@ -1987,43 +2243,10 @@ function setupGroupSelectionHandlers(categoryName) {
     console.warn("Deselect All button not found for", categoryName);
   }
 
-  // Apply selection button
-  applyBtn?.addEventListener("click", async () => {
-    const selectedGroupsList = Array.from(selectedGroups).map((id) => {
-      const checkbox = categoryContent.querySelector(
-        `.group-checkbox[data-group-id="${id}"]`
-      );
-      return {
-        id,
-        name: checkbox?.getAttribute("data-group-name"),
-      };
-    });
-
-    console.log("Selected groups for", categoryName, ":", selectedGroupsList);
-
-    // Show loading state
-    applyBtn.disabled = true;
-
-    try {
-      // Fetch members for all selected groups
-      await displayGroupMembersTable(selectedGroupsList, categoryName);
-    } catch (error) {
-      console.error("Error loading group members:", error);
-    } finally {
-      // Reset button state
-      applyBtn.disabled = false;
-    }
-
-    // Dispatch custom event with selection
-    document.dispatchEvent(
-      new CustomEvent("groups-selected", {
-        detail: {
-          category: categoryName,
-          groups: selectedGroupsList,
-          groupIds: Array.from(selectedGroups),
-        },
-      })
-    );
+  // Listen for group name changes
+  document.addEventListener("group-name-changed", (e) => {
+    const { groupId, newName } = e.detail;
+    updateSelectionUI();
   });
 }
 

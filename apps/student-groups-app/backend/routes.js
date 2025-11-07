@@ -294,7 +294,37 @@ function setupRoutes(app, config) {
       }
     }
   );
-}
+
+  // Update group details (name, description, etc.)
+  app.put("/api/canvas/groups/:groupId", async (req, res) => {
+    try {
+      const { groupId } = req.params;
+      const { name, description, join_level, max_membership } = req.body;
+
+      if (!name) {
+        return res.status(400).json({ error: "Group name is required" });
+      }
+
+      const result = await makeCanvasRequest(
+        `/groups/${groupId}`,
+        CANVAS_ACCESS_TOKEN,
+        config,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            name,
+            description: description || "",
+            join_level: join_level || null,
+            max_membership: max_membership || null,
+          }),
+        }
+      );
+
+      res.status(result.statusCode).json(result.data);
+    } catch (error) {
+      res.status(error.statusCode || 500).json(error);
+    }
+  });
 
 module.exports = {
   setupRoutes,
