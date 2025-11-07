@@ -537,7 +537,10 @@ async function loadTabContent(categoryName, tabsElement) {
           ...tab,
           loading: false,
           content:
-            '<div style="text-align: center; padding: var(--space-4); color: var(--color-error);">Error loading groups</div>',
+            '        } catch (error) {
+          console.error("Error loading groups:", error);
+          tabs[idx].content = `<ds-alert variant="error" title="Error Loading Groups">Failed to load groups for this category. Please try again.</ds-alert>`;
+          tabs[idx].loading = false;',
         };
       }
       return tab;
@@ -549,13 +552,17 @@ async function loadTabContent(categoryName, tabsElement) {
 // Generate HTML content for groups display
 function generateGroupsContent(groups, categoryName) {
   if (groups.length === 0) {
-    return `<div style="text-align: center; padding: var(--space-4); color: var(--color-text-secondary);">No groups found in the "${categoryName}" category.</div>`;
+    return `// Function to generate groups display with selection controls
+function generateGroupsContent(groups, categoryName) {
+  if (groups.length === 0) {
+    return `<ds-alert variant="info" title="No Groups Found">No groups found in the "${categoryName}" category.</ds-alert>`;
+  }`;
   }
 
   // Create groups display with filter controls
   let html = `
-    <div style="margin-bottom: var(--space-4);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border-primary);">
+    <ds-stack gap="4">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border-primary);">
         <h4 style="margin: 0; color: var(--color-text-secondary); font-weight: var(--weight-medium);">
           ${categoryName} Groups (<span class="selected-count">0</span>/${groups.length} selected)
         </h4>
@@ -576,42 +583,42 @@ function generateGroupsContent(groups, categoryName) {
       memberCount === 1 ? "1 member" : `${memberCount} members`;
 
     html += `
-      <div class="group-card" data-group-id="${
-        group.id
-      }" style="padding: var(--space-4); border: 1px solid var(--color-border-primary); border-radius: var(--radius-md); background: var(--color-surface-primary); transition: var(--transition-all); cursor: pointer;">
-        <div style="display: flex; align-items: start; gap: var(--space-3); margin-bottom: var(--space-3);">
-          <ds-checkbox class="group-checkbox" data-group-id="${
-            group.id
-          }" data-group-name="${group.name}"></ds-checkbox>
-          <div style="flex: 1;">
-            <div style="font-weight: var(--weight-medium); margin-bottom: var(--space-2); font-size: var(--text-lg);">${
-              group.name
-            }</div>
-            <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">${memberText}</div>
-          </div>
-        </div>
-        <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
-          <strong>Description:</strong> ${group.description || "No description"}
-        </div>
-      </div>`;
+      <ds-card class="group-card" data-group-id="${group.id}" style="cursor: pointer; transition: var(--transition-all);">
+        <ds-card-content>
+          <ds-stack gap="3">
+            <div style="display: flex; align-items: start; gap: var(--space-3);">
+              <ds-checkbox class="group-checkbox" data-group-id="${group.id}" data-group-name="${group.name}"></ds-checkbox>
+              <div style="flex: 1;">
+                <div style="font-weight: var(--weight-medium); margin-bottom: var(--space-2); font-size: var(--text-lg);">${group.name}</div>
+                <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">${memberText}</div>
+              </div>
+            </div>
+            <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
+              <strong>Description:</strong> ${group.description || "No description"}
+            </div>
+          </ds-stack>
+        </ds-card-content>
+      </ds-card>`;
   });
 
   html += `
       </div>
-      <div style="margin-top: var(--space-4); padding: var(--space-4); background: var(--color-surface-secondary); border-radius: var(--radius-md); border: 1px solid var(--color-border-primary);">
-        <div style="display: flex; justify-content: space-between; align-items: start; gap: var(--space-4);">
-          <div style="flex: 1;">
-            <strong style="color: var(--color-text-primary); display: block; margin-bottom: var(--space-2);">Selected Groups:</strong>
-            <div class="selected-groups-list" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
-              <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">None</span>
-            </div>
+      <ds-card style="margin-top: var(--space-4); background: var(--color-surface-secondary);">
+        <ds-card-content>
+          <div style="display: flex; justify-content: space-between; align-items: start; gap: var(--space-4);">
+            <ds-stack gap="2" style="flex: 1;">
+              <strong style="color: var(--color-text-primary);">Selected Groups:</strong>
+              <div class="selected-groups-list" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">None</span>
+              </div>
+            </ds-stack>
+            <ds-button size="sm" variant="primary" class="apply-selection-btn" data-category="${categoryName}" disabled style="flex-shrink: 0;">
+              Apply Selection
+            </ds-button>
           </div>
-          <ds-button size="sm" variant="primary" class="apply-selection-btn" data-category="${categoryName}" disabled style="flex-shrink: 0;">
-            Apply Selection
-          </ds-button>
-        </div>
-      </div>
-    </div>`;
+        </ds-card-content>
+      </ds-card>
+    </ds-stack>`;
 
   return html;
 }
@@ -641,10 +648,14 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
 
   // Show loading state
   groupsOverview.innerHTML = `
-    <div style="text-align: center; padding: var(--space-8);">
-      <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid var(--color-border-primary); border-top: 4px solid var(--color-primary-main); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-      <p style="margin-top: var(--space-4); color: var(--color-text-secondary);">Loading group members...</p>
-    </div>
+    <ds-card>
+      <ds-card-content style="text-align: center; padding: var(--space-8);">
+        <ds-stack gap="4" align="center">
+          <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid var(--color-border-primary); border-top: 4px solid var(--color-primary-main); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <p style="color: var(--color-text-secondary); margin: 0;">Loading group members...</p>
+        </ds-stack>
+      </ds-card-content>
+    </ds-card>
   `;
   groupsOverview.style.display = "block";
 
@@ -768,74 +779,70 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
 
     // Generate table HTML
     let tableHTML = `
-      <div style="margin-bottom: var(--space-6);">
-        <h3 style="color: var(--color-text-primary); margin-bottom: var(--space-2);">
-          Group Memberships for Selected Groups
-        </h3>
-        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-4);">
-          Showing ${students.length} students across ${
-      allCategories.length
-    } group categories
-        </p>
-      </div>
-      <div style="overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--color-border-primary); box-shadow: var(--shadow-sm);">
-        <table style="width: 100%; border-collapse: collapse; background: var(--color-surface-primary);">
-          <thead>
-            <tr style="background: var(--color-primary-main);">
-              ${headers
-                .map(
-                  (header) => `
-                <th style="padding: var(--space-4); text-align: left; font-weight: var(--weight-semibold); color: var(--color-text-inverse); border-bottom: 2px solid var(--color-border-secondary); white-space: nowrap;">
-                  ${header}
-                </th>
-              `
-                )
-                .join("")}
-            </tr>
-          </thead>
-          <tbody>
-            ${rows
-              .map(
-                (row, rowIndex) => `
-              <tr style="background: ${
-                rowIndex % 2 === 0
-                  ? "var(--color-surface-primary)"
-                  : "var(--color-surface-secondary)"
-              }; transition: var(--transition-colors);" onmouseover="this.style.background='var(--color-neutral-100)'" onmouseout="this.style.background='${
-                  rowIndex % 2 === 0
-                    ? "var(--color-surface-primary)"
-                    : "var(--color-surface-secondary)"
-                }'">
-                ${row
+      <ds-card>
+        <ds-card-header>
+          <h3 style="margin: 0;">Group Memberships for Selected Groups</h3>
+          <p style="margin: 0;">
+            Showing ${students.length} students across ${allCategories.length} group categories
+          </p>
+        </ds-card-header>
+        <ds-card-content style="padding: 0;">
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; background: var(--color-surface-primary);">
+              <thead>
+                <tr style="background: var(--color-primary-main);">
+                  ${headers
+                    .map(
+                      (header) => `
+                    <th style="padding: var(--space-4); text-align: left; font-weight: var(--weight-semibold); color: var(--color-text-inverse); border-bottom: 2px solid var(--color-border-secondary); white-space: nowrap;">
+                      ${header}
+                    </th>
+                  `
+                    )
+                    .join("")}
+                </tr>
+              </thead>
+              <tbody>
+                ${rows
                   .map(
-                    (cell, index) => `
-                  <td style="padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border-primary); ${
-                    index === 0
-                      ? "font-weight: var(--weight-medium);"
-                      : index === 1
-                      ? "color: var(--color-text-secondary);"
-                      : "color: var(--color-text-primary);"
-                  }">
-                    ${cell || "-"}
-                  </td>
+                    (row, rowIndex) => `
+                  <tr style="background: ${
+                    rowIndex % 2 === 0
+                      ? "var(--color-surface-primary)"
+                      : "var(--color-surface-secondary)"
+                  }; transition: var(--transition-colors);" onmouseover="this.style.background='var(--color-neutral-100)'" onmouseout="this.style.background='${
+                      rowIndex % 2 === 0
+                        ? "var(--color-surface-primary)"
+                        : "var(--color-surface-secondary)"
+                    }'">
+                    ${row
+                      .map(
+                        (cell, index) => `
+                      <td style="padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border-primary); ${
+                        index === 0
+                          ? "font-weight: var(--weight-medium);"
+                          : index === 1
+                          ? "color: var(--color-text-secondary);"
+                          : "color: var(--color-text-primary);"
+                      }">
+                        ${cell || "-"}
+                      </td>
+                    `
+                      )
+                      .join("")}
+                  </tr>
                 `
                   )
                   .join("")}
-              </tr>
-            `
-              )
-              .join("")}
-          </tbody>
-        </table>
-      </div>
+              </tbody>
+            </table>
+          </div>
+        </ds-card-content>
+      </ds-card>
     `;
 
     if (students.length === 0) {
-      tableHTML = `
-        <div style="text-align: center; padding: var(--space-8);">
-          <p style="color: var(--color-text-secondary);">No students found in the selected groups.</p>
-        </div>
-      `;
+      tableHTML = `<ds-alert variant="info" title="No Students Found">No students found in the selected groups.</ds-alert>`;
     }
 
     groupsOverview.innerHTML = tableHTML;
@@ -843,9 +850,9 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
   } catch (error) {
     console.error("Error displaying group members table:", error);
     groupsOverview.innerHTML = `
-      <div style="text-align: center; padding: var(--space-8); color: var(--color-error);">
-        <p>Error loading group members. Please try again.</p>
-      </div>
+      <ds-alert variant="error" title="Error Loading Data">
+        Failed to load group members. Please try again.
+      </ds-alert>
     `;
   }
 }
@@ -908,26 +915,14 @@ function setupGroupSelectionHandlers(categoryName) {
         })
         .filter(Boolean);
 
-      // Create pills for each selected group
-      const pillsHTML = groupNames
+      // Create badges for each selected group
+      const badgesHTML = groupNames
         .map(
-          (name) => `
-        <span style="
-          display: inline-block;
-          padding: var(--space-1) var(--space-3);
-          background: var(--color-primary-main);
-          color: var(--color-text-inverse);
-          border-radius: var(--radius-full);
-          font-size: var(--text-sm);
-          font-weight: var(--weight-medium);
-          margin-right: var(--space-2);
-          margin-bottom: var(--space-2);
-        ">${name}</span>
-      `
+          (name) => `<ds-badge label="${name}" variant="primary" size="sm"></ds-badge>`
         )
         .join("");
 
-      selectedGroupsList.innerHTML = pillsHTML;
+      selectedGroupsList.innerHTML = badgesHTML;
       applyBtn.disabled = false;
     }
 

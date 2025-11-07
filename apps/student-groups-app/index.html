@@ -30,21 +30,18 @@
           <p>Select a Canvas course to load student groups</p>
         </ds-card-header>
         <ds-card-content>
-          <div
-            style="display: flex; gap: var(--space-4); align-items: flex-end"
-          >
-            <div style="flex: 1">
-              <ds-select
-                id="course-select"
-                label="Select Course"
-                placeholder="Loading courses..."
-                full-width
-              ></ds-select>
-            </div>
+          <ds-stack gap="4" style="align-items: flex-end; flex-direction: row;">
+            <ds-select
+              id="course-select"
+              label="Select Course"
+              placeholder="Loading courses..."
+              full-width
+              style="flex: 1;"
+            ></ds-select>
             <ds-button id="load-course-btn" variant="primary">
               Load Groups
             </ds-button>
-          </div>
+          </ds-stack>
         </ds-card-content>
       </ds-card>
 
@@ -55,47 +52,38 @@
         </ds-card-header>
 
         <ds-card-content>
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: var(--space-4);
-            "
-          >
-            <h3>Group Categories</h3>
-            <div
-              id="selection-status"
-              style="
-                font-size: var(--text-sm);
-                color: var(--color-text-secondary);
-              "
-            ></div>
-          </div>
-
-          <!-- Category Tabs -->
-          <div
-            id="tabs-section"
-            style="
-              margin-bottom: var(--space-4);
-              padding: var(--space-4);
-              background: var(--color-surface-secondary);
-              border-radius: var(--radius-md);
-              display: none;
-            "
-          >
-            <div id="tabs-container">
-              <!-- Tabs will be dynamically inserted here -->
+          <ds-stack gap="4">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0;">Group Categories</h3>
+              <div
+                id="selection-status"
+                style="
+                  font-size: var(--text-sm);
+                  color: var(--color-text-secondary);
+                "
+              ></div>
             </div>
-          </div>
 
-          <!-- Groups Overview Table (appears after Apply Selection) -->
-          <div
-            id="groups-overview"
-            style="display: none; margin-top: var(--space-6)"
-          >
-            <!-- Table will be dynamically inserted here -->
-          </div>
+            <!-- Category Tabs -->
+            <div
+              id="tabs-section"
+              style="
+                padding: var(--space-4);
+                background: var(--color-surface-secondary);
+                border-radius: var(--radius-md);
+                display: none;
+              "
+            >
+              <div id="tabs-container">
+                <!-- Tabs will be dynamically inserted here -->
+              </div>
+            </div>
+
+            <!-- Groups Overview Table (appears after Apply Selection) -->
+            <div id="groups-overview" style="display: none;">
+              <!-- Table will be dynamically inserted here -->
+            </div>
+          </ds-stack>
         </ds-card-content>
       </ds-card>
     </ds-container>
