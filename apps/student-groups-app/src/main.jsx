@@ -989,24 +989,25 @@ function generateDragDropGroupsInterface(
                       </ds-button>
                     </ds-flex>
                     
-                    <ds-stack 
+                    <ds-inline 
                       gap="2"
                       class="group-members"
                       data-group-id="${group.id}"
                       style="
                         display: none;
-                        min-height: 100px;
+                        min-height: 40px;
                         padding: var(--space-3);
                         background: var(--color-surface);
                         border-radius: var(--radius-sm);
                         border: 2px dashed var(--color-border);
                         transition: all 0.2s ease;
                         margin-top: var(--space-3);
+                        flex-wrap: wrap;
                       "
                     >
                       ${
                         group.members.length === 0
-                          ? '<div style="color: var(--color-text-secondary); font-size: var(--text-sm); text-align: center; padding: var(--space-4);">No members in this group</div>'
+                          ? ""
                           : group.members
                               .map(
                                 (member) => `
@@ -1030,7 +1031,7 @@ function generateDragDropGroupsInterface(
                               )
                               .join("")
                       }
-                    </ds-stack>
+                    </ds-inline>
                   </ds-card-content>
                 </ds-card>
               `
@@ -1685,6 +1686,7 @@ function setupDragDropHandlers(categoryName) {
         const groupName = headerText.textContent.replace(/\s*\(\d+\)\s*$/, "");
         headerText.textContent = `${groupName} (${memberCount})`;
       }
+    });
   }
 }
 
