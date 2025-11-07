@@ -322,7 +322,6 @@ async function handleLoadCourse() {
   }
 
   // Show loading state
-  loadButton.textContent = "Loading...";
   loadButton.disabled = true;
 
   try {
@@ -334,7 +333,6 @@ async function handleLoadCourse() {
     );
   } finally {
     // Reset button state
-    loadButton.textContent = "Load Groups";
     loadButton.disabled = false;
   }
 }
@@ -347,6 +345,7 @@ function showInitialState() {
   const filterSection = document.getElementById("filter-section");
   const categoryRadioGroup = document.getElementById("category-radio-group");
   const categoryContent = document.getElementById("category-content");
+  const groupCategoriesCard = document.getElementById("group-categories-card");
 
   if (courseCardHeader) {
     courseCardHeader.title = "Group Categories";
@@ -374,6 +373,10 @@ function showInitialState() {
   if (categoryContent) {
     categoryContent.style.display = "none";
   }
+
+  if (groupCategoriesCard) {
+    groupCategoriesCard.style.display = "none";
+  }
 }
 
 // Function to load course categories and display tabs
@@ -382,15 +385,26 @@ async function loadCourseCategories(courseId) {
   const categoryRadioGroup = document.getElementById("category-radio-group");
   const categoryContent = document.getElementById("category-content");
   const groupsOverview = document.getElementById("groups-overview");
+  const groupCategoriesCard = document.getElementById("group-categories-card");
 
   try {
-    // Show loading state
+    // Show card with loading spinner
+    if (groupCategoriesCard) {
+      groupCategoriesCard.style.display = "block";
+    }
+
+    // Show loading state with spinner
     if (courseCardHeader) {
       courseCardHeader.title = "Group Categories";
       courseCardHeader.meta = "Loading course information...";
     }
     if (categoryRadioGroup) {
-      categoryRadioGroup.style.display = "none";
+      categoryRadioGroup.innerHTML = `
+        <div style="display: flex; justify-content: center; align-items: center; padding: var(--space-8);">
+          <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid var(--color-border-primary); border-top: 4px solid var(--color-primary-main); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+      `;
+      categoryRadioGroup.style.display = "block";
     }
     if (categoryContent) {
       categoryContent.style.display = "none";
@@ -428,8 +442,18 @@ async function loadCourseCategories(courseId) {
 
     // Display category tabs
     displayCategoryTabs(categories);
+
+    // Show the card now that data is loaded
+    if (groupCategoriesCard) {
+      groupCategoriesCard.style.display = "block";
+    }
   } catch (error) {
     console.error("Error loading course categories:", error);
+
+    // Keep card hidden on error
+    if (groupCategoriesCard) {
+      groupCategoriesCard.style.display = "none";
+    }
 
     // Show error state
     if (courseCardHeader) {
@@ -565,10 +589,10 @@ function generateGroupsContent(groups, categoryName) {
 
   // Create groups display with filter controls
   let html = `
-    <ds-card variant="secondary">
+    <ds-card>
       <ds-card-header
         title="${categoryName} Groups"
-        meta="<span class='selected-count'>0</span>/${groups.length} selected"
+        meta="${groups.length} group${groups.length === 1 ? "" : "s"}"
       >
         <ds-inline slot="stats" gap="2">
           <ds-button size="sm" variant="ghost" class="select-all-btn" data-category="${categoryName}">
@@ -580,14 +604,7 @@ function generateGroupsContent(groups, categoryName) {
         </ds-inline>
       </ds-card-header>
       <ds-card-content>
-        <ds-grid 
-          class="groups-grid" 
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-            gap: var(--space-4);
-          "
-        >`;
+        <ds-grid auto-fit min-width="280px" gap="lg" class="groups-grid">`;
 
   groups.forEach((group) => {
     const memberCount = group.members_count || 0;
@@ -595,7 +612,7 @@ function generateGroupsContent(groups, categoryName) {
       memberCount === 1 ? "1 member" : `${memberCount} members`;
 
     html += `
-            <ds-card variant="default" class="group-card" data-group-id="${
+            <ds-card variant="secondary" class="group-card" data-group-id="${
               group.id
             }" interactive style="cursor: pointer; transition: var(--transition-all);">
               <ds-card-content>
@@ -631,33 +648,35 @@ function generateGroupsContent(groups, categoryName) {
 
   html += `
         </ds-grid>
-      </ds-card-content>
-    </ds-card>
-
-    <ds-card variant="info">
-      <ds-card-content>
-        <ds-flex justify="space-between" align="start" gap="4">
-          <ds-stack gap="2" style="flex: 1; min-width: 0;">
-            <div style="font-weight: var(--weight-semibold); color: var(--color-text-primary);">
-              Selected Groups
-            </div>
-            <ds-inline class="selected-groups-list" gap="2" wrap="true">
-              <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">
-                None selected
-              </span>
-            </ds-inline>
-          </ds-stack>
-          <ds-button 
-            size="sm" 
-            variant="primary" 
-            class="apply-selection-btn" 
-            data-category="${categoryName}" 
-            disabled 
-            style="flex-shrink: 0;"
-          >
-            Apply Selection
-          </ds-button>
-        </ds-flex>
+        
+        <div style="
+          margin-top: var(--space-6);
+          padding-top: var(--space-6);
+          border-top: 1px solid var(--color-border-primary);
+        ">
+          <ds-flex justify="space-between" align="start" gap="4">
+            <ds-stack gap="2" style="flex: 1; min-width: 0;">
+              <div style="font-weight: var(--weight-semibold); color: var(--color-text-primary);">
+                Selected Groups
+              </div>
+              <ds-inline class="selected-groups-list" gap="2" wrap="true">
+                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                  None selected
+                </span>
+              </ds-inline>
+            </ds-stack>
+            <ds-button 
+              size="sm" 
+              variant="primary" 
+              class="apply-selection-btn" 
+              data-category="${categoryName}" 
+              disabled 
+              style="flex-shrink: 0;"
+            >
+              Apply Selection
+            </ds-button>
+          </ds-flex>
+        </div>
       </ds-card-content>
     </ds-card>
   `;
@@ -808,13 +827,25 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
 
     console.log("Student-group mapping:", students);
 
-    // Create table data with category columns
-    const headers = ["Student Name", "Email", ...allCategories];
-    const rows = students.map((student) => {
-      const row = [student.name, student.email];
-      // For each category, add the group name or empty string
+    // Create columns for ds-table
+    const columns = [
+      { key: "name", label: "Student Name" },
+      { key: "email", label: "Email" },
+      ...allCategories.map((category) => ({
+        key: category,
+        label: category,
+      })),
+    ];
+
+    // Create data for ds-table (array of objects)
+    const tableData = students.map((student) => {
+      const row = {
+        name: student.name,
+        email: student.email,
+      };
+      // Add each category as a property
       allCategories.forEach((category) => {
-        row.push(student.groupsByCategory[category] || "");
+        row[category] = student.groupsByCategory[category] || "-";
       });
       return row;
     });
@@ -824,64 +855,15 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
       <ds-card>
         <ds-card-header
           title="Group Memberships for Selected Groups"
-          meta="Showing ${students.length} students across ${
-      allCategories.length
-    } group categories"
+          meta="Showing ${students.length} students across ${allCategories.length} group categories"
         >
           <ds-button slot="stats" size="sm" variant="ghost" id="export-table-btn">
             Export CSV
           </ds-button>
         </ds-card-header>
-        <ds-card-content style="padding: 0;">
+        <ds-card-content>
           <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; background: var(--color-surface-primary);">
-              <thead>
-                <tr style="background: var(--color-primary-main);">
-                  ${headers
-                    .map(
-                      (header) => `
-                    <th style="padding: var(--space-4); text-align: left; font-weight: var(--weight-semibold); color: var(--color-text-inverse); border-bottom: 2px solid var(--color-border-secondary); white-space: nowrap;">
-                      ${header}
-                    </th>
-                  `
-                    )
-                    .join("")}
-                </tr>
-              </thead>
-              <tbody>
-                ${rows
-                  .map(
-                    (row, rowIndex) => `
-                  <tr style="background: ${
-                    rowIndex % 2 === 0
-                      ? "var(--color-surface-primary)"
-                      : "var(--color-surface-secondary)"
-                  }; transition: var(--transition-colors);" onmouseover="this.style.background='var(--color-neutral-100)'" onmouseout="this.style.background='${
-                      rowIndex % 2 === 0
-                        ? "var(--color-surface-primary)"
-                        : "var(--color-surface-secondary)"
-                    }'">
-                    ${row
-                      .map(
-                        (cell, index) => `
-                      <td style="padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border-primary); ${
-                        index === 0
-                          ? "font-weight: var(--weight-medium);"
-                          : index === 1
-                          ? "color: var(--color-text-secondary);"
-                          : "color: var(--color-text-primary);"
-                      }">
-                        ${cell || "-"}
-                      </td>
-                    `
-                      )
-                      .join("")}
-                  </tr>
-                `
-                  )
-                  .join("")}
-              </tbody>
-            </table>
+            <ds-table id="group-memberships-table"></ds-table>
           </div>
         </ds-card-content>
       </ds-card>
@@ -889,9 +871,23 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
 
     if (students.length === 0) {
       tableHTML = `<ds-alert variant="info" title="No Students Found">No students found in the selected groups.</ds-alert>`;
+      groupsOverview.innerHTML = tableHTML;
+    } else {
+      groupsOverview.innerHTML = tableHTML;
+
+      // Wait for the ds-table element to be defined and then set its data
+      customElements.whenDefined("ds-table").then(() => {
+        setTimeout(() => {
+          const table = document.getElementById("group-memberships-table");
+          if (table) {
+            console.log("Setting table data:", { columns, data: tableData });
+            table.columns = columns;
+            table.data = tableData;
+          }
+        }, 0);
+      });
     }
 
-    groupsOverview.innerHTML = tableHTML;
     groupsOverview.style.display = "block";
 
     // Add export CSV functionality
@@ -899,10 +895,13 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
     if (exportBtn) {
       exportBtn.addEventListener("click", () => {
         // Convert table data to CSV
-        const csv = [
-          headers.join(","),
-          ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-        ].join("\n");
+        const csvHeaders = columns.map((col) => col.label).join(",");
+        const csvRows = tableData
+          .map((row) =>
+            columns.map((col) => `"${row[col.key] || ""}"`).join(",")
+          )
+          .join("\n");
+        const csv = `${csvHeaders}\n${csvRows}`;
 
         // Create download link
         const blob = new Blob([csv], { type: "text/csv" });
@@ -928,33 +927,21 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
 
 // Setup event handlers for group selection
 function setupGroupSelectionHandlers(categoryName) {
-  const tabsElement = document.querySelector("ds-tabs");
-  if (!tabsElement) {
-    console.error("ds-tabs element not found");
+  // Find the category content container
+  const categoryContent = document.getElementById("category-content");
+  if (!categoryContent) {
+    console.error("category-content element not found");
     return;
   }
 
-  // Get the shadow root
-  const shadowRoot = tabsElement.shadowRoot;
-  if (!shadowRoot) {
-    console.error("Shadow root not found");
-    return;
-  }
-
-  // Find the active tab content within the shadow DOM
-  const tabContent = shadowRoot.querySelector(".tab-content.active");
-  if (!tabContent) {
-    console.error("Active tab content not found");
-    return;
-  }
-
-  const checkboxes = tabContent.querySelectorAll(".group-checkbox");
-  const groupCards = tabContent.querySelectorAll(".group-card");
-  const selectAllBtn = tabContent.querySelector(".select-all-btn");
-  const deselectAllBtn = tabContent.querySelector(".deselect-all-btn");
-  const applyBtn = tabContent.querySelector(".apply-selection-btn");
-  const selectedCountSpan = tabContent.querySelector(".selected-count");
-  const selectedGroupsList = tabContent.querySelector(".selected-groups-list");
+  const checkboxes = categoryContent.querySelectorAll(".group-checkbox");
+  const groupCards = categoryContent.querySelectorAll(".group-card");
+  const selectAllBtn = categoryContent.querySelector(".select-all-btn");
+  const deselectAllBtn = categoryContent.querySelector(".deselect-all-btn");
+  const applyBtn = categoryContent.querySelector(".apply-selection-btn");
+  const selectedGroupsList = categoryContent.querySelector(
+    ".selected-groups-list"
+  );
 
   console.log("Setup handlers for", categoryName, {
     checkboxes: checkboxes.length,
@@ -968,8 +955,6 @@ function setupGroupSelectionHandlers(categoryName) {
 
   // Update UI based on selection
   function updateSelectionUI() {
-    selectedCountSpan.textContent = selectedGroups.size;
-
     if (selectedGroups.size === 0) {
       selectedGroupsList.innerHTML =
         '<span style="color: var(--color-text-secondary); font-size: var(--text-sm);">None</span>';
@@ -977,7 +962,7 @@ function setupGroupSelectionHandlers(categoryName) {
     } else {
       const groupNames = Array.from(selectedGroups)
         .map((id) => {
-          const checkbox = tabContent.querySelector(
+          const checkbox = categoryContent.querySelector(
             `.group-checkbox[data-group-id="${id}"]`
           );
           return checkbox?.getAttribute("data-group-name");
@@ -1001,11 +986,11 @@ function setupGroupSelectionHandlers(categoryName) {
       const groupId = card.getAttribute("data-group-id");
       if (selectedGroups.has(groupId)) {
         card.style.borderColor = "var(--color-primary-main)";
-        card.style.backgroundColor = "var(--color-card-primary-bg)";
+        card.style.backgroundColor = "var(--color-card-secondary-bg)";
         card.style.boxShadow = "var(--shadow-sm)";
       } else {
         card.style.borderColor = "var(--color-border-primary)";
-        card.style.backgroundColor = "var(--color-surface-primary)";
+        card.style.backgroundColor = "var(--color-card-secondary-bg)";
         card.style.boxShadow = "none";
       }
     });
@@ -1051,29 +1036,39 @@ function setupGroupSelectionHandlers(categoryName) {
   });
 
   // Select all button
-  selectAllBtn?.addEventListener("click", () => {
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = true;
-      const groupId = checkbox.getAttribute("data-group-id");
-      selectedGroups.add(groupId);
+  if (selectAllBtn) {
+    selectAllBtn.addEventListener("click", () => {
+      console.log("Select All clicked");
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = true;
+        const groupId = checkbox.getAttribute("data-group-id");
+        selectedGroups.add(groupId);
+      });
+      updateSelectionUI();
     });
-    updateSelectionUI();
-  });
+  } else {
+    console.warn("Select All button not found for", categoryName);
+  }
 
   // Deselect all button
-  deselectAllBtn?.addEventListener("click", () => {
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = false;
-      const groupId = checkbox.getAttribute("data-group-id");
-      selectedGroups.delete(groupId);
+  if (deselectAllBtn) {
+    deselectAllBtn.addEventListener("click", () => {
+      console.log("Deselect All clicked");
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+        const groupId = checkbox.getAttribute("data-group-id");
+        selectedGroups.delete(groupId);
+      });
+      updateSelectionUI();
     });
-    updateSelectionUI();
-  });
+  } else {
+    console.warn("Deselect All button not found for", categoryName);
+  }
 
   // Apply selection button
   applyBtn?.addEventListener("click", async () => {
     const selectedGroupsList = Array.from(selectedGroups).map((id) => {
-      const checkbox = tabContent.querySelector(
+      const checkbox = categoryContent.querySelector(
         `.group-checkbox[data-group-id="${id}"]`
       );
       return {
@@ -1084,28 +1079,17 @@ function setupGroupSelectionHandlers(categoryName) {
 
     console.log("Selected groups for", categoryName, ":", selectedGroupsList);
 
-    // Show loading feedback
-    const originalText = applyBtn.textContent;
-    applyBtn.textContent = "Loading...";
+    // Show loading state
     applyBtn.disabled = true;
 
     try {
       // Fetch members for all selected groups
       await displayGroupMembersTable(selectedGroupsList, categoryName);
-
-      // Show success feedback
-      applyBtn.textContent = "✓ Applied";
-      setTimeout(() => {
-        applyBtn.textContent = originalText;
-        applyBtn.disabled = false;
-      }, 2000);
     } catch (error) {
       console.error("Error loading group members:", error);
-      applyBtn.textContent = "Error";
-      setTimeout(() => {
-        applyBtn.textContent = originalText;
-        applyBtn.disabled = false;
-      }, 2000);
+    } finally {
+      // Reset button state
+      applyBtn.disabled = false;
     }
 
     // Dispatch custom event with selection

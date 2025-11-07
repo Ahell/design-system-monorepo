@@ -95,6 +95,7 @@ export class DSSelect extends LitElement {
       margin: 0;
       font-family: inherit;
       cursor: pointer;
+      outline: none;
 
       /* Layout */
       width: 100%;
@@ -103,13 +104,13 @@ export class DSSelect extends LitElement {
 
       /* Styling using design tokens */
       background: var(--color-surface-primary);
-      border: 1px solid var(--color-border-primary);
+      border: 1px solid var(--color-border-primary) !important;
       border-radius: var(--radius-md);
       color: var(--color-text-primary);
       font-size: var(--text-md);
       font-weight: var(--weight-normal);
       line-height: var(--leading-normal);
-      transition: var(--transition-all);
+      transition: border-color 0ms, box-shadow 0ms;
     }
 
     /* Size variants */
@@ -141,20 +142,40 @@ export class DSSelect extends LitElement {
 
     /* States */
     select:hover:not(:disabled):not(.error) {
-      border-color: var(--color-border-secondary);
+      border-color: var(--color-border-secondary) !important;
       box-shadow: var(--shadow-sm);
     }
 
     select:focus {
-      outline: none;
-      border-color: var(--color-primary-main);
-      box-shadow: 0 0 0 3px var(--color-primary-focus);
+      outline: none !important;
+      border-color: var(--color-border-primary) !important;
+      box-shadow: none !important;
       background-color: var(--color-surface-primary);
     }
 
-    select:not(:focus):not(:hover):not(:disabled):not(.error) {
-      border-color: var(--color-border-primary);
-      box-shadow: none;
+    select:focus-visible {
+      outline: none !important;
+      border-color: var(--color-border-primary) !important;
+      box-shadow: none !important;
+    }
+
+    select:not(:focus):not(:focus-visible):not(:hover):not(:disabled):not(
+        .error
+      ) {
+      border-color: var(--color-border-primary) !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+
+    /* Force remove any browser default outlines/borders */
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus,
+    select:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px var(--color-surface-primary) inset !important;
+      box-shadow: none !important;
+      outline: none !important;
+      border-color: var(--color-border-primary) !important;
     }
 
     select:disabled {
@@ -239,6 +260,9 @@ export class DSSelect extends LitElement {
     );
 
     this.value = selectedValue;
+
+    // Blur the select to remove focus state and prevent black border
+    e.target.blur();
 
     this.dispatchEvent(
       new CustomEvent("change", {

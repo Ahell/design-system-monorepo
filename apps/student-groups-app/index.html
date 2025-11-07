@@ -46,7 +46,7 @@
           </ds-card-content>
         </ds-card>
 
-        <ds-card>
+        <ds-card id="group-categories-card" style="display: none">
           <ds-card-header
             id="course-card-header"
             title="Group Categories"
@@ -63,26 +63,24 @@
           </ds-card-header>
 
           <ds-card-content>
-            <ds-stack gap="6">
-              <!-- Category Radio Group -->
-              <ds-radio-group
-                id="category-radio-group"
-                name="category"
-                style="display: none"
-              ></ds-radio-group>
-
-              <!-- Category Content Container -->
-              <div id="category-content" style="display: none">
-                <!-- Category-specific content will be dynamically inserted here -->
-              </div>
-
-              <!-- Groups Overview Table (appears after Apply Selection) -->
-              <div id="groups-overview">
-                <!-- Table will be dynamically inserted here -->
-              </div>
-            </ds-stack>
+            <!-- Category Radio Group -->
+            <ds-radio-group
+              id="category-radio-group"
+              name="category"
+              style="display: none"
+            ></ds-radio-group>
           </ds-card-content>
         </ds-card>
+
+        <!-- Category Content Container (Groups display) -->
+        <div id="category-content" style="display: none">
+          <!-- Category-specific content will be dynamically inserted here -->
+        </div>
+
+        <!-- Groups Overview Table (appears after Apply Selection) -->
+        <div id="groups-overview">
+          <!-- Table will be dynamically inserted here -->
+        </div>
       </ds-stack>
     </ds-container>
 
