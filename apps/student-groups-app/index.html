@@ -17,81 +17,83 @@
   </head>
   <body>
     <ds-container>
-      <ds-hero>
-        <h1 slot="title">Student Groups Management</h1>
-        <p slot="subtitle">
-          View and manage student group assignments in Canvas LMS
-        </p>
-      </ds-hero>
+      <ds-stack gap="6">
+        <ds-hero>
+          <h1 slot="title">Student Groups Management</h1>
+          <p slot="subtitle">
+            View and manage student group assignments in Canvas LMS
+          </p>
+        </ds-hero>
 
-      <ds-card>
-        <ds-card-header>
-          <h3>Course Selection</h3>
-          <p>Select a Canvas course to load student groups</p>
-        </ds-card-header>
-        <ds-card-content>
-          <ds-stack gap="4" style="align-items: flex-end; flex-direction: row">
-            <ds-select
-              id="course-select"
-              label="Select Course"
-              placeholder="Loading courses..."
-              full-width
-              style="flex: 1"
-            ></ds-select>
-            <ds-button id="load-course-btn" variant="primary">
-              Load Groups
-            </ds-button>
-          </ds-stack>
-        </ds-card-content>
-      </ds-card>
+        <ds-card>
+          <ds-card-header>
+            <h3>Course Selection</h3>
+            <p>Select a Canvas course to load student groups</p>
+          </ds-card-header>
+          <ds-card-content>
+            <ds-stack gap="4" style="align-items: flex-end; flex-direction: row">
+              <ds-select
+                id="course-select"
+                label="Select Course"
+                placeholder="Loading courses..."
+                full-width
+                style="flex: 1"
+              ></ds-select>
+              <ds-button id="load-course-btn" variant="primary">
+                Load Groups
+              </ds-button>
+            </ds-stack>
+          </ds-card-content>
+        </ds-card>
 
-      <ds-card>
-        <ds-card-header>
-          <h2 id="course-title">Course: Select a course above</h2>
-          <p>Student Group Assignments</p>
-        </ds-card-header>
+        <ds-card>
+          <ds-card-header>
+            <h2 id="course-title">Course: Select a course above</h2>
+            <p>Student Group Assignments</p>
+          </ds-card-header>
 
-        <ds-card-content>
-          <ds-stack gap="4">
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-              "
-            >
-              <h3 style="margin: 0">Group Categories</h3>
+          <ds-card-content>
+            <ds-stack gap="4">
               <div
-                id="selection-status"
                 style="
-                  font-size: var(--text-sm);
-                  color: var(--color-text-secondary);
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
                 "
-              ></div>
-            </div>
-
-            <!-- Category Tabs -->
-            <div
-              id="tabs-section"
-              style="
-                padding: var(--space-4);
-                background: var(--color-surface-secondary);
-                border-radius: var(--radius-md);
-                display: none;
-              "
-            >
-              <div id="tabs-container">
-                <!-- Tabs will be dynamically inserted here -->
+              >
+                <h3 style="margin: 0">Group Categories</h3>
+                <div
+                  id="selection-status"
+                  style="
+                    font-size: var(--text-sm);
+                    color: var(--color-text-secondary);
+                  "
+                ></div>
               </div>
-            </div>
 
-            <!-- Groups Overview Table (appears after Apply Selection) -->
-            <div id="groups-overview" style="display: none">
-              <!-- Table will be dynamically inserted here -->
-            </div>
-          </ds-stack>
-        </ds-card-content>
-      </ds-card>
+              <!-- Category Tabs -->
+              <div
+                id="tabs-section"
+                style="
+                  padding: var(--space-4);
+                  background: var(--color-surface-secondary);
+                  border-radius: var(--radius-md);
+                  display: none;
+                "
+              >
+                <div id="tabs-container">
+                  <!-- Tabs will be dynamically inserted here -->
+                </div>
+              </div>
+
+              <!-- Groups Overview Table (appears after Apply Selection) -->
+              <div id="groups-overview" style="display: none">
+                <!-- Table will be dynamically inserted here -->
+              </div>
+            </ds-stack>
+          </ds-card-content>
+        </ds-card>
+      </ds-stack>
     </ds-container>
 
     <script type="module" src="./src/main.js"></script>

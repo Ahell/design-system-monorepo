@@ -575,18 +575,26 @@ function generateGroupsContent(groups, categoryName) {
       memberCount === 1 ? "1 member" : `${memberCount} members`;
 
     html += `
-      <ds-card class="group-card" data-group-id="${group.id}" style="cursor: pointer; transition: var(--transition-all);">
+      <ds-card class="group-card" data-group-id="${
+        group.id
+      }" style="cursor: pointer; transition: var(--transition-all);">
         <ds-card-content>
           <ds-stack gap="3">
             <div style="display: flex; align-items: start; gap: var(--space-3);">
-              <ds-checkbox class="group-checkbox" data-group-id="${group.id}" data-group-name="${group.name}"></ds-checkbox>
+              <ds-checkbox class="group-checkbox" data-group-id="${
+                group.id
+              }" data-group-name="${group.name}"></ds-checkbox>
               <div style="flex: 1;">
-                <div style="font-weight: var(--weight-medium); margin-bottom: var(--space-2); font-size: var(--text-lg);">${group.name}</div>
+                <div style="font-weight: var(--weight-medium); margin-bottom: var(--space-2); font-size: var(--text-lg);">${
+                  group.name
+                }</div>
                 <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">${memberText}</div>
               </div>
             </div>
             <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
-              <strong>Description:</strong> ${group.description || "No description"}
+              <strong>Description:</strong> ${
+                group.description || "No description"
+              }
             </div>
           </ds-stack>
         </ds-card-content>
@@ -775,7 +783,9 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
         <ds-card-header>
           <h3 style="margin: 0;">Group Memberships for Selected Groups</h3>
           <p style="margin: 0;">
-            Showing ${students.length} students across ${allCategories.length} group categories
+            Showing ${students.length} students across ${
+      allCategories.length
+    } group categories
           </p>
         </ds-card-header>
         <ds-card-content style="padding: 0;">
@@ -910,7 +920,8 @@ function setupGroupSelectionHandlers(categoryName) {
       // Create badges for each selected group
       const badgesHTML = groupNames
         .map(
-          (name) => `<ds-badge label="${name}" variant="primary" size="sm"></ds-badge>`
+          (name) =>
+            `<ds-badge label="${name}" variant="primary" size="sm"></ds-badge>`
         )
         .join("");
 
