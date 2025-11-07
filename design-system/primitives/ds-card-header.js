@@ -3,9 +3,12 @@
  *
  * Enhanced card header with professional styling using design tokens.
  * Provides consistent header layout with title, meta text, and stats slot.
+ * Uses design system layout components (ds-inline, ds-stack) internally.
  */
 
 import { LitElement, html, css } from "lit";
+import "../layout/ds-inline.js";
+import "../layout/ds-stack.js";
 
 /**
  * CardHeader - Enhanced card header with professional styling
@@ -23,29 +26,17 @@ class CardHeader extends LitElement {
     :host {
       display: block;
       font-family: var(--font-sans);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
-      padding-bottom: var(--space-4);
-      margin-bottom: var(--space-4);
-      border-bottom: 1px solid var(--color-border-primary);
-      position: relative;
-    }
-
-    .header-content {
-      flex: 1;
-      min-width: 0;
+      margin: calc(-1 * var(--card-padding, var(--space-6)));
+      margin-bottom: var(--space-6);
+      padding: var(--card-padding, var(--space-6));
+      padding-bottom: 0;
     }
 
     .card-title {
       font-size: var(--text-lg);
       font-weight: var(--weight-semibold);
       color: var(--color-text-primary);
-      margin: 0 0 var(--space-1) 0;
+      margin: 0;
       line-height: var(--leading-tight);
     }
 
@@ -56,46 +47,15 @@ class CardHeader extends LitElement {
       margin: 0;
     }
 
-    .header-actions {
-      display: flex;
-      gap: var(--space-2);
-      flex-shrink: 0;
-      align-items: center;
-    }
-
-    /* Enhanced styling for slotted content */
-    ::slotted(.badge) {
-      margin: 0;
-    }
-
-    ::slotted(ds-badge) {
-      margin: 0;
-    }
-
     /* Responsive design */
     @media (max-width: 768px) {
-      .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-3);
-        padding-bottom: var(--space-3);
-        margin-bottom: var(--space-3);
-      }
-
-      .header-actions {
-        width: 100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
+      :host {
+        margin-bottom: var(--space-4);
       }
 
       .card-title {
         font-size: var(--text-md);
       }
-    }
-
-    /* Hover effect for interactive headers */
-    .card-header:hover {
-      border-bottom-color: var(--color-border-secondary);
     }
   `;
 
@@ -107,15 +67,21 @@ class CardHeader extends LitElement {
 
   render() {
     return html`
-      <div class="card-header">
-        <div class="header-content">
+      <ds-flex
+        direction="row"
+        justify="space-between"
+        align="start"
+        gap="4"
+        wrap="wrap"
+      >
+        <ds-stack gap="1" style="flex: 1; min-width: 0; text-align: left;">
           ${this.title ? html`<h3 class="card-title">${this.title}</h3>` : ""}
           ${this.meta ? html`<p class="card-meta">${this.meta}</p>` : ""}
-        </div>
-        <div class="header-actions">
+        </ds-stack>
+        <ds-inline gap="2" style="flex-shrink: 0;">
           <slot name="stats"></slot>
-        </div>
-      </div>
+        </ds-inline>
+      </ds-flex>
     `;
   }
 }

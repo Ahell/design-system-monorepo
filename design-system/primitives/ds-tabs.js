@@ -220,7 +220,7 @@ export class DSTabs extends LitElement {
 
     /* Content area */
     .tabs-content {
-      padding: var(--space-6) 0;
+      padding: var(--space-6);
       min-height: 200px;
       background: var(--color-surface-primary);
       border-radius: var(--radius-lg);
@@ -232,7 +232,7 @@ export class DSTabs extends LitElement {
       background: transparent;
       border: none;
       box-shadow: none;
-      padding: var(--space-4) 0;
+      padding: var(--space-4) var(--space-6);
     }
 
     .tab-content {

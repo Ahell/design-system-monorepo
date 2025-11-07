@@ -341,14 +341,17 @@ async function handleLoadCourse() {
 
 // Show initial empty state
 function showInitialState() {
-  const courseTitle = document.getElementById("course-title");
+  const courseCardHeader = document.getElementById("course-card-header");
   const table = document.getElementById("students-table");
   const groupsOverview = document.getElementById("groups-overview");
   const filterSection = document.getElementById("filter-section");
-  const tabsSection = document.getElementById("tabs-section");
+  const categoryRadioGroup = document.getElementById("category-radio-group");
+  const categoryContent = document.getElementById("category-content");
 
-  if (courseTitle) {
-    courseTitle.textContent = "Course: Select a course above";
+  if (courseCardHeader) {
+    courseCardHeader.title = "Group Categories";
+    courseCardHeader.meta =
+      "Select a course above to load student group assignments";
   }
 
   if (table) {
@@ -356,6 +359,7 @@ function showInitialState() {
   }
 
   if (groupsOverview) {
+    groupsOverview.innerHTML = "";
     groupsOverview.style.display = "none";
   }
 
@@ -363,26 +367,36 @@ function showInitialState() {
     filterSection.style.display = "none";
   }
 
-  if (tabsSection) {
-    tabsSection.style.display = "none";
+  if (categoryRadioGroup) {
+    categoryRadioGroup.style.display = "none";
+  }
+
+  if (categoryContent) {
+    categoryContent.style.display = "none";
   }
 }
 
 // Function to load course categories and display tabs
 async function loadCourseCategories(courseId) {
-  const courseTitle = document.getElementById("course-title");
-  const tabsSection = document.getElementById("tabs-section");
+  const courseCardHeader = document.getElementById("course-card-header");
+  const categoryRadioGroup = document.getElementById("category-radio-group");
+  const categoryContent = document.getElementById("category-content");
   const groupsOverview = document.getElementById("groups-overview");
 
   try {
     // Show loading state
-    if (courseTitle) {
-      courseTitle.textContent = "Course: Loading...";
+    if (courseCardHeader) {
+      courseCardHeader.title = "Group Categories";
+      courseCardHeader.meta = "Loading course information...";
     }
-    if (tabsSection) {
-      tabsSection.style.display = "none";
+    if (categoryRadioGroup) {
+      categoryRadioGroup.style.display = "none";
+    }
+    if (categoryContent) {
+      categoryContent.style.display = "none";
     }
     if (groupsOverview) {
+      groupsOverview.innerHTML = "";
       groupsOverview.style.display = "none";
     }
 
@@ -404,8 +418,9 @@ async function loadCourseCategories(courseId) {
     }
 
     // Update course title
-    if (courseTitle) {
-      courseTitle.textContent = `Course: ${courseName}`;
+    if (courseCardHeader) {
+      courseCardHeader.title = "Group Categories";
+      courseCardHeader.meta = courseName;
     }
 
     // Store current course ID for tab clicks
@@ -417,13 +432,18 @@ async function loadCourseCategories(courseId) {
     console.error("Error loading course categories:", error);
 
     // Show error state
-    if (courseTitle) {
-      courseTitle.textContent = "Course: Error loading categories";
+    if (courseCardHeader) {
+      courseCardHeader.title = "Group Categories";
+      courseCardHeader.meta = "Error loading categories - please try again";
     }
-    if (tabsSection) {
-      tabsSection.style.display = "none";
+    if (categoryRadioGroup) {
+      categoryRadioGroup.style.display = "none";
+    }
+    if (categoryContent) {
+      categoryContent.style.display = "none";
     }
     if (groupsOverview) {
+      groupsOverview.innerHTML = "";
       groupsOverview.style.display = "none";
     }
   }
@@ -431,79 +451,85 @@ async function loadCourseCategories(courseId) {
 
 // Function to display category tabs
 function displayCategoryTabs(categories) {
-  const tabsSection = document.getElementById("tabs-section");
-  const tabsContainer = document.getElementById("tabs-container");
+  const categoryRadioGroup = document.getElementById("category-radio-group");
+  const categoryContent = document.getElementById("category-content");
   const groupsOverview = document.getElementById("groups-overview");
 
-  if (!tabsSection || !tabsContainer) return;
+  if (!categoryRadioGroup || !categoryContent) return;
 
   if (categories.length === 0) {
-    tabsContainer.innerHTML =
-      "<p>No group categories found for this course.</p>";
-    tabsSection.style.display = "block";
+    categoryContent.innerHTML = `
+      <ds-alert variant="info" title="No Categories">
+        No group categories found for this course.
+      </ds-alert>
+    `;
+    categoryContent.style.display = "block";
+    categoryRadioGroup.style.display = "none";
     if (groupsOverview) {
+      groupsOverview.innerHTML = "";
       groupsOverview.style.display = "none";
     }
     return;
   }
 
-  // Create tabs data structure for ds-tabs component
-  const tabsData = categories.map((category) => ({
-    id: category,
-    label: category,
-    content: '<div class="tab-loading">Loading groups...</div>',
-    loading: true,
-  }));
+  // Create radio buttons for each category
+  categoryRadioGroup.innerHTML = "";
+  categoryRadioGroup.label = "Select a group category";
+  categoryRadioGroup.orientation = "horizontal";
 
-  // Create ds-tabs element
-  const tabsElement = document.createElement("ds-tabs");
-  tabsElement.tabs = tabsData;
-  tabsElement.activeTab = categories[0]; // Set first category as active
+  categories.forEach((category, index) => {
+    const radio = document.createElement("ds-radio");
+    radio.value = category;
+    radio.label = category;
+    if (index === 0) {
+      radio.checked = true;
+    }
+    categoryRadioGroup.appendChild(radio);
+  });
 
-  // Clear container and add tabs
-  tabsContainer.innerHTML = "";
-  tabsContainer.appendChild(tabsElement);
-
-  tabsSection.style.display = "block";
+  // Show radio group
+  categoryRadioGroup.style.display = "block";
+  categoryContent.style.display = "block";
 
   // Hide groups overview initially
   if (groupsOverview) {
+    groupsOverview.innerHTML = "";
     groupsOverview.style.display = "none";
   }
 
-  // Add event listener for tab changes
-  tabsElement.addEventListener("tab-change", handleTabChange);
+  // Add event listener for category changes
+  categoryRadioGroup.removeEventListener("change", handleCategoryChange);
+  categoryRadioGroup.addEventListener("change", handleCategoryChange);
+
+  // Store current course ID for category clicks
+  currentCourseId = currentCourseId;
 
   // Load first category by default
   if (categories.length > 0) {
-    loadTabContent(categories[0], tabsElement);
+    loadCategoryContent(categories[0]);
   }
 }
 
-// Handle tab change events from ds-tabs component
-function handleTabChange(event) {
-  const { tabId } = event.detail;
-  const tabsElement = event.target;
-
-  // Load content for the selected tab
-  loadTabContent(tabId, tabsElement);
+// Handle category change events from radio group
+function handleCategoryChange(event) {
+  const categoryName = event.target.value;
+  loadCategoryContent(categoryName);
 }
 
-// Load content for a specific tab
-async function loadTabContent(categoryName, tabsElement) {
+// Load content for a specific category
+async function loadCategoryContent(categoryName) {
+  const categoryContent = document.getElementById("category-content");
+
+  if (!categoryContent) return;
+
   try {
-    // Update tab to show loading state
-    const updatedTabs = tabsElement.tabs.map((tab) => {
-      if (tab.id === categoryName) {
-        return {
-          ...tab,
-          loading: true,
-          content: '<div class="tab-loading">Loading groups...</div>',
-        };
-      }
-      return tab;
-    });
-    tabsElement.tabs = updatedTabs;
+    // Show loading state
+    categoryContent.innerHTML = `
+      <ds-stack gap="4" align="center" style="padding: var(--space-8); text-align: center;">
+        <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid var(--color-border-primary); border-top: 4px solid var(--color-primary-main); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="color: var(--color-text-secondary);">Loading groups...</p>
+      </ds-stack>
+    `;
 
     // Fetch groups for this category
     const groups = await fetchCourseGroupsByCategory(
@@ -511,17 +537,9 @@ async function loadTabContent(categoryName, tabsElement) {
       categoryName
     );
 
-    // Generate HTML content for groups
+    // Generate and display HTML content for groups
     const content = generateGroupsContent(groups, categoryName);
-
-    // Update tab with loaded content
-    const finalTabs = tabsElement.tabs.map((tab) => {
-      if (tab.id === categoryName) {
-        return { ...tab, loading: false, content };
-      }
-      return tab;
-    });
-    tabsElement.tabs = finalTabs;
+    categoryContent.innerHTML = content;
 
     // Wait for DOM to update, then attach event listeners
     setTimeout(() => {
@@ -530,18 +548,12 @@ async function loadTabContent(categoryName, tabsElement) {
   } catch (error) {
     console.error("Error loading groups for category:", error);
 
-    // Update tab with error state
-    const errorTabs = tabsElement.tabs.map((tab) => {
-      if (tab.id === categoryName) {
-        return {
-          ...tab,
-          loading: false,
-          content: `<ds-alert variant="error" title="Error Loading Groups">Failed to load groups for this category. Please try again.</ds-alert>`,
-        };
-      }
-      return tab;
-    });
-    tabsElement.tabs = errorTabs;
+    // Show error state
+    categoryContent.innerHTML = `
+      <ds-alert variant="error" title="Error Loading Groups">
+        Failed to load groups for this category. Please try again.
+      </ds-alert>
+    `;
   }
 }
 
@@ -553,21 +565,29 @@ function generateGroupsContent(groups, categoryName) {
 
   // Create groups display with filter controls
   let html = `
-    <ds-stack gap="4">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border-primary);">
-        <h4 style="margin: 0; color: var(--color-text-secondary); font-weight: var(--weight-medium);">
-          ${categoryName} Groups (<span class="selected-count">0</span>/${groups.length} selected)
-        </h4>
-        <div style="display: flex; gap: var(--space-2);">
+    <ds-card variant="secondary">
+      <ds-card-header
+        title="${categoryName} Groups"
+        meta="<span class='selected-count'>0</span>/${groups.length} selected"
+      >
+        <ds-inline slot="stats" gap="2">
           <ds-button size="sm" variant="ghost" class="select-all-btn" data-category="${categoryName}">
             Select All
           </ds-button>
           <ds-button size="sm" variant="ghost" class="deselect-all-btn" data-category="${categoryName}">
             Deselect All
           </ds-button>
-        </div>
-      </div>
-      <div class="groups-grid" style="display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">`;
+        </ds-inline>
+      </ds-card-header>
+      <ds-card-content>
+        <ds-grid 
+          class="groups-grid" 
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+            gap: var(--space-4);
+          "
+        >`;
 
   groups.forEach((group) => {
     const memberCount = group.members_count || 0;
@@ -575,50 +595,72 @@ function generateGroupsContent(groups, categoryName) {
       memberCount === 1 ? "1 member" : `${memberCount} members`;
 
     html += `
-      <ds-card class="group-card" data-group-id="${
-        group.id
-      }" style="cursor: pointer; transition: var(--transition-all);">
-        <ds-card-content>
-          <ds-stack gap="3">
-            <div style="display: flex; align-items: start; gap: var(--space-3);">
-              <ds-checkbox class="group-checkbox" data-group-id="${
-                group.id
-              }" data-group-name="${group.name}"></ds-checkbox>
-              <div style="flex: 1;">
-                <div style="font-weight: var(--weight-medium); margin-bottom: var(--space-2); font-size: var(--text-lg);">${
-                  group.name
-                }</div>
-                <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">${memberText}</div>
-              </div>
-            </div>
-            <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
-              <strong>Description:</strong> ${
-                group.description || "No description"
-              }
-            </div>
-          </ds-stack>
-        </ds-card-content>
-      </ds-card>`;
+            <ds-card variant="default" class="group-card" data-group-id="${
+              group.id
+            }" interactive style="cursor: pointer; transition: var(--transition-all);">
+              <ds-card-content>
+                <ds-stack gap="3">
+                  <ds-inline align="start" gap="3">
+                    <ds-checkbox 
+                      class="group-checkbox" 
+                      data-group-id="${group.id}" 
+                      data-group-name="${group.name}"
+                    ></ds-checkbox>
+                    <ds-stack gap="1" style="flex: 1;">
+                      <div style="font-weight: var(--weight-semibold); font-size: var(--text-base); color: var(--color-text-primary);">
+                        ${group.name}
+                      </div>
+                      <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
+                        ${memberText}
+                      </div>
+                    </ds-stack>
+                  </ds-inline>
+                  ${
+                    group.description
+                      ? `
+                  <div style="font-size: var(--text-sm); color: var(--color-text-secondary); padding-top: var(--space-2); border-top: 1px solid var(--color-border);">
+                    ${group.description}
+                  </div>
+                  `
+                      : ""
+                  }
+                </ds-stack>
+              </ds-card-content>
+            </ds-card>`;
   });
 
   html += `
-      </div>
-      <ds-card style="margin-top: var(--space-4); background: var(--color-surface-secondary);">
-        <ds-card-content>
-          <div style="display: flex; justify-content: space-between; align-items: start; gap: var(--space-4);">
-            <ds-stack gap="2" style="flex: 1;">
-              <strong style="color: var(--color-text-primary);">Selected Groups:</strong>
-              <div class="selected-groups-list" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
-                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">None</span>
-              </div>
-            </ds-stack>
-            <ds-button size="sm" variant="primary" class="apply-selection-btn" data-category="${categoryName}" disabled style="flex-shrink: 0;">
-              Apply Selection
-            </ds-button>
-          </div>
-        </ds-card-content>
-      </ds-card>
-    </ds-stack>`;
+        </ds-grid>
+      </ds-card-content>
+    </ds-card>
+
+    <ds-card variant="info">
+      <ds-card-content>
+        <ds-flex justify="space-between" align="start" gap="4">
+          <ds-stack gap="2" style="flex: 1; min-width: 0;">
+            <div style="font-weight: var(--weight-semibold); color: var(--color-text-primary);">
+              Selected Groups
+            </div>
+            <ds-inline class="selected-groups-list" gap="2" wrap="true">
+              <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                None selected
+              </span>
+            </ds-inline>
+          </ds-stack>
+          <ds-button 
+            size="sm" 
+            variant="primary" 
+            class="apply-selection-btn" 
+            data-category="${categoryName}" 
+            disabled 
+            style="flex-shrink: 0;"
+          >
+            Apply Selection
+          </ds-button>
+        </ds-flex>
+      </ds-card-content>
+    </ds-card>
+  `;
 
   return html;
 }
@@ -649,10 +691,10 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
   // Show loading state
   groupsOverview.innerHTML = `
     <ds-card>
-      <ds-card-content style="text-align: center; padding: var(--space-8);">
+      <ds-card-content style="text-align: center;">
         <ds-stack gap="4" align="center">
           <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid var(--color-border-primary); border-top: 4px solid var(--color-primary-main); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-          <p style="color: var(--color-text-secondary); margin: 0;">Loading group members...</p>
+          <p style="color: var(--color-text-secondary);">Loading group members...</p>
         </ds-stack>
       </ds-card-content>
     </ds-card>
@@ -780,13 +822,15 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
     // Generate table HTML
     let tableHTML = `
       <ds-card>
-        <ds-card-header>
-          <h3 style="margin: 0;">Group Memberships for Selected Groups</h3>
-          <p style="margin: 0;">
-            Showing ${students.length} students across ${
+        <ds-card-header
+          title="Group Memberships for Selected Groups"
+          meta="Showing ${students.length} students across ${
       allCategories.length
-    } group categories
-          </p>
+    } group categories"
+        >
+          <ds-button slot="stats" size="sm" variant="ghost" id="export-table-btn">
+            Export CSV
+          </ds-button>
         </ds-card-header>
         <ds-card-content style="padding: 0;">
           <div style="overflow-x: auto;">
@@ -849,6 +893,29 @@ async function displayGroupMembersTable(selectedGroups, categoryName) {
 
     groupsOverview.innerHTML = tableHTML;
     groupsOverview.style.display = "block";
+
+    // Add export CSV functionality
+    const exportBtn = document.getElementById("export-table-btn");
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        // Convert table data to CSV
+        const csv = [
+          headers.join(","),
+          ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+        ].join("\n");
+
+        // Create download link
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `group-memberships-${
+          new Date().toISOString().split("T")[0]
+        }.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+    }
   } catch (error) {
     console.error("Error displaying group members table:", error);
     groupsOverview.innerHTML = `

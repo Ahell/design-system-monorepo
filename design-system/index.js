@@ -28,6 +28,8 @@ import "./primitives/ds-expandable-details.js";
 import "./layout/ds-container.js";
 import "./layout/ds-stack.js";
 import "./layout/ds-grid.js";
+import "./layout/ds-inline.js";
+import "./layout/ds-flex.js";
 
 // Import patterns
 import "./patterns/ds-hero.js";
@@ -42,7 +44,7 @@ export { DSButton } from "./primitives/ds-button.js";
 export { DSCard } from "./primitives/ds-card.js";
 export { CardHeader } from "./primitives/ds-card-header.js";
 export { CardFooter } from "./primitives/ds-card-footer.js";
-export { DataCard, TableCard, InfoCard } from "./primitives/ds-card-content.js";
+export { DSCardContent } from "./primitives/ds-card-content.js";
 export { DSCheckbox } from "./primitives/ds-checkbox.js";
 export { DSInput } from "./primitives/ds-input.js";
 export { DSRadio } from "./primitives/ds-radio.js";
@@ -56,6 +58,8 @@ export { DSExpandableDetails } from "./primitives/ds-expandable-details.js";
 export { DSContainer } from "./layout/ds-container.js";
 export { DSStack } from "./layout/ds-stack.js";
 export { DSGrid } from "./layout/ds-grid.js";
+export { DSInline } from "./layout/ds-inline.js";
+export { DSFlex } from "./layout/ds-flex.js";
 export { DSHero } from "./patterns/ds-hero.js";
 export { DSFeatureGrid } from "./patterns/ds-feature-grid.js";
 export { DSTwoColumn } from "./patterns/ds-two-column.js";

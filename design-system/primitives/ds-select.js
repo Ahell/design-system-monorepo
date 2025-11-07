@@ -152,6 +152,11 @@ export class DSSelect extends LitElement {
       background-color: var(--color-surface-primary);
     }
 
+    select:not(:focus):not(:hover):not(:disabled):not(.error) {
+      border-color: var(--color-border-primary);
+      box-shadow: none;
+    }
+
     select:disabled {
       opacity: 0.6;
       cursor: not-allowed;

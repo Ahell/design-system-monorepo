@@ -5,7 +5,7 @@ export { DSButton } from "./ds-button.js";
 export { DSCard } from "./ds-card.js";
 export { CardHeader } from "./ds-card-header.js";
 export { CardFooter } from "./ds-card-footer.js";
-export { DataCard, TableCard, InfoCard } from "./ds-card-content.js";
+export { DSCardContent } from "./ds-card-content.js";
 export { DSCheckbox } from "./ds-checkbox.js";
 export { DSInput } from "./ds-input.js";
 export { DSRadio } from "./ds-radio.js";

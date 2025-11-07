@@ -93,6 +93,21 @@ export class DSCard extends LitElement {
     }
 
     /* Variant styles */
+    .card.variant-default {
+      background-color: var(--color-surface-secondary);
+      border-color: var(--color-border-primary);
+    }
+
+    .card.variant-secondary {
+      background-color: var(--color-surface-primary);
+      border-color: var(--color-border-secondary);
+    }
+
+    .card.variant-tertiary {
+      background-color: var(--color-surface-tertiary);
+      border-color: var(--color-border-secondary);
+    }
+
     .card.variant-primary {
       border-color: var(--color-primary-main);
       background-color: var(--color-card-primary-bg);
@@ -111,6 +126,11 @@ export class DSCard extends LitElement {
     .card.variant-danger {
       border-color: var(--color-danger-main);
       background-color: var(--color-card-danger-bg);
+    }
+
+    .card.variant-info {
+      border-color: var(--color-primary-200);
+      background-color: var(--color-primary-50);
     }
 
     /* Slots */

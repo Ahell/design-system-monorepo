@@ -16,22 +16,22 @@
     </style>
   </head>
   <body>
+    <ds-hero
+      title="Student Groups Management"
+      description="View and manage student group assignments in Canvas LMS"
+      align="center"
+      size="md"
+    ></ds-hero>
+
     <ds-container>
       <ds-stack gap="6">
-        <ds-hero>
-          <h1 slot="title">Student Groups Management</h1>
-          <p slot="subtitle">
-            View and manage student group assignments in Canvas LMS
-          </p>
-        </ds-hero>
-
         <ds-card>
-          <ds-card-header>
-            <h3>Course Selection</h3>
-            <p>Select a Canvas course to load student groups</p>
-          </ds-card-header>
+          <ds-card-header
+            title="Course Selection"
+            meta="Select a Canvas course to load student groups"
+          ></ds-card-header>
           <ds-card-content>
-            <ds-stack gap="4" style="align-items: flex-end; flex-direction: row">
+            <ds-inline gap="4" align="end">
               <ds-select
                 id="course-select"
                 label="Select Course"
@@ -42,52 +42,42 @@
               <ds-button id="load-course-btn" variant="primary">
                 Load Groups
               </ds-button>
-            </ds-stack>
+            </ds-inline>
           </ds-card-content>
         </ds-card>
 
         <ds-card>
-          <ds-card-header>
-            <h2 id="course-title">Course: Select a course above</h2>
-            <p>Student Group Assignments</p>
+          <ds-card-header
+            id="course-card-header"
+            title="Group Categories"
+            meta="Select a course above to load student group assignments"
+          >
+            <div
+              slot="stats"
+              id="selection-status"
+              style="
+                font-size: var(--text-sm);
+                color: var(--color-text-secondary);
+              "
+            ></div>
           </ds-card-header>
 
           <ds-card-content>
-            <ds-stack gap="4">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                "
-              >
-                <h3 style="margin: 0">Group Categories</h3>
-                <div
-                  id="selection-status"
-                  style="
-                    font-size: var(--text-sm);
-                    color: var(--color-text-secondary);
-                  "
-                ></div>
-              </div>
+            <ds-stack gap="6">
+              <!-- Category Radio Group -->
+              <ds-radio-group
+                id="category-radio-group"
+                name="category"
+                style="display: none"
+              ></ds-radio-group>
 
-              <!-- Category Tabs -->
-              <div
-                id="tabs-section"
-                style="
-                  padding: var(--space-4);
-                  background: var(--color-surface-secondary);
-                  border-radius: var(--radius-md);
-                  display: none;
-                "
-              >
-                <div id="tabs-container">
-                  <!-- Tabs will be dynamically inserted here -->
-                </div>
+              <!-- Category Content Container -->
+              <div id="category-content" style="display: none">
+                <!-- Category-specific content will be dynamically inserted here -->
               </div>
 
               <!-- Groups Overview Table (appears after Apply Selection) -->
-              <div id="groups-overview" style="display: none">
+              <div id="groups-overview">
                 <!-- Table will be dynamically inserted here -->
               </div>
             </ds-stack>
