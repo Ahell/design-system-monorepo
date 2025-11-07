@@ -1590,11 +1590,30 @@ function setupDragDropHandlers(categoryName) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update group name");
+        let errorMessage = "Failed to update group name";
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+        } catch (jsonError) {
+          // If response is not JSON, try to get text
+          try {
+            const errorText = await response.text();
+            errorMessage = errorText || `HTTP ${response.status}: ${response.statusText}`;
+          } catch (textError) {
+            errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
-      const updatedGroup = await response.json();
+      let updatedGroup;
+      try {
+        updatedGroup = await response.json();
+      } catch (jsonError) {
+        // If response is empty or not JSON, assume success and use the new name
+        console.warn("Canvas API returned non-JSON response, assuming success");
+        updatedGroup = { name: newName };
+      }
 
       // Update all references to the group name in the UI
       updateGroupNameInUI(groupId, updatedGroup.name);
