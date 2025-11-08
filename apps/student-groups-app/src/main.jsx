@@ -126,6 +126,150 @@ async function fetchCourseStudents(courseId) {
   }
 }
 
+// Initialize sidebar menu with items
+async function initializeSidebarMenu() {
+  const sidebarMenu = document.getElementById("sidebar-menu");
+  const fallback = document.getElementById("sidebar-fallback");
+
+  if (!sidebarMenu) {
+    console.warn("Sidebar menu element not found");
+    return;
+  }
+
+  console.log("Initializing sidebar menu...");
+
+  // Fetch Canvas courses
+  const courses = await fetchCourses();
+  console.log("Fetched courses:", courses);
+
+  // Sort courses: first by term (HT/VT + year), then by course code
+  courses.sort((a, b) => {
+    const fullTextA = (a.course_code || "") + " " + (a.name || "");
+    const fullTextB = (b.course_code || "") + " " + (b.name || "");
+
+    // Extract term info - supports both 2-digit (HT25) and 4-digit years (HT2025)
+    const termRegex = /\b(HT|VT)(\d{2}|\d{4})\b/i;
+
+    const matchA = fullTextA.match(termRegex);
+    const matchB = fullTextB.match(termRegex);
+
+    // If both have term info, compare terms
+    if (matchA && matchB) {
+      const [, semesterA, yearA] = matchA;
+      const [, semesterB, yearB] = matchB;
+
+      // Normalize years to 2-digit format (2016 -> 16, 25 -> 25)
+      const normalizedYearA = yearA.length === 4 ? yearA.slice(-2) : yearA;
+      const normalizedYearB = yearB.length === 4 ? yearB.slice(-2) : yearB;
+
+      // Compare years (descending - newest first)
+      if (normalizedYearA !== normalizedYearB) {
+        return normalizedYearB.localeCompare(normalizedYearA);
+      }
+
+      // Same year - HT comes after VT (HT is fall, VT is spring)
+      // HT25 > VT25 because HT25 is later in the year
+      if (semesterA.toUpperCase() !== semesterB.toUpperCase()) {
+        return semesterA.toUpperCase() === "HT" ? -1 : 1;
+      }
+    }
+
+    // If only one has term info, prioritize it
+    if (matchA && !matchB) return -1;
+    if (!matchA && matchB) return 1;
+
+    // Extract first course code (handles cases like "AI1525/AI1531")
+    // Matches patterns like AI1108, DD1234, etc.
+    const codeRegex = /\b([A-Z]{2}\d{4})\b/;
+
+    const codeMatchA = fullTextA.match(codeRegex);
+    const codeMatchB = fullTextB.match(codeRegex);
+
+    const codeA = codeMatchA ? codeMatchA[1] : fullTextA;
+    const codeB = codeMatchB ? codeMatchB[1] : fullTextB;
+
+    // Sort by course code alphabetically (e.g., AI1108 before AI1147)
+    return codeA.localeCompare(codeB);
+  });
+
+  // Group courses: Examinations (TEN1), Courses (with year), Other (no year)
+  const examinationCourses = [];
+  const regularCourses = [];
+  const otherCourses = [];
+
+  // Regex to detect year in course text
+  const termRegex = /\b(HT|VT)(\d{2}|\d{4})\b/i;
+
+  courses.forEach((course) => {
+    const fullText = (course.course_code || "") + " " + (course.name || "");
+    const submenuItem = {
+      id: `course-${course.id}`,
+      label: course.name || course.course_code || `Course ${course.id}`,
+    };
+
+    if (fullText.includes("TEN1")) {
+      examinationCourses.push(submenuItem);
+    } else if (termRegex.test(fullText)) {
+      // Has a year (HT/VT + year)
+      regularCourses.push(submenuItem);
+    } else {
+      // No year found
+      otherCourses.push(submenuItem);
+    }
+  });
+
+  // Define menu items with sections - using SVG icons as HTML strings
+  const menuItems = [
+    { 
+      id: 'courses', 
+      label: 'Courses', 
+      icon: '◧',
+      submenu: regularCourses.length > 0 ? regularCourses : [
+        { id: 'courses-empty', label: 'No courses found' }
+      ]
+    },
+    { 
+      id: 'examinations', 
+      label: 'Examinations', 
+      icon: '◪',
+      submenu: examinationCourses.length > 0 ? examinationCourses : [
+        { id: 'exam-empty', label: 'No examinations found' }
+      ]
+    },
+    { 
+      id: 'other', 
+      label: 'Other', 
+      icon: '◯',
+      submenu: otherCourses.length > 0 ? otherCourses : [
+        { id: 'other-empty', label: 'No other courses found' }
+      ]
+    }
+  ];
+
+  console.log("Setting menu items:", menuItems);
+
+  // Set the items and active item
+  sidebarMenu.items = menuItems;
+  sidebarMenu.activeItem = 'courses';
+  sidebarMenu.logoText = 'Student Groups Management';
+  // Optionally add a logo image:
+  // sidebarMenu.logo = '/path/to/logo.png';
+
+  console.log("Sidebar menu initialized with", menuItems.length, "items");
+
+  // Hide fallback if component is working
+  if (fallback) {
+    setTimeout(() => {
+      if (sidebarMenu.shadowRoot && sidebarMenu.shadowRoot.children.length > 0) {
+        fallback.style.display = 'none';
+        console.log("Component rendered successfully, hiding fallback");
+      } else {
+        console.warn("Component may not have rendered properly");
+      }
+    }, 1000);
+  }
+}
+
 // Initialize the app when custom elements are defined
 async function initializeApp() {
   // Wait for the ds-table custom element to be defined
@@ -134,9 +278,13 @@ async function initializeApp() {
   await customElements.whenDefined("ds-button");
   await customElements.whenDefined("ds-select");
   await customElements.whenDefined("ds-tabs");
+  await customElements.whenDefined("ds-sidebar-menu");
 
   // Small delay to ensure the element is fully rendered
   await new Promise((resolve) => setTimeout(resolve, 100));
+
+  // Initialize sidebar menu (now async to fetch courses)
+  await initializeSidebarMenu();
 
   // Set up event listeners
   setupEventListeners();
@@ -170,6 +318,12 @@ function setupEventListeners() {
 
   if (addCategoryBtn) {
     addCategoryBtn.addEventListener("click", handleAddCategory);
+  }
+
+  // Add sidebar menu event listener
+  const sidebarMenu = document.getElementById("sidebar-menu");
+  if (sidebarMenu) {
+    sidebarMenu.addEventListener("menu-item-click", handleSidebarMenuClick);
   }
 }
 
@@ -401,6 +555,25 @@ async function handleAddCategory() {
       addCategoryBtn.textContent = "+ Add Category";
     }
   }
+}
+
+// Handle sidebar menu item clicks
+async function handleSidebarMenuClick(event) {
+  const { id, item } = event.detail;
+  console.log("Sidebar menu clicked:", id, item);
+
+  // If a course submenu item is clicked, load its group categories
+  if (id && id.startsWith('course-')) {
+    const courseId = parseInt(id.replace('course-', ''), 10);
+    if (!isNaN(courseId)) {
+      await loadCourseCategories(courseId);
+    }
+  }
+
+  // You could implement additional navigation logic here, for example:
+  // - Dashboard: show overview/stats
+  // - Admin/Settings: show settings
+  // - Admin/Users: show user management
 }
 
 // Handle adding a new group to a category
@@ -959,7 +1132,7 @@ function generateDragDropGroupsInterface(
           </div>
           
           <!-- Second Column: Groups -->
-          <div style="display: flex; flex-direction: column; height: 600px;">
+          <div style="display: flex; flex-direction: column; min-width: 0;">
             <!-- Group Selection Controls -->
             <ds-card variant="secondary" style="margin-bottom: var(--space-3);">
               <ds-card-content>
@@ -990,7 +1163,7 @@ function generateDragDropGroupsInterface(
               </ds-card-content>
             </ds-card>
             
-            <ds-grid cols="2" gap="sm" style="flex: 1; max-height: 600px; overflow-y: auto;">
+            <ds-grid cols="2" gap="sm" style="overflow-y: auto;">
               ${
                 groups.length === 0
                   ? '<ds-alert variant="info" title="No Groups">No groups found in this category.</ds-alert>'
@@ -999,7 +1172,7 @@ function generateDragDropGroupsInterface(
                         (group) => `
                 <ds-card variant="secondary" class="group-container group-card drop-zone" data-group-id="${
                   group.id
-                }" data-zone-type="group" data-group-name="${group.name}">
+                }" data-zone-type="group" data-group-name="${group.name}" style="min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
                   <ds-card-content>
                     <ds-flex justify="space-between" align="center" class="group-header">
                       <ds-flex align="center" gap="2">
@@ -2260,6 +2433,26 @@ function setupGroupSelectionHandlers(categoryName) {
     });
   } else {
     console.warn("Deselect All button not found for", categoryName);
+  }
+
+  // Apply selection (View Members) button
+  if (applyBtn) {
+    applyBtn.addEventListener("click", async () => {
+      console.log("View Members clicked");
+      const selectedGroupsArray = Array.from(selectedGroups).map((groupId) => {
+        const checkbox = categoryContent.querySelector(
+          `.group-checkbox[data-group-id="${groupId}"]`
+        );
+        return {
+          id: groupId,
+          name: checkbox?.getAttribute("data-group-name") || `Group ${groupId}`,
+        };
+      });
+      console.log("Selected groups for table:", selectedGroupsArray);
+      await displayGroupMembersTable(selectedGroupsArray, categoryName);
+    });
+  } else {
+    console.warn("Apply Selection button not found for", categoryName);
   }
 
   // Listen for group name changes

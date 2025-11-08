@@ -10,8 +10,22 @@ import { LitElement, html, css } from "lit";
 export class DSContainer extends LitElement {
   static properties = {
     size: { type: String },
-    padding: { type: Boolean },
-    center: { type: Boolean },
+    padding: { 
+      type: Boolean, 
+      reflect: true,
+      converter: {
+        fromAttribute: (value) => value !== 'false' && value !== null && value !== undefined,
+        toAttribute: (value) => value ? '' : null,
+      }
+    },
+    center: { 
+      type: Boolean, 
+      reflect: true,
+      converter: {
+        fromAttribute: (value) => value !== 'false' && value !== null && value !== undefined,
+        toAttribute: (value) => value ? '' : null,
+      }
+    },
   };
 
   constructor() {

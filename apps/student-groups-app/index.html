@@ -56,91 +56,92 @@
     </style>
   </head>
   <body>
-    <ds-hero
-      title="Student Groups Management"
-      description="View and manage student group assignments in Canvas LMS"
-      align="center"
-      size="md"
-    ></ds-hero>
-
-    <ds-container>
-      <ds-stack gap="6">
-        <ds-card>
-          <ds-card-header
-            title="Course Selection"
-            meta="Select a Canvas course to load student groups"
-          ></ds-card-header>
-          <ds-card-content>
-            <ds-inline gap="4" align="end">
-              <ds-select
-                id="course-select"
-                label="Select Course"
-                placeholder="Loading courses..."
-                full-width
-                style="flex: 1"
-              ></ds-select>
-              <ds-button id="load-course-btn" variant="primary">
-                Load Groups
-              </ds-button>
-            </ds-inline>
-          </ds-card-content>
-        </ds-card>
-
-        <ds-card id="group-categories-card" style="display: none">
-          <ds-card-header
-            id="course-card-header"
-            title="Group Categories"
-            meta="Select a course above to load student group assignments"
-          >
-            <ds-button
-              slot="stats"
-              id="add-category-btn"
-              size="sm"
-              variant="primary"
-              style="display: none"
-            >
-              + Add Category
-            </ds-button>
-            <div
-              slot="stats"
-              id="selection-status"
-              style="
-                font-size: var(--text-sm);
-                color: var(--color-text-secondary);
-                display: none;
-              "
-            ></div>
-          </ds-card-header>
-
-          <ds-card-content>
-            <!-- Category Radio Group -->
-            <ds-radio-group
-              id="category-radio-group"
-              name="category"
-              style="display: none"
-            ></ds-radio-group>
-          </ds-card-content>
-        </ds-card>
-
-        <!-- Category Content Container (Groups display) -->
-        <div id="category-content" style="display: none">
-          <!-- Category-specific content will be dynamically inserted here -->
-        </div>
-
-        <!-- Groups Overview Table (appears after Apply Selection) -->
-        <div id="groups-overview">
-          <!-- Table will be dynamically inserted here -->
-        </div>
-      </ds-stack>
-    </ds-container>
-
-    <ds-footer
-      align="center"
-      copyright="© 2025 Student Groups Management"
-      variant="default"
+    <!-- Main Application Layout -->
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        min-height: 100vh;
+      "
     >
-      <span slot="links">Canvas LMS Integration</span>
-    </ds-footer>
+      <!-- Left Sidebar Menu -->
+      <aside style="border-right: 1px solid var(--color-border); background: var(--color-surface-secondary);">
+        <ds-sidebar-menu
+          id="sidebar-menu"
+        ></ds-sidebar-menu>
+        <!-- Fallback content if component doesn't render -->
+        <div id="sidebar-fallback" style="padding: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-sm);">
+          Sidebar menu loading...
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main style="overflow-y: auto; background: var(--color-surface); display: flex; flex-direction: column; min-height: 100vh;">
+        <ds-container padding="false" center="false" size="fluid" style="margin-left: 0; margin-right: 0; flex: 1;">
+          <div style="display: grid; grid-template-columns: 700px 1fr; gap: var(--space-6); padding: var(--space-6);">
+            <!-- Left Column -->
+            <ds-stack gap="6">
+              <ds-card id="group-categories-card" style="display: none">
+                <ds-card-header
+                  id="course-card-header"
+                  title="Group Categories"
+                  meta="Select a course above to load student group assignments"
+                >
+                  <ds-button
+                    slot="stats"
+                    id="add-category-btn"
+                    size="sm"
+                    variant="primary"
+                    style="display: none"
+                  >
+                    + Add Category
+                  </ds-button>
+                  <div
+                    slot="stats"
+                    id="selection-status"
+                    style="
+                      font-size: var(--text-sm);
+                      color: var(--color-text-secondary);
+                      display: none;
+                    "
+                  ></div>
+                </ds-card-header>
+
+                <ds-card-content>
+                  <!-- Category Radio Group -->
+                  <ds-radio-group
+                    id="category-radio-group"
+                    name="category"
+                    style="display: none"
+                  ></ds-radio-group>
+                </ds-card-content>
+              </ds-card>
+
+              <!-- Category Content Container (Groups display) -->
+              <div id="category-content" style="display: none">
+                <!-- Category-specific content will be dynamically inserted here -->
+              </div>
+            </ds-stack>
+
+            <!-- Right Column -->
+            <div>
+              <!-- Groups Overview Table (appears after Apply Selection) -->
+              <div id="groups-overview">
+                <!-- Table will be dynamically inserted here -->
+              </div>
+            </div>
+          </div>
+        </ds-container>
+
+        <ds-footer
+          align="center"
+          copyright="© 2025 Student Groups Management"
+          variant="default"
+        >
+          <span slot="links">Canvas LMS Integration</span>
+        </ds-footer>
+      </main>
+    </div>
 
     <script type="module" src="./src/main.jsx"></script>
   </body>
