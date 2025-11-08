@@ -220,38 +220,41 @@ async function initializeSidebarMenu() {
 
   // Define menu items with sections - using SVG icons as HTML strings
   const menuItems = [
-    { 
-      id: 'courses', 
-      label: 'Courses', 
-      icon: '◧',
-      submenu: regularCourses.length > 0 ? regularCourses : [
-        { id: 'courses-empty', label: 'No courses found' }
-      ]
+    {
+      id: "courses",
+      label: "Courses",
+      icon: "◧",
+      submenu:
+        regularCourses.length > 0
+          ? regularCourses
+          : [{ id: "courses-empty", label: "No courses found" }],
     },
-    { 
-      id: 'examinations', 
-      label: 'Examinations', 
-      icon: '◪',
-      submenu: examinationCourses.length > 0 ? examinationCourses : [
-        { id: 'exam-empty', label: 'No examinations found' }
-      ]
+    {
+      id: "examinations",
+      label: "Examinations",
+      icon: "◪",
+      submenu:
+        examinationCourses.length > 0
+          ? examinationCourses
+          : [{ id: "exam-empty", label: "No examinations found" }],
     },
-    { 
-      id: 'other', 
-      label: 'Other', 
-      icon: '◯',
-      submenu: otherCourses.length > 0 ? otherCourses : [
-        { id: 'other-empty', label: 'No other courses found' }
-      ]
-    }
+    {
+      id: "other",
+      label: "Other",
+      icon: "◯",
+      submenu:
+        otherCourses.length > 0
+          ? otherCourses
+          : [{ id: "other-empty", label: "No other courses found" }],
+    },
   ];
 
   console.log("Setting menu items:", menuItems);
 
   // Set the items and active item
   sidebarMenu.items = menuItems;
-  sidebarMenu.activeItem = 'courses';
-  sidebarMenu.logoText = 'Student Groups Management';
+  sidebarMenu.activeItem = "courses";
+  sidebarMenu.logoText = "Student Groups Management";
   // Optionally add a logo image:
   // sidebarMenu.logo = '/path/to/logo.png';
 
@@ -260,8 +263,11 @@ async function initializeSidebarMenu() {
   // Hide fallback if component is working
   if (fallback) {
     setTimeout(() => {
-      if (sidebarMenu.shadowRoot && sidebarMenu.shadowRoot.children.length > 0) {
-        fallback.style.display = 'none';
+      if (
+        sidebarMenu.shadowRoot &&
+        sidebarMenu.shadowRoot.children.length > 0
+      ) {
+        fallback.style.display = "none";
         console.log("Component rendered successfully, hiding fallback");
       } else {
         console.warn("Component may not have rendered properly");
@@ -563,8 +569,8 @@ async function handleSidebarMenuClick(event) {
   console.log("Sidebar menu clicked:", id, item);
 
   // If a course submenu item is clicked, load its group categories
-  if (id && id.startsWith('course-')) {
-    const courseId = parseInt(id.replace('course-', ''), 10);
+  if (id && id.startsWith("course-")) {
+    const courseId = parseInt(id.replace("course-", ""), 10);
     if (!isNaN(courseId)) {
       await loadCourseCategories(courseId);
     }
@@ -1172,7 +1178,9 @@ function generateDragDropGroupsInterface(
                         (group) => `
                 <ds-card variant="secondary" class="group-container group-card drop-zone" data-group-id="${
                   group.id
-                }" data-zone-type="group" data-group-name="${group.name}" style="min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
+                }" data-zone-type="group" data-group-name="${
+                          group.name
+                        }" style="min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
                   <ds-card-content>
                     <ds-flex justify="space-between" align="center" class="group-header">
                       <ds-flex align="center" gap="2">
@@ -1618,7 +1626,9 @@ function setupDragDropHandlers(categoryName) {
   });
 
   // Also allow clicking on group name to edit
-  const groupNameDisplays = categoryContent.querySelectorAll(".group-name-display");
+  const groupNameDisplays = categoryContent.querySelectorAll(
+    ".group-name-display"
+  );
   groupNameDisplays.forEach((display) => {
     display.addEventListener("click", (e) => {
       const groupId = display.getAttribute("data-group-id");
@@ -1633,7 +1643,9 @@ function setupDragDropHandlers(categoryName) {
     );
     if (!groupContainer) return;
 
-    const groupNameDisplay = groupContainer.querySelector(".group-name-display");
+    const groupNameDisplay = groupContainer.querySelector(
+      ".group-name-display"
+    );
     const editBtn = groupContainer.querySelector(".edit-group-btn");
     const toggleBtn = groupContainer.querySelector(".toggle-group-btn");
 
@@ -1733,7 +1745,9 @@ function setupDragDropHandlers(categoryName) {
     }
 
     // Get current name to check if changed
-    const groupNameDisplay = groupContainer.querySelector(".group-name-display");
+    const groupNameDisplay = groupContainer.querySelector(
+      ".group-name-display"
+    );
     const currentFullText = groupNameDisplay.textContent;
     const currentName = currentFullText.replace(/\s*\(\d+\)\s*$/, "").trim();
 
@@ -1771,7 +1785,8 @@ function setupDragDropHandlers(categoryName) {
           // If response is not JSON, try to get text
           try {
             const errorText = await response.text();
-            errorMessage = errorText || `HTTP ${response.status}: ${response.statusText}`;
+            errorMessage =
+              errorText || `HTTP ${response.status}: ${response.statusText}`;
           } catch (textError) {
             errorMessage = `HTTP ${response.status}: ${response.statusText}`;
           }
@@ -1792,9 +1807,11 @@ function setupDragDropHandlers(categoryName) {
       updateGroupNameInUI(groupId, updatedGroup.name);
 
       // Notify selection handlers of the name change
-      document.dispatchEvent(new CustomEvent("group-name-changed", {
-        detail: { groupId, newName: updatedGroup.name }
-      }));
+      document.dispatchEvent(
+        new CustomEvent("group-name-changed", {
+          detail: { groupId, newName: updatedGroup.name },
+        })
+      );
 
       // Exit edit mode
       cancelGroupNameEdit(groupId);
@@ -1803,7 +1820,7 @@ function setupDragDropHandlers(categoryName) {
     } catch (error) {
       console.error("Error updating group name:", error);
       alert(`Failed to update group name: ${error.message}`);
-      
+
       // Reset save button
       const saveBtn = groupContainer.querySelector(".save-group-name-btn");
       if (saveBtn) {
@@ -1827,7 +1844,9 @@ function setupDragDropHandlers(categoryName) {
     }
 
     // Show original elements
-    const groupNameDisplay = groupContainer.querySelector(".group-name-display");
+    const groupNameDisplay = groupContainer.querySelector(
+      ".group-name-display"
+    );
     const editBtn = groupContainer.querySelector(".edit-group-btn");
     const toggleBtn = groupContainer.querySelector(".toggle-group-btn");
 
@@ -1843,7 +1862,8 @@ function setupDragDropHandlers(categoryName) {
       `.group-name-display[data-group-id="${groupId}"]`
     );
     if (groupNameDisplay) {
-      const memberCount = groupNameDisplay.textContent.match(/\((\d+)\)/)?.[1] || "0";
+      const memberCount =
+        groupNameDisplay.textContent.match(/\((\d+)\)/)?.[1] || "0";
       groupNameDisplay.textContent = `${newName} (${memberCount})`;
     }
 

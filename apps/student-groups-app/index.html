@@ -58,27 +58,53 @@
   <body>
     <!-- Main Application Layout -->
     <div
-      style="
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        min-height: 100vh;
-      "
+      style="display: grid; grid-template-columns: 200px 1fr; min-height: 100vh"
     >
       <!-- Left Sidebar Menu -->
-      <aside style="border-right: 1px solid var(--color-border); background: var(--color-surface-secondary);">
-        <ds-sidebar-menu
-          id="sidebar-menu"
-        ></ds-sidebar-menu>
+      <aside
+        style="
+          border-right: 1px solid var(--color-border);
+          background: var(--color-surface-secondary);
+        "
+      >
+        <ds-sidebar-menu id="sidebar-menu"></ds-sidebar-menu>
         <!-- Fallback content if component doesn't render -->
-        <div id="sidebar-fallback" style="padding: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-sm);">
+        <div
+          id="sidebar-fallback"
+          style="
+            padding: var(--space-4);
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+          "
+        >
           Sidebar menu loading...
         </div>
       </aside>
 
       <!-- Main Content Area -->
-      <main style="overflow-y: auto; background: var(--color-surface); display: flex; flex-direction: column; min-height: 100vh;">
-        <ds-container padding="false" center="false" size="fluid" style="margin-left: 0; margin-right: 0; flex: 1;">
-          <div style="display: grid; grid-template-columns: 700px 1fr; gap: var(--space-6); padding: var(--space-6);">
+      <main
+        style="
+          overflow-y: auto;
+          background: var(--color-surface);
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        "
+      >
+        <ds-container
+          padding="false"
+          center="false"
+          size="fluid"
+          style="margin-left: 0; margin-right: 0; flex: 1"
+        >
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 700px 1fr;
+              gap: var(--space-6);
+              padding: var(--space-6);
+            "
+          >
             <!-- Left Column -->
             <ds-stack gap="6">
               <ds-card id="group-categories-card" style="display: none">

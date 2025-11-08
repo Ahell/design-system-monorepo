@@ -302,7 +302,7 @@ export class DSSidebarMenu extends LitElement {
   _toggleSubmenu(itemId) {
     this.expandedItems = {
       ...this.expandedItems,
-      [itemId]: !this.expandedItems[itemId]
+      [itemId]: !this.expandedItems[itemId],
     };
   }
 
@@ -360,15 +360,17 @@ export class DSSidebarMenu extends LitElement {
       >
         ${item.icon ? html`<span class="icon">${item.icon}</span>` : ""}
         <span class="label">${item.label}</span>
-        ${item.badge
-          ? html`<span class="badge">${item.badge}</span>`
-          : ""}
+        ${item.badge ? html`<span class="badge">${item.badge}</span>` : ""}
       </button>
-      ${hasSubmenu ? html`
-        <div class="submenu ${isExpanded ? "expanded" : ""}">
-          ${item.submenu.map((subItem) => this._renderSubmenuItem(item, subItem))}
-        </div>
-      ` : ""}
+      ${hasSubmenu
+        ? html`
+            <div class="submenu ${isExpanded ? "expanded" : ""}">
+              ${item.submenu.map((subItem) =>
+                this._renderSubmenuItem(item, subItem)
+              )}
+            </div>
+          `
+        : ""}
     `;
   }
 
@@ -437,12 +439,14 @@ export class DSSidebarMenu extends LitElement {
           : ""}
 
         <div class="menu-container">
-          ${sectionArray.map((section, index) => html`
-            ${this._renderMenuSection(section)}
-            ${index < sectionArray.length - 1
-              ? html`<hr class="divider" />`
-              : ""}
-          `)}
+          ${sectionArray.map(
+            (section, index) => html`
+              ${this._renderMenuSection(section)}
+              ${index < sectionArray.length - 1
+                ? html`<hr class="divider" />`
+                : ""}
+            `
+          )}
         </div>
       </div>
     `;
