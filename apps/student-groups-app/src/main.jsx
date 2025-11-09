@@ -1417,59 +1417,62 @@ function generateDragDropGroupsInterface(
       <ds-card-content>
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-6); align-items: stretch;">
           <!-- First Column: Unassigned Students -->
-          <div style="display: flex; flex-direction: column; gap: var(--space-3); height: 600px;">
-            <!-- Search/Filter Box -->
-            <div>
-              <ds-input
-                id="unassigned-search"
-                type="text"
-                placeholder="Search students..."
-                style="width: 100%;"
-              ></ds-input>
-            </div>
-            
-            <ds-stack 
-              gap="2" 
-              class="drop-zone unassigned-zone" 
-              data-zone-type="unassigned"
-              style="
-                flex: 1;
-                min-height: 200px;
-                padding: var(--space-3);
-                background: var(--color-surface);
-                border-radius: var(--radius-sm);
-                border: 2px dashed var(--color-border);
-                transition: all 0.2s ease;
-                overflow-y: auto;
-              "
-            >
-              ${
-                unassignedStudents.length === 0
-                  ? '<div style="color: var(--color-text-secondary); font-size: var(--text-sm); text-align: center; padding: var(--space-4);">All students are assigned to groups</div>'
-                  : unassignedStudents
-                      .map(
-                        (student) => `
-                    <div
-                      draggable="true"
-                      class="student-badge draggable-student"
-                      data-student-id="${student.id}"
-                      data-student-name="${student.name}"
-                      data-student-sortable-name="${student.sortable_name}"
-                      data-current-group="unassigned"
-                      style="
-                        cursor: move;
-                        transition: all 0.2s ease;
-                      "
-                    >
-                      <ds-badge variant="default" size="md">
-                        ${student.name}
-                      </ds-badge>
-                    </div>
-                  `
-                      )
-                      .join("")
-              }
-            </ds-stack>
+          <div>
+            <!-- Unassigned Students Card -->
+            <ds-card variant="secondary" style="display: flex; flex-direction: column; height: 600px;">
+              <ds-card-content style="flex: 1; display: flex; flex-direction: column; gap: var(--space-3);">
+                <ds-stack gap="3">
+                  <div style="font-weight: var(--weight-semibold); font-size: var(--text-sm); color: var(--color-text-secondary);">
+                    Unassigned Students (${unassignedStudents.length})
+                  </div>
+                  <ds-input
+                    id="unassigned-search"
+                    type="text"
+                    placeholder="Search students..."
+                    style="width: 100%;"
+                  ></ds-input>
+                </ds-stack>
+                <ds-stack 
+                  gap="2" 
+                  class="drop-zone unassigned-zone" 
+                  data-zone-type="unassigned"
+                  style="
+                    flex: 1;
+                    min-height: 0;
+                    padding: var(--space-2) 0;
+                    overflow-y: auto;
+                    transition: all 0.2s ease;
+                  "
+                >
+                  ${
+                    unassignedStudents.length === 0
+                      ? '<div style="color: var(--color-text-secondary); font-size: var(--text-sm); text-align: center; padding: var(--space-4);">All students are assigned to groups</div>'
+                      : unassignedStudents
+                          .map(
+                            (student) => `
+                        <div
+                          draggable="true"
+                          class="student-badge draggable-student"
+                          data-student-id="${student.id}"
+                          data-student-name="${student.name}"
+                          data-student-sortable-name="${student.sortable_name}"
+                          data-current-group="unassigned"
+                          style="
+                            cursor: move;
+                            transition: all 0.2s ease;
+                          "
+                        >
+                          <ds-badge variant="default" size="md">
+                            ${student.name}
+                          </ds-badge>
+                        </div>
+                      `
+                          )
+                          .join("")
+                  }
+                </ds-stack>
+              </ds-card-content>
+            </ds-card>
           </div>
           
           <!-- Second Column: Groups -->
@@ -1528,8 +1531,8 @@ function generateDragDropGroupsInterface(
                           class="group-name-display"
                           style="
                             font-weight: var(--weight-semibold);
-                            font-size: var(--text-base);
-                            color: var(--color-text-primary);
+                            font-size: var(--text-sm);
+                            color: var(--color-text-secondary);
                             cursor: pointer;
                           "
                           data-group-id="${group.id}"
