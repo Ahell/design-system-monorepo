@@ -325,6 +325,48 @@ function setupRoutes(app, config) {
       res.status(error.statusCode || 500).json(error);
     }
   });
+
+  // Send conversation message (email)
+  app.post("/api/canvas/conversations", async (req, res) => {
+    try {
+      const { recipients, subject, body } = req.body;
+
+      if (
+        !recipients ||
+        !Array.isArray(recipients) ||
+        recipients.length === 0
+      ) {
+        return res.status(400).json({ error: "Recipients are required" });
+      }
+
+      if (!subject) {
+        return res.status(400).json({ error: "Subject is required" });
+      }
+
+      if (!body) {
+        return res.status(400).json({ error: "Message body is required" });
+      }
+
+      const result = await makeCanvasRequest(
+        `/conversations`,
+        CANVAS_ACCESS_TOKEN,
+        config,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            recipients: recipients,
+            subject: subject,
+            body: body,
+            force_new: true,
+          }),
+        }
+      );
+
+      res.status(result.statusCode).json(result.data);
+    } catch (error) {
+      res.status(error.statusCode || 500).json(error);
+    }
+  });
 }
 
 module.exports = {

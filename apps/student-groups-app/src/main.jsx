@@ -12,16 +12,18 @@ import { html } from "lit";
 const CANVAS_API_BASE = "http://localhost:3001/api/canvas";
 
 // API helper function (now calling our backend proxy)
-async function canvasApiRequest(endpoint) {
+async function canvasApiRequest(endpoint, options = {}) {
   const url = `${CANVAS_API_BASE}${endpoint}`;
-  console.log("Making API request to:", url);
+  console.log("Making API request to:", url, options.method || "GET");
 
   try {
     const response = await fetch(url, {
-      method: "GET",
+      method: options.method || "GET",
       headers: {
         "Content-Type": "application/json",
+        ...options.headers,
       },
+      ...options,
     });
 
     if (!response.ok) {
@@ -246,6 +248,12 @@ async function initializeSidebarMenu() {
         otherCourses.length > 0
           ? otherCourses
           : [{ id: "other-empty", label: "No other courses found" }],
+    },
+    {
+      id: "teachers",
+      label: "Teachers",
+      icon: "👤",
+      submenu: [{ id: "teachers-empty", label: "Select a course first" }],
     },
   ];
 
@@ -573,6 +581,17 @@ async function handleSidebarMenuClick(event) {
     const courseId = parseInt(id.replace("course-", ""), 10);
     if (!isNaN(courseId)) {
       await loadCourseCategories(courseId);
+
+      // Also fetch and update teachers for this course
+      await updateTeachersSubmenu(courseId);
+    }
+  }
+
+  // If a teacher submenu item is clicked, display teacher contact card
+  if (id && id.startsWith("teacher-")) {
+    const teacherId = parseInt(id.replace("teacher-", ""), 10);
+    if (!isNaN(teacherId)) {
+      displayTeacherCard(teacherId);
     }
   }
 
@@ -580,6 +599,321 @@ async function handleSidebarMenuClick(event) {
   // - Dashboard: show overview/stats
   // - Admin/Settings: show settings
   // - Admin/Users: show user management
+}
+
+// Store current teachers data for access when teacher is clicked
+let currentTeachers = [];
+
+// Update the Teachers submenu with teachers from the selected course
+async function updateTeachersSubmenu(courseId) {
+  const sidebarMenu = document.getElementById("sidebar-menu");
+  if (!sidebarMenu) return;
+
+  try {
+    // Fetch teachers for the selected course
+    const teachers = await canvasApiRequest(
+      `/courses/${courseId}/users?enrollment_type=teacher`
+    );
+
+    // Store teachers data globally
+    currentTeachers = Array.isArray(teachers) ? teachers : [];
+
+    const teacherItems =
+      currentTeachers.length > 0
+        ? currentTeachers
+            .map((teacher) => ({
+              id: `teacher-${teacher.id}`,
+              label:
+                teacher.name ||
+                teacher.sortable_name ||
+                `Teacher ${teacher.id}`,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label))
+        : [{ id: "teachers-empty", label: "No teachers found" }];
+
+    // Update the Teachers submenu
+    const currentItems = sidebarMenu.items;
+    const updatedItems = currentItems.map((item) => {
+      if (item.id === "teachers") {
+        return {
+          ...item,
+          submenu: teacherItems,
+        };
+      }
+      return item;
+    });
+
+    sidebarMenu.items = updatedItems;
+    console.log("Updated teachers submenu for course", courseId);
+  } catch (error) {
+    console.error("Error fetching teachers for course:", error);
+  }
+}
+
+// Display teacher contact card
+function displayTeacherCard(teacherId) {
+  const teacher = currentTeachers.find((t) => t.id === teacherId);
+
+  if (!teacher) {
+    console.error("Teacher not found:", teacherId);
+    return;
+  }
+
+  const groupsOverview = document.getElementById("groups-overview");
+  if (!groupsOverview) return;
+
+  const teacherName =
+    teacher.name || teacher.sortable_name || `Teacher ${teacher.id}`;
+  const teacherEmail =
+    teacher.email || teacher.login_id || "No email available";
+  const avatarUrl = teacher.avatar_url || "";
+
+  const cardHTML = `
+    <ds-card variant="default">
+      <ds-card-header
+        title="Send Email to Teacher"
+        meta="${teacherName}"
+      ></ds-card-header>
+      <ds-card-content>
+        <ds-stack gap="4">
+          ${
+            avatarUrl
+              ? `
+            <div style="text-align: center;">
+              <img 
+                src="${avatarUrl}" 
+                alt="${teacherName}" 
+                style="
+                  width: 80px; 
+                  height: 80px; 
+                  border-radius: 50%; 
+                  object-fit: cover;
+                  border: 3px solid var(--color-border);
+                "
+              />
+            </div>
+          `
+              : ""
+          }
+          
+          <div style="
+            padding: var(--space-3);
+            background: var(--color-surface-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+          ">
+            <div style="
+              font-size: var(--text-sm);
+              color: var(--color-text-secondary);
+              margin-bottom: var(--space-1);
+            ">
+              To:
+            </div>
+            <div style="
+              font-size: var(--text-base);
+              font-weight: var(--weight-medium);
+              color: var(--color-text-primary);
+              word-break: break-word;
+            ">
+              ${teacherEmail}
+            </div>
+          </div>
+
+          <form id="teacher-email-form" style="display: contents;">
+            <ds-stack gap="3">
+              <div>
+                <label style="
+                  display: block;
+                  font-size: var(--text-sm);
+                  font-weight: var(--weight-medium);
+                  color: var(--color-text-primary);
+                  margin-bottom: var(--space-2);
+                ">
+                  Subject
+                </label>
+                <ds-input
+                  id="email-subject"
+                  type="text"
+                  placeholder="Enter email subject"
+                  required
+                  style="width: 100%;"
+                ></ds-input>
+              </div>
+
+              <div>
+                <label style="
+                  display: block;
+                  font-size: var(--text-sm);
+                  font-weight: var(--weight-medium);
+                  color: var(--color-text-primary);
+                  margin-bottom: var(--space-2);
+                ">
+                  Message
+                </label>
+                <ds-textarea
+                  id="email-message"
+                  placeholder="Type your message here..."
+                  rows="8"
+                  required
+                  style="width: 100%;"
+                ></ds-textarea>
+              </div>
+
+              <div id="email-status" style="display: none;"></div>
+
+              <ds-flex gap="2">
+                <ds-button 
+                  id="send-email-btn"
+                  variant="primary" 
+                  size="md"
+                  style="flex: 1;"
+                >
+                  📧 Send Email
+                </ds-button>
+                <ds-button 
+                  id="clear-email-form"
+                  variant="outline" 
+                  size="md"
+                  style="flex: 1;"
+                >
+                  �️ Clear
+                </ds-button>
+              </ds-flex>
+            </ds-stack>
+          </form>
+
+          ${
+            teacher.bio
+              ? `
+            <div style="
+              padding: var(--space-3);
+              border-left: 3px solid var(--color-primary-main);
+              background: var(--color-surface-secondary);
+              border-radius: var(--radius-sm);
+              margin-top: var(--space-2);
+            ">
+              <div style="
+                font-size: var(--text-sm);
+                font-weight: var(--weight-semibold);
+                color: var(--color-text-secondary);
+                margin-bottom: var(--space-2);
+              ">
+                About
+              </div>
+              <div style="
+                font-size: var(--text-sm);
+                color: var(--color-text-primary);
+                line-height: 1.6;
+              ">
+                ${teacher.bio}
+              </div>
+            </div>
+          `
+              : ""
+          }
+        </ds-stack>
+      </ds-card-content>
+    </ds-card>
+  `;
+
+  groupsOverview.innerHTML = cardHTML;
+  groupsOverview.style.display = "block";
+
+  // Setup form handlers
+  const form = document.getElementById("teacher-email-form");
+  const sendBtn = document.getElementById("send-email-btn");
+  const clearBtn = document.getElementById("clear-email-form");
+  const subjectInput = document.getElementById("email-subject");
+  const messageInput = document.getElementById("email-message");
+  const statusDiv = document.getElementById("email-status");
+
+  // Send email handler
+  async function handleSendEmail() {
+    const subject = subjectInput.value.trim();
+    const message = messageInput.value.trim();
+
+    if (!subject || !message) {
+      showEmailStatus("error", "Please fill in both subject and message");
+      return;
+    }
+
+    // Show sending status
+    showEmailStatus("info", "Sending email...");
+
+    try {
+      // Send message via Canvas Conversations API
+      const response = await fetch(`${CANVAS_API_BASE}/conversations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipients: [String(teacher.id)], // Canvas expects user IDs as strings
+          subject: subject,
+          body: message,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || `Failed to send email: ${response.status}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Email sent successfully:", result);
+
+      // Success
+      showEmailStatus("success", `Email sent to ${teacherName}!`);
+
+      // Clear form after successful send
+      setTimeout(() => {
+        subjectInput.value = "";
+        messageInput.value = "";
+        statusDiv.style.display = "none";
+      }, 3000);
+    } catch (error) {
+      console.error("Error sending email:", error);
+      showEmailStatus("error", `Failed to send email: ${error.message}`);
+    }
+  }
+
+  if (sendBtn) {
+    sendBtn.addEventListener("click", handleSendEmail);
+  }
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await handleSendEmail();
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      subjectInput.value = "";
+      messageInput.value = "";
+      statusDiv.style.display = "none";
+    });
+  }
+
+  function showEmailStatus(type, message) {
+    const variants = {
+      success: "success",
+      error: "error",
+      info: "info",
+    };
+
+    statusDiv.innerHTML = `
+      <ds-alert variant="${
+        variants[type] || "info"
+      }" title="${message}"></ds-alert>
+    `;
+    statusDiv.style.display = "block";
+  }
+
+  console.log("Displayed teacher card for:", teacherName);
 }
 
 // Handle adding a new group to a category
@@ -904,6 +1238,7 @@ async function loadCategoryContent(categoryName) {
           ...group,
           members: members.map((m) => ({
             id: m.user_id,
+            membershipId: m.id, // Canvas membership ID needed for deletion
             name:
               allStudents.find((s) => s.id === m.user_id)?.name ||
               `User ${m.user_id}`,
@@ -1250,15 +1585,17 @@ function generateDragDropGroupsInterface(
                             draggable="true"
                             class="student-badge draggable-student"
                             data-student-id="${member.id}"
+                            data-membership-id="${member.membershipId}"
                             data-student-name="${member.name}"
                             data-student-sortable-name="${member.sortable_name}"
                             data-current-group="${group.id}"
+                            data-group-id="${group.id}"
                             style="
                               cursor: move;
                               transition: all 0.2s ease;
                             "
                           >
-                            <ds-badge variant="primary" size="md">
+                            <ds-badge variant="primary" size="md" removable>
                               ${member.name}
                             </ds-badge>
                           </div>
@@ -2172,6 +2509,146 @@ function setupDragDropHandlers(categoryName) {
 
   // Initial setup of draggable students
   setupDraggableStudents();
+
+  // Handle badge remove events for students (delete button in badges)
+  categoryContent.addEventListener("remove", async (e) => {
+    const badge = e.target;
+    if (badge.tagName === "DS-BADGE") {
+      const studentBadge = badge.closest(".student-badge");
+      if (studentBadge) {
+        const membershipId = studentBadge.getAttribute("data-membership-id");
+        const studentId = studentBadge.getAttribute("data-student-id");
+        const studentName = studentBadge.getAttribute("data-student-name");
+        const studentSortableName = studentBadge.getAttribute(
+          "data-student-sortable-name"
+        );
+        const groupId = studentBadge.getAttribute("data-group-id");
+
+        const unassignedZone =
+          categoryContent.querySelector(".unassigned-zone");
+        if (!unassignedZone) return;
+
+        try {
+          // Remove from Canvas API
+          await canvasApiRequest(
+            `/groups/${groupId}/memberships/${membershipId}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          // Update UI immediately (same as drag-and-drop)
+          // Remove student from group
+          studentBadge.remove();
+
+          // Add to unassigned zone in alphabetical order
+          const newBadgeHTML = `
+            <div
+              draggable="true"
+              class="student-badge draggable-student"
+              data-student-id="${studentId}"
+              data-student-name="${studentName}"
+              data-student-sortable-name="${studentSortableName}"
+              data-current-group="unassigned"
+              style="cursor: move; transition: all 0.2s ease;"
+            >
+              <ds-badge variant="default" size="md">
+                ${studentName}
+              </ds-badge>
+            </div>
+          `;
+
+          // Insert in alphabetical order
+          const existingStudents = Array.from(
+            unassignedZone.querySelectorAll(".draggable-student")
+          );
+          let inserted = false;
+
+          for (const existingStudent of existingStudents) {
+            const existingSortableName =
+              existingStudent.getAttribute("data-student-sortable-name") ||
+              existingStudent.getAttribute("data-student-name");
+            if (studentSortableName.localeCompare(existingSortableName) < 0) {
+              existingStudent.insertAdjacentHTML("beforebegin", newBadgeHTML);
+              inserted = true;
+              break;
+            }
+          }
+
+          // If not inserted yet, add at the end
+          if (!inserted) {
+            unassignedZone.insertAdjacentHTML("beforeend", newBadgeHTML);
+          }
+
+          // Remove "All students are assigned" message if it exists
+          const noStudentsMsg = unassignedZone.querySelector(
+            'div[style*="All students are assigned"]'
+          );
+          if (noStudentsMsg) {
+            noStudentsMsg.remove();
+          }
+
+          // Check if source group is now empty
+          const sourceGroupContainer = categoryContent.querySelector(
+            `.group-container[data-group-id="${groupId}"]`
+          );
+          if (sourceGroupContainer) {
+            const sourceMembersContainer =
+              sourceGroupContainer.querySelector(".group-members");
+            const remainingMembers =
+              sourceMembersContainer.querySelectorAll(".draggable-student");
+
+            if (remainingMembers.length === 0) {
+              // Collapse the empty group
+              sourceMembersContainer.style.display = "none";
+              const toggleBtn =
+                sourceGroupContainer.querySelector(".toggle-group-btn");
+              if (toggleBtn) {
+                const toggleText = toggleBtn.querySelector(".toggle-text");
+                if (toggleText) {
+                  toggleText.textContent = "Expand";
+                }
+              }
+            }
+          }
+
+          // Re-setup drag handlers for the newly added element
+          setupDraggableStudents();
+
+          // Update member counts
+          updateGroupMemberCounts();
+
+          // Update originalUnassignedStudents array
+          const newElement = unassignedZone.querySelector(
+            `.draggable-student[data-student-id="${studentId}"]`
+          );
+          if (newElement) {
+            originalUnassignedStudents.push({
+              element: newElement,
+              id: studentId,
+              name: studentName,
+              sortable_name: studentSortableName,
+            });
+          }
+
+          // Clear search filter to show all students
+          const searchInput =
+            categoryContent.querySelector("#unassigned-search");
+          if (searchInput) {
+            searchInput.value = "";
+            filterUnassignedStudents("");
+          }
+
+          console.log(
+            `Successfully removed ${studentName} from group ${groupId}`
+          );
+        } catch (error) {
+          console.error("Error removing student from group:", error);
+          alert("Failed to remove student from group. Please try again.");
+        }
+      }
+    }
+  });
 
   // Helper function to update member counts in group headers
   function updateGroupMemberCounts() {

@@ -8,13 +8,10 @@
  * @prop {string} value - The value to display (e.g., "1", "191.7 KB")
  * @prop {string} variant - Visual variant: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'
  * @prop {string} size - Size variant: 'sm' | 'md' | 'lg'
+ * @prop {boolean} removable - Show a remove/close button
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "lit";
+import { LitElement, html, css } from "lit";
 
 class DSBadge extends LitElement {
   static properties = {
@@ -22,6 +19,7 @@ class DSBadge extends LitElement {
     value: { type: String },
     variant: { type: String },
     size: { type: String },
+    removable: { type: Boolean },
   };
 
   static styles = css`
@@ -43,11 +41,50 @@ class DSBadge extends LitElement {
       white-space: nowrap;
       line-height: var(--leading-tight);
       transition: var(--transition-colors);
+      position: relative;
+    }
+
+    .badge.removable {
+      padding-right: var(--space-6);
     }
 
     .badge-value {
       color: var(--color-text-primary);
       font-weight: var(--weight-semibold);
+    }
+
+    .remove-btn {
+      position: absolute;
+      right: 4px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: currentColor;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1;
+      transition: all 0.2s ease;
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    .remove-btn:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .badge.variant-primary .remove-btn:hover,
+    .badge.variant-success .remove-btn:hover,
+    .badge.variant-warning .remove-btn:hover,
+    .badge.variant-danger .remove-btn:hover,
+    .badge.variant-info .remove-btn:hover {
+      background: rgba(0, 0, 0, 0.2);
     }
 
     /* Size variants */
@@ -140,10 +177,26 @@ class DSBadge extends LitElement {
     this.value = "";
     this.variant = "default";
     this.size = "md";
+    this.removable = false;
+  }
+
+  _handleRemove(e) {
+    e.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent("remove", {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   render() {
-    const classes = ["badge", `variant-${this.variant}`, `size-${this.size}`]
+    const classes = [
+      "badge",
+      `variant-${this.variant}`,
+      `size-${this.size}`,
+      this.removable ? "removable" : "",
+    ]
       .filter(Boolean)
       .join(" ");
 
@@ -152,6 +205,15 @@ class DSBadge extends LitElement {
       return html`
         <div class="${classes}">
           ${this.label} <span class="badge-value">${this.value}</span>
+          ${this.removable
+            ? html`<button
+                class="remove-btn"
+                @click="${this._handleRemove}"
+                title="Remove"
+              >
+                ✕
+              </button>`
+            : ""}
         </div>
       `;
     }
@@ -160,6 +222,15 @@ class DSBadge extends LitElement {
     return html`
       <div class="${classes}">
         <slot></slot>
+        ${this.removable
+          ? html`<button
+              class="remove-btn"
+              @click="${this._handleRemove}"
+              title="Remove"
+            >
+              ✕
+            </button>`
+          : ""}
       </div>
     `;
   }
