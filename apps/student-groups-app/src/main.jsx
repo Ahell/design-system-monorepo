@@ -1168,6 +1168,7 @@ function displayCategoryTabs(categories) {
     const categoryId = typeof category === "string" ? category : category.id;
     radio.value = categoryName;
     radio.label = categoryName;
+    radio.size = "sm";
     radio.setAttribute("data-category-id", categoryId);
     if (index === 0) {
       radio.checked = true;
@@ -1327,6 +1328,7 @@ function generateGroupsContent(groups, categoryName) {
                 <ds-stack gap="3">
                   <ds-inline align="start" gap="3">
                     <ds-checkbox 
+                      size="sm"
                       class="group-checkbox" 
                       data-group-id="${group.id}" 
                       data-group-name="${group.name}"
@@ -1419,7 +1421,12 @@ function generateDragDropGroupsInterface(
           <!-- First Column: Unassigned Students -->
           <div>
             <!-- Unassigned Students Card -->
-            <ds-card variant="secondary" style="display: flex; flex-direction: column; height: 600px;">
+            <ds-card 
+              variant="secondary" 
+              class="drop-zone unassigned-card" 
+              data-zone-type="unassigned"
+              style="display: flex; flex-direction: column; height: 600px;"
+            >
               <ds-card-content style="flex: 1; display: flex; flex-direction: column; gap: var(--space-3);">
                 <ds-stack gap="3">
                   <div style="font-weight: var(--weight-semibold); font-size: var(--text-sm); color: var(--color-text-secondary);">
@@ -1428,14 +1435,14 @@ function generateDragDropGroupsInterface(
                   <ds-input
                     id="unassigned-search"
                     type="text"
+                    size="sm"
                     placeholder="Search students..."
                     style="width: 100%;"
                   ></ds-input>
                 </ds-stack>
                 <ds-stack 
                   gap="2" 
-                  class="drop-zone unassigned-zone" 
-                  data-zone-type="unassigned"
+                  class="unassigned-zone" 
                   style="
                     flex: 1;
                     min-height: 0;
@@ -1523,6 +1530,7 @@ function generateDragDropGroupsInterface(
                     <ds-flex justify="space-between" align="center" class="group-header">
                       <ds-flex align="center" gap="2">
                         <ds-checkbox 
+                          size="sm"
                           class="group-checkbox" 
                           data-group-id="${group.id}" 
                           data-group-name="${group.name}"
@@ -2382,8 +2390,13 @@ function setupDragDropHandlers(categoryName) {
 
       // If dropping into unassigned zone, insert in alphabetical order by sortable_name
       if (zoneType === "unassigned") {
+        // If zone is the card, find the inner stack element
+        const targetZone = zone.classList.contains("unassigned-card")
+          ? zone.querySelector(".unassigned-zone")
+          : zone;
+
         const existingStudents = Array.from(
-          zone.querySelectorAll(".draggable-student")
+          targetZone.querySelectorAll(".draggable-student")
         );
         let inserted = false;
 
@@ -2402,12 +2415,12 @@ function setupDragDropHandlers(categoryName) {
 
         // If not inserted yet, add at the end
         if (!inserted) {
-          zone.insertAdjacentHTML("beforeend", newBadgeHTML);
+          targetZone.insertAdjacentHTML("beforeend", newBadgeHTML);
         }
 
         // Update originalUnassignedStudents array
         originalUnassignedStudents.push({
-          element: zone.lastElementChild,
+          element: targetZone.lastElementChild,
           id: draggedStudent.id,
           name: draggedStudent.name,
           sortable_name: draggedStudent.sortable_name,

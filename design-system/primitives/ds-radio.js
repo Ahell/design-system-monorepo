@@ -38,7 +38,7 @@ export class DSRadio extends LitElement {
 
     .radio-wrapper {
       display: inline-flex;
-      align-items: flex-start;
+      align-items: center;
       gap: var(--space-3);
       cursor: pointer;
       user-select: none;
