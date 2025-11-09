@@ -2308,7 +2308,7 @@ function setupDragDropHandlers(categoryName) {
 
     zone.addEventListener("drop", async (e) => {
       e.preventDefault();
-      
+
       // Stop propagation to prevent bubbling to parent cards
       e.stopPropagation();
 
@@ -2360,11 +2360,12 @@ function setupDragDropHandlers(categoryName) {
           data-student-name="${draggedStudent.name}"
           data-student-sortable-name="${draggedStudent.sortable_name}"
           data-current-group="${targetGroup}"
+          ${zoneType !== "unassigned" ? `data-group-id="${targetGroup}"` : ""}
           style="cursor: move; transition: all 0.2s ease;"
         >
           <ds-badge variant="${
             zoneType === "unassigned" ? "default" : "primary"
-          }" size="md">
+          }" size="md"${zoneType !== "unassigned" ? " removable" : ""}>
             ${draggedStudent.name}
           </ds-badge>
         </div>
@@ -2488,7 +2489,34 @@ function setupDragDropHandlers(categoryName) {
 
         if (targetGroup !== "unassigned") {
           // Add to new group
-          await addStudentToGroup(targetGroup, draggedStudent.id);
+          const membershipResponse = await addStudentToGroup(
+            targetGroup,
+            draggedStudent.id
+          );
+
+          console.log("Membership response:", membershipResponse);
+
+          // Update the newly added badge with the membership ID
+          const newBadgeElement = categoryContent.querySelector(
+            `.student-badge[data-student-id="${draggedStudent.id}"][data-current-group="${targetGroup}"]`
+          );
+          console.log("Found new badge element:", newBadgeElement);
+
+          if (newBadgeElement && membershipResponse.id) {
+            newBadgeElement.setAttribute(
+              "data-membership-id",
+              membershipResponse.id
+            );
+            console.log("Set membership ID:", membershipResponse.id);
+          } else {
+            console.warn(
+              "Could not set membership ID - element or ID missing",
+              {
+                element: !!newBadgeElement,
+                membershipId: membershipResponse?.id,
+              }
+            );
+          }
         }
 
         console.log("Successfully updated group membership in Canvas");
@@ -2533,6 +2561,22 @@ function setupDragDropHandlers(categoryName) {
         const unassignedZone =
           categoryContent.querySelector(".unassigned-zone");
         if (!unassignedZone) return;
+
+        console.log(
+          "Remove clicked - membershipId:",
+          membershipId,
+          "groupId:",
+          groupId,
+          "studentId:",
+          studentId
+        );
+
+        // Check if membershipId exists
+        if (!membershipId) {
+          console.error("Missing membership ID for student removal");
+          alert("Failed to remove student from group. Missing membership ID.");
+          return;
+        }
 
         try {
           // Remove from Canvas API

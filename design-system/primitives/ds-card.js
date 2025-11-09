@@ -97,7 +97,8 @@ export class DSCard extends LitElement {
 
     /* Drag over state */
     .card.drag-over {
-      border: 2px dashed var(--color-primary-main) !important;
+      outline: 2px dashed var(--color-primary-main) !important;
+      outline-offset: -2px !important;
     }
 
     /* Variant styles */
