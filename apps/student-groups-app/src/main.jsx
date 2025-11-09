@@ -1425,10 +1425,10 @@ function generateDragDropGroupsInterface(
               variant="secondary" 
               class="drop-zone unassigned-card" 
               data-zone-type="unassigned"
-              style="display: flex; flex-direction: column; height: 600px;"
+              style="display: flex; flex-direction: column; overflow: visible;"
             >
-              <ds-card-content style="flex: 1; display: flex; flex-direction: column; gap: var(--space-3);">
-                <ds-stack gap="3">
+              <ds-card-content style="display: flex; flex-direction: column; gap: var(--space-3); overflow: visible; flex: 1; min-height: 0;">
+                <ds-stack gap="3" style="flex-shrink: 0; overflow: visible;">
                   <div style="font-weight: var(--weight-semibold); font-size: var(--text-sm); color: var(--color-text-secondary);">
                     Unassigned Students (${unassignedStudents.length})
                   </div>
@@ -1446,6 +1446,7 @@ function generateDragDropGroupsInterface(
                   style="
                     flex: 1;
                     min-height: 0;
+                    align-content: flex-start;
                     padding: var(--space-2) 0;
                     overflow-y: auto;
                     transition: all 0.2s ease;
@@ -1527,7 +1528,7 @@ function generateDragDropGroupsInterface(
                           group.name
                         }" style="min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
                   <ds-card-content>
-                    <ds-flex justify="space-between" align="center" class="group-header">
+                    <ds-flex justify="space-between" align="center" data-role="group-header" style="margin-bottom: var(--space-4);">
                       <ds-flex align="center" gap="2">
                         <ds-checkbox 
                           size="sm"
@@ -1548,13 +1549,12 @@ function generateDragDropGroupsInterface(
                           ${group.name} (${group.members.length})
                         </div>
                       </ds-flex>
-                      <ds-flex gap="1">
+                      <ds-flex gap="1" style="margin-left: var(--space-3);">
                         <ds-button 
                           size="sm" 
                           variant="ghost"
                           class="edit-group-btn"
                           data-group-id="${group.id}"
-                          style="min-width: 60px;"
                         >
                           Edit
                         </ds-button>
@@ -1563,7 +1563,6 @@ function generateDragDropGroupsInterface(
                           variant="ghost"
                           class="toggle-group-btn"
                           data-group-id="${group.id}"
-                          style="min-width: 80px;"
                         >
                           <span class="toggle-text">Expand</span>
                         </ds-button>
@@ -1942,18 +1941,19 @@ function setupDragDropHandlers(categoryName) {
     });
   }
 
-  // Setup expand/collapse for groups
-  const toggleButtons = categoryContent.querySelectorAll(".toggle-group-btn");
-  toggleButtons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const groupId = btn.getAttribute("data-group-id");
+  // Setup group name editing using event delegation
+  categoryContent.addEventListener("click", (e) => {
+    // Check if toggle button was clicked
+    const toggleBtn = e.target.closest(".toggle-group-btn");
+    if (toggleBtn) {
+      const groupId = toggleBtn.getAttribute("data-group-id");
       const membersContainer = categoryContent.querySelector(
         `.group-members[data-group-id="${groupId}"]`
       );
       const groupCard = categoryContent.querySelector(
         `.group-card[data-group-id="${groupId}"]`
       );
-      const toggleText = btn.querySelector(".toggle-text");
+      const toggleText = toggleBtn.querySelector(".toggle-text");
 
       if (
         membersContainer.style.display === "none" ||
@@ -1973,27 +1973,40 @@ function setupDragDropHandlers(categoryName) {
           groupCard.classList.add("drop-zone");
         }
       }
-    });
-  });
+      return;
+    }
 
-  // Setup group name editing
-  const editButtons = categoryContent.querySelectorAll(".edit-group-btn");
-  editButtons.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const groupId = btn.getAttribute("data-group-id");
+    // Check if edit button was clicked
+    const editBtn = e.target.closest(".edit-group-btn");
+    if (editBtn) {
+      const groupId = editBtn.getAttribute("data-group-id");
       startEditingGroupName(groupId);
-    });
-  });
+      return;
+    }
 
-  // Also allow clicking on group name to edit
-  const groupNameDisplays = categoryContent.querySelectorAll(
-    ".group-name-display"
-  );
-  groupNameDisplays.forEach((display) => {
-    display.addEventListener("click", (e) => {
-      const groupId = display.getAttribute("data-group-id");
+    // Check if save button was clicked
+    const saveBtn = e.target.closest(".save-group-name-btn");
+    if (saveBtn) {
+      const groupId = saveBtn.getAttribute("data-group-id");
+      saveGroupName(groupId);
+      return;
+    }
+
+    // Check if cancel button was clicked
+    const cancelBtn = e.target.closest(".cancel-edit-btn");
+    if (cancelBtn) {
+      const groupId = cancelBtn.getAttribute("data-group-id");
+      cancelGroupNameEdit(groupId);
+      return;
+    }
+
+    // Also allow clicking on group name to edit
+    const groupNameDisplay = e.target.closest(".group-name-display");
+    if (groupNameDisplay) {
+      const groupId = groupNameDisplay.getAttribute("data-group-id");
       startEditingGroupName(groupId);
-    });
+      return;
+    }
   });
 
   // Function to start editing a group name
@@ -2006,25 +2019,39 @@ function setupDragDropHandlers(categoryName) {
     const groupNameDisplay = groupContainer.querySelector(
       ".group-name-display"
     );
-    const editBtn = groupContainer.querySelector(".edit-group-btn");
-    const toggleBtn = groupContainer.querySelector(".toggle-group-btn");
-
-    if (!groupNameDisplay || !editBtn || !toggleBtn) return;
+    if (!groupNameDisplay) return;
 
     // Get current name (without member count)
     const currentFullText = groupNameDisplay.textContent;
     const currentName = currentFullText.replace(/\s*\(\d+\)\s*$/, "").trim();
 
-    // Replace display with input and buttons
-    const editHTML = `
-      <ds-flex align="center" gap="2" style="flex: 1;">
+    // Check if checkbox is currently checked
+    const checkbox = groupContainer.querySelector(".group-checkbox");
+    const isChecked = checkbox ? checkbox.checked : false;
+
+    // Re-render the group header in edit mode
+    const groupHeader = groupContainer.querySelector(
+      '[data-role="group-header"]'
+    );
+    if (!groupHeader) return;
+
+    groupHeader.innerHTML = `
+      <ds-flex align="center" gap="2">
+        <ds-checkbox 
+          size="sm"
+          class="group-checkbox" 
+          data-group-id="${groupId}"
+          ${isChecked ? "checked" : ""}
+        ></ds-checkbox>
         <ds-input
           type="text"
+          size="sm"
           value="${currentName}"
           class="group-name-input"
           data-group-id="${groupId}"
-          style="flex: 1; min-width: 150px;"
         ></ds-input>
+      </ds-flex>
+      <ds-flex gap="1" style="margin-left: var(--space-3);">
         <ds-button 
           size="sm" 
           variant="primary"
@@ -2044,48 +2071,27 @@ function setupDragDropHandlers(categoryName) {
       </ds-flex>
     `;
 
-    // Hide original elements and show edit interface
-    groupNameDisplay.style.display = "none";
-    editBtn.style.display = "none";
-    toggleBtn.style.display = "none";
-
-    // Insert edit interface after the checkbox
-    const checkbox = groupContainer.querySelector(".group-checkbox");
-    if (checkbox) {
-      checkbox.insertAdjacentHTML("afterend", editHTML);
-    }
-
     // Focus the input
     setTimeout(() => {
       const input = groupContainer.querySelector(".group-name-input");
       if (input) {
         input.focus();
-        input.select();
       }
     }, 100);
 
-    // Setup save and cancel handlers
-    const saveBtn = groupContainer.querySelector(".save-group-name-btn");
-    const cancelBtn = groupContainer.querySelector(".cancel-edit-btn");
-    const input = groupContainer.querySelector(".group-name-input");
-
-    if (saveBtn) {
-      saveBtn.addEventListener("click", () => saveGroupName(groupId));
-    }
-
-    if (cancelBtn) {
-      cancelBtn.addEventListener("click", () => cancelGroupNameEdit(groupId));
-    }
-
-    if (input) {
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          saveGroupName(groupId);
-        } else if (e.key === "Escape") {
-          cancelGroupNameEdit(groupId);
-        }
-      });
-    }
+    // Setup keyboard handlers (Enter/Escape)
+    setTimeout(() => {
+      const input = groupContainer.querySelector(".group-name-input");
+      if (input) {
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            saveGroupName(groupId);
+          } else if (e.key === "Escape") {
+            cancelGroupNameEdit(groupId);
+          }
+        });
+      }
+    }, 100);
   }
 
   // Function to save group name changes
@@ -2104,12 +2110,8 @@ function setupDragDropHandlers(categoryName) {
       return;
     }
 
-    // Get current name to check if changed
-    const groupNameDisplay = groupContainer.querySelector(
-      ".group-name-display"
-    );
-    const currentFullText = groupNameDisplay.textContent;
-    const currentName = currentFullText.replace(/\s*\(\d+\)\s*$/, "").trim();
+    // Get current name from container data attribute
+    const currentName = groupContainer.getAttribute("data-group-name") || "";
 
     if (newName === currentName) {
       // No change, just cancel edit
@@ -2126,15 +2128,18 @@ function setupDragDropHandlers(categoryName) {
       }
 
       // Make API call to update group
-      const response = await fetch(`/api/canvas/groups/${groupId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newName,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/canvas/groups/${groupId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: newName,
+          }),
+        }
+      );
 
       if (!response.ok) {
         let errorMessage = "Failed to update group name";
@@ -2197,22 +2202,66 @@ function setupDragDropHandlers(categoryName) {
     );
     if (!groupContainer) return;
 
-    // Remove edit interface
-    const editInterface = groupContainer.querySelector("ds-flex");
-    if (editInterface && editInterface.querySelector(".group-name-input")) {
-      editInterface.remove();
-    }
+    // Get the group name from the container data attribute
+    const groupName = groupContainer.getAttribute("data-group-name") || "Group";
 
-    // Show original elements
-    const groupNameDisplay = groupContainer.querySelector(
-      ".group-name-display"
+    // Get member count by counting the members
+    const membersContainer = groupContainer.querySelector(".group-members");
+    const memberCount = membersContainer
+      ? membersContainer.querySelectorAll(".draggable-student").length
+      : 0;
+
+    // Check if checkbox is currently checked
+    const checkbox = groupContainer.querySelector(".group-checkbox");
+    const isChecked = checkbox ? checkbox.checked : false;
+
+    // Re-render the group header in normal mode
+    const groupHeader = groupContainer.querySelector(
+      '[data-role="group-header"]'
     );
-    const editBtn = groupContainer.querySelector(".edit-group-btn");
-    const toggleBtn = groupContainer.querySelector(".toggle-group-btn");
+    if (!groupHeader) return;
 
-    if (groupNameDisplay) groupNameDisplay.style.display = "";
-    if (editBtn) editBtn.style.display = "";
-    if (toggleBtn) toggleBtn.style.display = "";
+    groupHeader.innerHTML = `
+      <ds-flex align="center" gap="2">
+        <ds-checkbox 
+          size="sm"
+          class="group-checkbox" 
+          data-group-id="${groupId}" 
+          data-group-name="${groupName}"
+          ${isChecked ? "checked" : ""}
+        ></ds-checkbox>
+        <div 
+          class="group-name-display"
+          style="
+            font-weight: var(--weight-semibold);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+          "
+          data-group-id="${groupId}"
+        >
+          ${groupName} (${memberCount})
+        </div>
+      </ds-flex>
+      <ds-flex gap="1" style="margin-left: var(--space-3);">
+        <ds-button 
+          size="sm" 
+          variant="ghost"
+          class="edit-group-btn"
+          data-group-id="${groupId}"
+        >
+          Edit
+        </ds-button>
+        <ds-button 
+          size="sm" 
+          variant="ghost"
+          class="toggle-group-btn"
+          data-group-id="${groupId}"
+        >
+          <span class="toggle-text">Expand</span>
+        </ds-button>
+      </ds-flex>
+    `;
   }
 
   // Function to update group name throughout the UI

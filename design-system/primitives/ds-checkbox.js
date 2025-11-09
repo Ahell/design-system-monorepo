@@ -30,7 +30,7 @@ export class DSCheckbox extends LitElement {
   static styles = css`
     :host {
       display: inline-block;
-      align-self: flex-start;
+      align-self: center;
       color: var(--color-text-primary);
       font-family: var(--font-sans);
     }
