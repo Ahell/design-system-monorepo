@@ -1562,8 +1562,9 @@ function generateDragDropGroupsInterface(
                     <ds-inline 
                       gap="2"
                       wrap
-                      class="group-members"
+                      class="group-members drop-zone"
                       data-group-id="${group.id}"
+                      data-zone-type="group"
                       style="
                         display: none;
                         min-height: 40px;
@@ -1938,17 +1939,28 @@ function setupDragDropHandlers(categoryName) {
       const membersContainer = categoryContent.querySelector(
         `.group-members[data-group-id="${groupId}"]`
       );
+      const groupCard = categoryContent.querySelector(
+        `.group-card[data-group-id="${groupId}"]`
+      );
       const toggleText = btn.querySelector(".toggle-text");
 
       if (
         membersContainer.style.display === "none" ||
         !membersContainer.style.display
       ) {
+        // Expanding: show members, remove drop-zone from card
         membersContainer.style.display = "flex";
         toggleText.textContent = "Collapse";
+        if (groupCard) {
+          groupCard.classList.remove("drop-zone");
+        }
       } else {
+        // Collapsing: hide members, add drop-zone back to card
         membersContainer.style.display = "none";
         toggleText.textContent = "Expand";
+        if (groupCard) {
+          groupCard.classList.add("drop-zone");
+        }
       }
     });
   });
@@ -2267,16 +2279,13 @@ function setupDragDropHandlers(categoryName) {
 
       // Highlight drop zone - handle both div and ds-card elements
       if (zone.tagName === "DS-CARD") {
-        zone.style.setProperty(
-          "--card-border-color",
-          "var(--color-primary-main)"
-        );
-        zone.style.setProperty(
-          "--card-bg-color",
-          "var(--color-primary-surface)"
-        );
+        // Only apply dragOver effect if card still has drop-zone class (collapsed state)
+        if (zone.classList.contains("drop-zone")) {
+          zone.dragOver = true;
+        }
       } else {
-        // For regular div elements
+        // For regular div elements (stop propagation to prevent parent cards from reacting)
+        e.stopPropagation();
         zone.style.borderColor = "var(--color-primary-main)";
         zone.style.background = "var(--color-primary-surface)";
       }
@@ -2287,10 +2296,10 @@ function setupDragDropHandlers(categoryName) {
       if (e.target === zone) {
         // Reset drop zone styling - handle both div and ds-card elements
         if (zone.tagName === "DS-CARD") {
-          zone.style.removeProperty("--card-border-color");
-          zone.style.removeProperty("--card-bg-color");
+          zone.dragOver = false;
         } else {
           // For regular div elements
+          e.stopPropagation();
           zone.style.borderColor = "var(--color-border)";
           zone.style.background = "var(--color-surface)";
         }
@@ -2299,8 +2308,16 @@ function setupDragDropHandlers(categoryName) {
 
     zone.addEventListener("drop", async (e) => {
       e.preventDefault();
+      
+      // Stop propagation to prevent bubbling to parent cards
+      e.stopPropagation();
 
       if (!draggedStudent) return;
+
+      // If this is a card without drop-zone class (expanded), ignore the drop
+      if (zone.tagName === "DS-CARD" && !zone.classList.contains("drop-zone")) {
+        return;
+      }
 
       const zoneType = zone.getAttribute("data-zone-type");
       const targetGroupId = zone.getAttribute("data-group-id");
@@ -2308,8 +2325,7 @@ function setupDragDropHandlers(categoryName) {
 
       // Reset zone styling
       if (zone.tagName === "DS-CARD") {
-        zone.style.removeProperty("--card-border-color");
-        zone.style.removeProperty("--card-bg-color");
+        zone.dragOver = false;
       } else {
         zone.style.borderColor = "var(--color-border)";
         zone.style.background = "var(--color-surface)";
@@ -2411,17 +2427,7 @@ function setupDragDropHandlers(categoryName) {
         if (membersContainer) {
           membersContainer.insertAdjacentHTML("beforeend", newBadgeHTML);
 
-          // If the group was collapsed, expand it
-          if (wasCollapsed) {
-            membersContainer.style.display = "flex";
-            const toggleBtn = zone.querySelector(".toggle-group-btn");
-            if (toggleBtn) {
-              const toggleText = toggleBtn.querySelector(".toggle-text");
-              if (toggleText) {
-                toggleText.textContent = "Collapse";
-              }
-            }
-          }
+          // Don't auto-expand - keep the group collapsed if it was collapsed
         } else {
           console.error("Could not find members container for group");
         }
@@ -2860,46 +2866,6 @@ function setupGroupSelectionHandlers(categoryName) {
         }, 10);
       }
     }
-  });
-
-  // Handle card clicks to toggle checkbox
-  groupCards.forEach((card) => {
-    card.addEventListener("click", (e) => {
-      // Don't toggle if clicking on the checkbox itself
-      if (
-        e.target.tagName === "DS-CHECKBOX" ||
-        e.target.closest("ds-checkbox")
-      ) {
-        return;
-      }
-      const groupId = card.getAttribute("data-group-id");
-      const checkbox = card.querySelector(".group-checkbox");
-      if (checkbox) {
-        const newCheckedState = !checkbox.checked;
-        checkbox.checked = newCheckedState;
-        console.log(
-          "Card clicked, setting checkbox:",
-          groupId,
-          newCheckedState
-        );
-
-        // Manually update selection
-        if (newCheckedState) {
-          selectedGroups.add(groupId);
-        } else {
-          selectedGroups.delete(groupId);
-        }
-        updateSelectionUI();
-
-        // Also dispatch a change event to be safe
-        checkbox.dispatchEvent(
-          new CustomEvent("change", {
-            detail: { checked: newCheckedState },
-            bubbles: true,
-          })
-        );
-      }
-    });
   });
 
   // Select all button

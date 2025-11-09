@@ -14,6 +14,7 @@ export class DSCard extends LitElement {
     elevated: { type: Boolean },
     interactive: { type: Boolean },
     borderless: { type: Boolean },
+    dragOver: { type: Boolean, reflect: true },
   };
 
   constructor() {
@@ -23,6 +24,7 @@ export class DSCard extends LitElement {
     this.elevated = false;
     this.interactive = false;
     this.borderless = false;
+    this.dragOver = false;
   }
 
   static styles = css`
@@ -91,6 +93,11 @@ export class DSCard extends LitElement {
     /* Borderless variant */
     .card.borderless {
       border: none;
+    }
+
+    /* Drag over state */
+    .card.drag-over {
+      border: 2px dashed var(--color-primary-main) !important;
     }
 
     /* Variant styles */
@@ -190,6 +197,7 @@ export class DSCard extends LitElement {
       this.elevated ? "elevated" : "",
       this.interactive ? "interactive" : "",
       this.borderless ? "borderless" : "",
+      this.dragOver ? "drag-over" : "",
     ]
       .filter(Boolean)
       .join(" ");
