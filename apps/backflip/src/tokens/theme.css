@@ -19,6 +19,7 @@
   --color-pure-black: #000000;
   --color-pure-white: #ffffff;
   --color-bright-gold: #f3ce57; /* primary brand gold */
+  --color-bright-gold-dark: #f0c800; /* brighter, more yellow tone of bright gold */
 
   /* Derived colors for scales */
   --color-dark-grey: #333333;

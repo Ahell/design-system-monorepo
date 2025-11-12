@@ -58,16 +58,17 @@ export class BackflipWhoAreWe extends LitElement {
 
     .image-section {
       flex: 0 0 120px;
-      height: 160px;
-      border-radius: var(--radius-lg);
+      height: auto;
       overflow: hidden;
       box-shadow: var(--shadow-lg);
     }
 
     .image-section img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 160px;
+      object-fit: contain;
       display: block;
     }
 
@@ -76,12 +77,11 @@ export class BackflipWhoAreWe extends LitElement {
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: var(--space-4);
       color: var(--color-text-primary);
     }
 
     .who-are-we-title {
-      font-size: var(--text-2xl);
+      font-size: var(--text-lg);
       font-weight: var(--weight-black);
       font-family: var(--font-display);
       margin: 0;

@@ -14,6 +14,7 @@ export class BackflipSingleMovie extends LitElement {
     imageUrl: { type: String },
     buttonLabel: { type: String },
     videoUrl: { type: String },
+    theme: { type: String },
   };
 
   static styles = css`
@@ -28,6 +29,10 @@ export class BackflipSingleMovie extends LitElement {
       display: flex;
       flex-direction: column;
       width: 100%;
+      padding-top: 80px;
+    }
+
+    .single-movie-grid:not(.inverted) {
       background-color: var(--color-text-primary);
     }
 
@@ -63,10 +68,11 @@ export class BackflipSingleMovie extends LitElement {
     }
 
     .media-image {
-      width: 100%;
-      height: 400px;
-      object-fit: cover;
-      border-radius: var(--radius-lg);
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
       box-shadow: var(--shadow-lg);
       margin-bottom: var(--space-6);
     }
@@ -117,6 +123,38 @@ export class BackflipSingleMovie extends LitElement {
       text-align: left;
       width: fit-content;
     }
+
+    /* Inverted theme */
+    .inverted .single-movie-grid {
+      background-color: white;
+    }
+
+    .inverted .content-section {
+      background-color: white;
+    }
+
+    .inverted .video-section {
+      background-color: white;
+    }
+
+    .inverted .media-container,
+    .inverted .media-description,
+    .inverted .media-creator {
+      color: black;
+    }
+
+    .inverted .media-title {
+      color: var(--color-bright-gold-dark);
+    }
+
+    .inverted .media-description {
+      opacity: 1;
+    }
+
+    .inverted .media-button {
+      background-color: var(--color-bright-gold-dark);
+      color: var(--color-text-primary);
+    }
   `;
 
   connectedCallback() {
@@ -136,7 +174,9 @@ export class BackflipSingleMovie extends LitElement {
     };
 
     return html`
-      <div class="single-movie-grid">
+      <div class="single-movie-grid ${
+        this.theme === "inverted" ? "inverted" : ""
+      }">
         <div class="video-section">
           <video
             class="single-movie-video"
