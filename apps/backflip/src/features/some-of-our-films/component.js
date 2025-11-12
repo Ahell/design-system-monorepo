@@ -123,8 +123,8 @@ export class BackflipSomeOfOurFilms extends LitElement {
   }
 
   _navigateToMovieDetail(movieId) {
-    // Navigate to the detailed single movie page with the specific movie ID
-    window.location.hash = `#detailed-single-movie?movieId=${movieId}`;
+    // Navigate to the detailed single movie page
+    window.location.hash = "#detailed-single-movie";
   }
 
   render() {

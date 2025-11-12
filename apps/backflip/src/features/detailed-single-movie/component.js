@@ -157,16 +157,6 @@ export class BackflipDetailedSingleMovie extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     initializeDetailedSingleMovie();
-    this._parseMovieIdFromUrl();
-  }
-
-  _parseMovieIdFromUrl() {
-    // Parse movieId from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get('movieId');
-    if (movieId) {
-      this.movieId = movieId;
-    }
   }
 
   render() {
