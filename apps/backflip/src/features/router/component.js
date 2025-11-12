@@ -24,7 +24,6 @@ export class BackflipRouter extends LitElement {
     backflip-homepage,
     backflip-some-of-our-films,
     backflip-single-movie,
-    backflip-detailed-single-movie,
     backflip-contact {
       flex: 0 0 100vh;
       width: 100%;
@@ -134,7 +133,6 @@ export class BackflipRouter extends LitElement {
       "single-movie",
       "single-movie",
       "single-movie",
-      "detailed-single-movie",
       "contact",
     ];
     const newPage = pages[currentPageIndex] || "home";
@@ -181,7 +179,6 @@ export class BackflipRouter extends LitElement {
         "single-movie",
         "single-movie",
         "single-movie",
-        "detailed-single-movie",
         "contact",
       ];
       const pageIndex = pages.indexOf(page);
@@ -317,9 +314,6 @@ Audience Award."
           videoUrl="./videos/behind_the_swedish_model.mp4"
         >
         </backflip-single-movie>
-        <backflip-detailed-single-movie
-          id="detailed-single-movie"
-        ></backflip-detailed-single-movie>
         <backflip-contact id="contact"></backflip-contact>
       </div>
     `;
