@@ -51,7 +51,7 @@ export class BackflipSingleMovie extends LitElement {
 
     .single-movie-video {
       width: 100%;
-      height: 60vh;
+      aspect-ratio: 16 / 9;
       display: block;
       object-fit: cover;
     }
