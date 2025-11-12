@@ -104,7 +104,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
       aspect-ratio: 16 / 9;
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-lg);
-      object-fit: contain;
+      object-fit: cover;
     }
 
     .description-section {
