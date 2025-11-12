@@ -3,12 +3,6 @@
 
 import { LitElement, html, css } from "lit";
 import { getMenuItems } from "./data.js";
-import {
-  initializeMenu,
-  handleMenuItemClick,
-  getMenuItemStyles,
-  getCurrentPage,
-} from "./logic.js";
 
 export class BackflipMenu extends LitElement {
   static styles = css`
@@ -57,8 +51,7 @@ export class BackflipMenu extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    initializeMenu();
-
+    
     // Listen for page changes
     window.addEventListener("pagechange", () => {
       this.requestUpdate();
@@ -68,9 +61,7 @@ export class BackflipMenu extends LitElement {
     window.addEventListener("hashchange", () => {
       this._updateActiveFromHash();
     });
-  }
-
-  disconnectedCallback() {
+  }  disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener("pagechange", () => {});
     window.removeEventListener("hashchange", () => {});
@@ -78,7 +69,7 @@ export class BackflipMenu extends LitElement {
 
   render() {
     const menuItems = getMenuItems();
-    const currentPage = getCurrentPage();
+    const currentPage = window.location.hash.substring(1) || 'home';
     const isInverted = currentPage === 'about';
 
     return html`
@@ -101,17 +92,41 @@ export class BackflipMenu extends LitElement {
 
   _handleItemClick(event, item) {
     event.preventDefault();
-    handleMenuItemClick(item);
+    
+    // Extract page from href (remove #)
+    const page = item.href.substring(1);
+    
+    // Update URL hash
+    window.location.hash = page;
+    
+    // Scroll to the appropriate position
+    this._scrollToPage(page);
+    
+    // Update active state
+    const items = getMenuItems();
+    items.forEach((menuItem) => {
+      menuItem.active = menuItem.label === item.label;
+    });
+
+    // Dispatch custom event for page changes
+    window.dispatchEvent(new CustomEvent('pagechange', { 
+      detail: { page, item } 
+    }));
+  }
+  
+  _scrollToPage(page) {
+    const pageIndex = page === 'home' ? 0 : page === 'about' ? 1 : 0;
+    const targetScrollY = pageIndex * window.innerHeight;
+    
+    window.scrollTo({
+      top: targetScrollY,
+      behavior: 'smooth'
+    });
   }
 
   _updateActiveFromHash() {
-    const hash = window.location.hash.substring(1) || "home";
-    // This will trigger a pagechange event through handleMenuItemClick
-    const items = getMenuItems();
-    const item = items.find((i) => i.href === `#${hash}`);
-    if (item) {
-      handleMenuItemClick(item);
-    }
+    // Trigger re-render to update active state based on new hash
+    this.requestUpdate();
   }
 }
 

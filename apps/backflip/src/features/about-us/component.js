@@ -36,6 +36,7 @@ export class BackflipAboutUs extends LitElement {
       grid-row: 2;
       grid-column: 2;
       width: 100%;
+      font-family: var(--font-serif);
     }
 
     .footer-container {
@@ -57,26 +58,13 @@ export class BackflipAboutUs extends LitElement {
     .about-us-title {
       grid-column: 2;
       align-self: end;
-      font-size: var(--text-16xl);
-      font-weight: var(--weight-normal);
+      font-size: var(--text-10xl);
+      font-weight: var(--weight-black);
       margin: 0 0 var(--space-4) 0;
       padding: 0;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
       letter-spacing: var(--tracking-tight);
       text-align: left;
-    }
-
-    .about-us-subtitle {
-      grid-column: 2;
-      justify-self: end;
-      align-self: start;
-      font-size: var(--text-2xl);
-      font-weight: var(--weight-bold);
-      margin: 0;
-      opacity: 0.8;
-      text-align: left;
-      line-height: 1.2;
-      max-width: 400px;
     }
   `;
 
@@ -96,7 +84,6 @@ export class BackflipAboutUs extends LitElement {
         <div class="hero-container">
           <div class="about-us-hero">
             <h1 class="about-us-title">${content.title}</h1>
-            <p class="about-us-subtitle">${unsafeHTML(content.subtitle)}</p>
           </div>
         </div>
         <div class="footer-container"></div>
