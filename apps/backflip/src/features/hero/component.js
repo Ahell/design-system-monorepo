@@ -9,8 +9,8 @@ export class BackflipHero extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       background-color: var(--color-bright-gold);
       margin: 0;
       padding: 0;
@@ -25,8 +25,8 @@ export class BackflipHero extends LitElement {
       color: var(--color-text-primary);
       background-color: var(--color-bright-gold);
       width: 100%;
+      height: 100%;
       padding: 0 var(--space-0);
-      min-height: 100vh;
     }
 
     .hero-title {
