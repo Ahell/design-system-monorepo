@@ -4,16 +4,16 @@
 import { getMenuConfig, getMenuItems } from "./data.js";
 
 // Current page state
-let currentPage = 'home';
+let currentPage = "home";
 
 /**
  * Initialize menu functionality
  */
 export function initializeMenu() {
   console.log("🍔 Menu initialized");
-  
+
   // Set initial page from URL hash or default to home
-  const hash = window.location.hash.substring(1) || 'home';
+  const hash = window.location.hash.substring(1) || "home";
   setCurrentPage(hash);
 }
 
@@ -26,10 +26,10 @@ export function handleMenuItemClick(item) {
 
   // Extract page from href (remove #)
   const page = item.href.substring(1);
-  
+
   // Update URL hash
   window.location.hash = page;
-  
+
   // Set current page
   setCurrentPage(page);
 
@@ -40,9 +40,11 @@ export function handleMenuItemClick(item) {
   });
 
   // Dispatch custom event for page changes
-  window.dispatchEvent(new CustomEvent('pagechange', { 
-    detail: { page, item } 
-  }));
+  window.dispatchEvent(
+    new CustomEvent("pagechange", {
+      detail: { page, item },
+    })
+  );
 }
 
 /**
