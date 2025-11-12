@@ -63,44 +63,25 @@ export class BackflipDetailedSingleMovie extends LitElement {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: var(--space-6);
+      margin-top: var(--space-8);
+    }
+
+    .media-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
       margin-bottom: var(--space-8);
-    }
-
-    .meta-item {
-      background-color: var(--color-surface-secondary);
-      padding: var(--space-4);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .meta-label {
-      font-size: var(--text-sm);
-      font-weight: var(--weight-bold);
-      font-family: var(--font-sans);
-      margin: 0 0 var(--space-2) 0;
-      color: var(--color-text-secondary);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-    }
-
-    .meta-value {
-      font-size: var(--text-base);
-      font-weight: var(--weight-normal);
-      font-family: var(--font-sans);
-      margin: 0;
-      color: var(--color-text-primary);
-      line-height: 1.4;
+      align-items: start;
     }
 
     .video-section {
       display: flex;
-      justify-content: center;
-      margin-bottom: var(--space-8);
+      flex-direction: column;
+      gap: var(--space-4);
     }
 
     .video-player {
       width: 100%;
-      max-width: 800px;
       aspect-ratio: 16 / 9;
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-lg);
@@ -112,6 +93,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
       padding: var(--space-6);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
+      height: fit-content;
     }
 
     .description-title {
@@ -167,6 +149,20 @@ export class BackflipDetailedSingleMovie extends LitElement {
             <h1 class="movie-title">${movieData.title}</h1>
           </div>
 
+          <div class="media-section">
+            <div class="video-section">
+              <video class="video-player" controls poster="${movieData.imageUrl}">
+                <source src="${movieData.videoUrl}" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            <div class="description-section">
+              <h2 class="description-title">About the Film</h2>
+              <p class="description-text">${movieData.description}</p>
+            </div>
+          </div>
+
           <div class="movie-meta">
             <div class="meta-item">
               <div class="meta-label">Year</div>
@@ -196,18 +192,6 @@ export class BackflipDetailedSingleMovie extends LitElement {
               <div class="meta-label">With Support From</div>
               <div class="meta-value">${movieData.support}</div>
             </div>
-          </div>
-
-          <div class="video-section">
-            <video class="video-player" controls poster="${movieData.imageUrl}">
-              <source src="${movieData.videoUrl}" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-
-          <div class="description-section">
-            <h2 class="description-title">About the Film</h2>
-            <p class="description-text">${movieData.description}</p>
           </div>
         </div>
         <div class="footer-container"></div>
