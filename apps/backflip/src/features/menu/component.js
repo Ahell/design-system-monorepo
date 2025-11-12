@@ -51,7 +51,7 @@ export class BackflipMenu extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    
+
     // Listen for page changes
     window.addEventListener("pagechange", () => {
       this.requestUpdate();
@@ -61,7 +61,8 @@ export class BackflipMenu extends LitElement {
     window.addEventListener("hashchange", () => {
       this._updateActiveFromHash();
     });
-  }  disconnectedCallback() {
+  }
+  disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener("pagechange", () => {});
     window.removeEventListener("hashchange", () => {});
@@ -69,11 +70,11 @@ export class BackflipMenu extends LitElement {
 
   render() {
     const menuItems = getMenuItems();
-    const currentPage = window.location.hash.substring(1) || 'home';
-    const isInverted = currentPage === 'about';
+    const currentPage = window.location.hash.substring(1) || "home";
+    const isInverted = currentPage === "about";
 
     return html`
-      <nav class="menu ${isInverted ? 'inverted' : ''}">
+      <nav class="menu ${isInverted ? "inverted" : ""}">
         ${menuItems.map((item) => {
           const isActive = item.href.substring(1) === currentPage;
           return html`
@@ -92,16 +93,16 @@ export class BackflipMenu extends LitElement {
 
   _handleItemClick(event, item) {
     event.preventDefault();
-    
+
     // Extract page from href (remove #)
     const page = item.href.substring(1);
-    
+
     // Update URL hash
     window.location.hash = page;
-    
+
     // Scroll to the appropriate position
     this._scrollToPage(page);
-    
+
     // Update active state
     const items = getMenuItems();
     items.forEach((menuItem) => {
@@ -109,18 +110,27 @@ export class BackflipMenu extends LitElement {
     });
 
     // Dispatch custom event for page changes
-    window.dispatchEvent(new CustomEvent('pagechange', { 
-      detail: { page, item } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent("pagechange", {
+        detail: { page, item },
+      })
+    );
   }
-  
+
   _scrollToPage(page) {
-    const pageIndex = page === 'home' ? 0 : page === 'about' ? 1 : page === 'who-are-we' ? 2 : 0;
+    const pageIndex =
+      page === "home"
+        ? 0
+        : page === "about"
+        ? 1
+        : page === "who-are-we"
+        ? 2
+        : 0;
     const targetScrollY = pageIndex * window.innerHeight;
-    
+
     window.scrollTo({
       top: targetScrollY,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   }
 

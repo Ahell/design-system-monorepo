@@ -17,4 +17,6 @@ import { BackflipRouter } from "./features/router/index.js";
 
 // Add any Backflip-specific initialization here
 console.log("🎪 Backflip app initialized with design system components!");
-console.log("🏠 Homepage, Hero, Menu, About Us, Who Are We, and Router features loaded");
+console.log(
+  "🏠 Homepage, Hero, Menu, About Us, Who Are We, and Router features loaded"
+);

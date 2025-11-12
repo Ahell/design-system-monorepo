@@ -36,9 +36,26 @@ export class BackflipWhoAreWe extends LitElement {
       grid-column: 2;
       width: 100%;
       display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      padding: var(--space-4) 0;
+      max-width: 1000px;
+      margin: 0 auto;
+      overflow-y: auto;
+    }
+
+    .section-item {
+      display: flex;
       align-items: center;
       gap: var(--space-8);
-      padding: var(--space-8) 0;
+    }
+
+    .section-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .section-item:nth-child(even) .text-section {
+      text-align: right;
     }
 
     .footer-container {
@@ -48,8 +65,8 @@ export class BackflipWhoAreWe extends LitElement {
     }
 
     .image-section {
-      flex: 0 0 400px;
-      height: 300px;
+      flex: 0 0 350px;
+      height: 220px;
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-lg);
@@ -67,12 +84,12 @@ export class BackflipWhoAreWe extends LitElement {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: var(--space-6);
+      gap: var(--space-4);
       color: var(--color-text-primary);
     }
 
     .who-are-we-title {
-      font-size: var(--text-8xl);
+      font-size: var(--text-6xl);
       font-weight: var(--weight-black);
       font-family: var(--font-serif);
       margin: 0;
@@ -105,13 +122,19 @@ export class BackflipWhoAreWe extends LitElement {
           <backflip-menu></backflip-menu>
         </div>
         <div class="content-container">
-          <div class="image-section">
-            <img src="${content.imageUrl}" alt="Our team" />
-          </div>
-          <div class="text-section">
-            <h1 class="who-are-we-title">${content.title}</h1>
-            <p class="who-are-we-description">${content.description}</p>
-          </div>
+          ${content.sections.map(
+            (section, index) => html`
+              <div class="section-item">
+                <div class="image-section">
+                  <img src="${section.imageUrl}" alt="${section.title}" />
+                </div>
+                <div class="text-section">
+                  <h1 class="who-are-we-title">${section.title}</h1>
+                  <p class="who-are-we-description">${section.description}</p>
+                </div>
+              </div>
+            `
+          )}
         </div>
         <div class="footer-container"></div>
       </div>

@@ -3,10 +3,10 @@
 
 export const ROUTER_CONFIG = {
   routes: [
-    { path: 'home', component: 'backflip-homepage' },
-    { path: 'about', component: 'backflip-about-us' },
-    { path: 'services', component: 'services-placeholder' },
-    { path: 'contact', component: 'contact-placeholder' },
+    { path: "home", component: "backflip-homepage" },
+    { path: "about", component: "backflip-about-us" },
+    { path: "services", component: "services-placeholder" },
+    { path: "contact", component: "contact-placeholder" },
   ],
 };
 
@@ -19,5 +19,5 @@ export function getRoutes() {
 }
 
 export function getRouteForPath(path) {
-  return ROUTER_CONFIG.routes.find(route => route.path === path);
+  return ROUTER_CONFIG.routes.find((route) => route.path === path);
 }

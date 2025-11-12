@@ -40,34 +40,36 @@ export class BackflipRouter extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    
+
     // Listen for page changes
-    window.addEventListener('pagechange', (e) => {
+    window.addEventListener("pagechange", (e) => {
       this.currentPage = e.detail.page;
     });
-    
+
     // Listen for hash changes
-    window.addEventListener('hashchange', () => {
-      const hash = window.location.hash.substring(1) || 'home';
+    window.addEventListener("hashchange", () => {
+      const hash = window.location.hash.substring(1) || "home";
       this.currentPage = hash;
     });
 
     // Listen for scroll events
-    window.addEventListener('scroll', this._handleScroll.bind(this), { passive: true });
+    window.addEventListener("scroll", this._handleScroll.bind(this), {
+      passive: true,
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('pagechange', () => {});
-    window.removeEventListener('hashchange', () => {});
-    window.removeEventListener('scroll', this._handleScroll.bind(this));
+    window.removeEventListener("pagechange", () => {});
+    window.removeEventListener("hashchange", () => {});
+    window.removeEventListener("scroll", this._handleScroll.bind(this));
   }
 
   _handleScroll() {
     const currentScrollY = window.scrollY;
     const scrollDelta = currentScrollY - this.lastScrollY;
     const viewportHeight = window.innerHeight;
-    
+
     // Only trigger page changes if we've scrolled enough
     if (Math.abs(scrollDelta) < this.scrollThreshold) {
       return;
@@ -75,8 +77,8 @@ export class BackflipRouter extends LitElement {
 
     // Determine which page is currently in view
     const currentPageIndex = Math.round(currentScrollY / viewportHeight);
-    const pages = ['home', 'about', 'who-are-we'];
-    const newPage = pages[currentPageIndex] || 'home';
+    const pages = ["home", "about", "who-are-we"];
+    const newPage = pages[currentPageIndex] || "home";
 
     // Update active page if it changed
     if (newPage !== this.currentPage) {
@@ -86,7 +88,7 @@ export class BackflipRouter extends LitElement {
     this.lastScrollY = currentScrollY;
   }
 
-    _navigateToPage(page) {
+  _navigateToPage(page) {
     // Find the menu item for this page
     const menuItems = [
       { label: "Home", href: "#home" },
@@ -95,13 +97,15 @@ export class BackflipRouter extends LitElement {
       { label: "Services", href: "#services" },
       { label: "Contact", href: "#contact" },
     ];
-    
-    const menuItem = menuItems.find(item => item.href === `#${page}`);
+
+    const menuItem = menuItems.find((item) => item.href === `#${page}`);
     if (menuItem) {
       // Trigger menu update without full navigation
-      window.dispatchEvent(new CustomEvent('pagechange', { 
-        detail: { page, item: menuItem } 
-      }));
+      window.dispatchEvent(
+        new CustomEvent("pagechange", {
+          detail: { page, item: menuItem },
+        })
+      );
     }
   }
 
