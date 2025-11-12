@@ -5,6 +5,7 @@
     "dev:web": "pnpm --filter web-app dev",
     "dev:test": "pnpm --filter test-app dev",
     "dev:student-groups": "pnpm --filter student-groups-app dev",
+    "dev:backflip": "pnpm --filter backflip dev",
     "dev:student-groups-backend": "cd apps/student-groups-app/backend && node server.js",
     "build:ds": "pnpm --filter design-system build",
     "install:all": "pnpm install",

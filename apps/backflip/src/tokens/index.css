@@ -1,0 +1,56 @@
+/* Backflip App - Custom Tokens */
+/* Import base design system tokens first, then override with Backflip-specific values */
+
+/* Import design system base tokens */
+@import url("@ahell/design-system/tokens");
+
+/* Backflip custom token overrides */
+:root {
+  /* Backflip Color Palette - Vibrant and energetic */
+  --color-primary-main: #ff6b35; /* Vibrant orange */
+  --color-primary-surface: #fff3ed; /* Light orange tint */
+  --color-primary-hover: #e55a2b; /* Darker orange */
+  --color-primary-active: #cc4f26; /* Even darker orange */
+
+  --color-secondary-main: #4ecdc4; /* Turquoise */
+  --color-secondary-surface: #e8f8f7; /* Light turquoise tint */
+  --color-secondary-hover: #45b8b0; /* Darker turquoise */
+  --color-secondary-active: #3ea49c; /* Even darker turquoise */
+
+  --color-accent-main: #9b59b6; /* Purple accent */
+  --color-accent-surface: #f5f0f8; /* Light purple tint */
+  --color-accent-hover: #8b4fa3; /* Darker purple */
+  --color-accent-active: #7a4490; /* Even darker purple */
+
+  /* Success, Warning, Error colors with Backflip twist */
+  --color-success-main: #27ae60; /* Fresh green */
+  --color-success-surface: #e8f5e9; /* Light green tint */
+  --color-warning-main: #f39c12; /* Warm amber */
+  --color-warning-surface: #fff8e1; /* Light amber tint */
+  --color-error-main: #e74c3c; /* Vibrant red */
+  --color-error-surface: #fdeaea; /* Light red tint */
+
+  /* Surface colors - Clean and modern */
+  --color-surface: #ffffff; /* Pure white */
+  --color-surface-secondary: #f8f9fa; /* Light gray */
+  --color-surface-tertiary: #e9ecef; /* Medium light gray */
+
+  /* Text colors */
+  --color-text-primary: #2c3e50; /* Dark blue-gray */
+  --color-text-secondary: #6c757d; /* Medium gray */
+  --color-text-tertiary: #adb5bd; /* Light gray */
+  --color-text-inverse: #ffffff; /* White for dark backgrounds */
+
+  /* Border colors */
+  --color-border: #dee2e6; /* Light border */
+  --color-border-hover: #ced4da; /* Slightly darker on hover */
+  --color-border-focus: var(--color-primary-main); /* Primary color for focus */
+
+  /* Backflip-specific additions */
+  --color-backflip-gradient: linear-gradient(
+    135deg,
+    var(--color-primary-main),
+    var(--color-secondary-main)
+  );
+  --color-backflip-shadow: rgba(255, 107, 53, 0.2);
+}

@@ -1,0 +1,20 @@
+{
+  "name": "backflip",
+  "version": "1.0.0",
+  "description": "Backflip - A design system demo app",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite --port 3020",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ahell/design-system": "workspace:*",
+    "vite": "^7.1.12"
+  }
+}

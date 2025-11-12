@@ -1,0 +1,541 @@
+/**
+ * Design System Color Theme
+ *
+ * Clean, high-contrast scheme: pure black, pure white,
+ * bright gold accents.
+ *
+ * Main colors: #f3ce57 (gold), #000000 (black), #ffffff (white)
+ * Updated: 2025-11-12
+ */
+
+@import url("./tokens.css");
+
+:root {
+  /* ========================================
+     BASE COLORS (user-specified main colors)
+     ======================================== */
+
+  /* Brand neutrals & accents */
+  --color-pure-black: #000000;
+  --color-pure-white: #ffffff;
+  --color-bright-gold: #f3ce57; /* primary brand gold */
+
+  /* Derived colors for scales */
+  --color-dark-grey: #333333;
+  --color-medium-grey: #666666;
+  --color-light-grey: #cccccc;
+  --color-off-white: #f8f8f8;
+
+  /* ========================================
+     LIGHT THEME SCALES
+     ======================================== */
+
+  /* Primary (Gold variations) */
+  --color-primary-50: #fefce8;
+  --color-primary-100: #fef9c3;
+  --color-primary-200: #fef08a;
+  --color-primary-300: #fde047;
+  --color-primary-400: #facc15;
+  --color-primary-500: #eab308;
+  --color-primary-600: #f3ce57; /* bright-gold */
+  --color-primary-700: #d97706;
+  --color-primary-800: #b45309;
+  --color-primary-900: #92400e;
+  --color-primary-950: #451a03;
+
+  /* Secondary (Cool greys) */
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+  --color-secondary-950: #020617;
+
+  /* Neutral (Pure white → Pure black) */
+  --color-neutral-50: #ffffff; /* pure-white */
+  --color-neutral-100: #f8f8f8; /* off-white */
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #cccccc; /* light-grey */
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+  --color-neutral-950: #000000; /* pure-black */
+
+  /* Accent (Warm oranges) */
+  --color-accent-50: #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+  --color-accent-700: #c2410c;
+  --color-accent-800: #9a3412;
+  --color-accent-900: #7c2d12;
+  --color-accent-950: #431407;
+
+  /* Semantic (mapped to brand hues) */
+  --color-success: #f3ce57; /* gold as "success" */
+  --color-success-rgb: 243, 206, 87;
+  --color-warning: #d97706; /* darker gold as "warning" */
+  --color-warning-rgb: 217, 119, 6;
+  --color-error: #dc2626; /* red */
+  --color-error-rgb: 220, 38, 38;
+  --color-info: #3b82f6; /* blue */
+  --color-info-rgb: 59, 130, 246;
+
+  /* Backgrounds */
+  --color-bg-primary: #ffffff; /* pure white */
+  --color-bg-secondary: #f8f8f8; /* off white */
+  --color-bg-tertiary: #f1f1f1;
+  --color-bg-overlay: rgba(255, 255, 255, 0.8);
+
+  /* Surfaces */
+  --color-surface-primary: #ffffff; /* pure white */
+  --color-surface-secondary: #f8f8f8; /* off white */
+  --color-surface-tertiary: #f1f1f1;
+  --color-surface-elevated: #ffffff; /* pure white */
+
+  /* Text */
+  --color-text-primary: #000000; /* pure black */
+  --color-text-secondary: #374151; /* dark grey */
+  --color-text-tertiary: #6b7280; /* medium grey */
+  --color-text-inverse: #ffffff; /* pure white */
+
+  /* Borders */
+  --color-border-primary: #e5e5e5; /* light grey */
+  --color-border-secondary: #cccccc; /* light grey */
+  --color-bg-tertiary: #faf9f8;
+  --color-bg-overlay: rgba(255, 255, 255, 0.8);
+
+  /* Surfaces */
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f7f5f2;
+  --color-surface-tertiary: #f0eeea;
+  --color-surface-elevated: #ffffff;
+
+  /* Text */
+  --color-text-primary: #0c0c0c; /* neutral-950 */
+  --color-text-secondary: #1e1e1e; /* neutral-900 */
+  --color-text-tertiary: #6e6e6e; /* neutral-700 */
+  --color-text-inverse: #ffffff;
+
+  /* Borders */
+  --color-border-primary: #e8e6e3; /* neutral-200 */
+  --color-border-secondary: #d4d1cd; /* neutral-300 */
+
+  /* ========================================
+     DARK THEME SCALES
+     ======================================== */
+
+  /* Primary (Gold variations, inverted) */
+  --color-primary-50-dark: #451a03;
+  --color-primary-100-dark: #92400e;
+  --color-primary-200-dark: #b45309;
+  --color-primary-300-dark: #d97706;
+  --color-primary-400-dark: #f3ce57; /* bright-gold */
+  --color-primary-500-dark: #eab308;
+  --color-primary-600-dark: #facc15;
+  --color-primary-700-dark: #fde047;
+  --color-primary-800-dark: #fef08a;
+  --color-primary-900-dark: #fef9c3;
+  --color-primary-950-dark: #fefce8;
+
+  /* Secondary (Cool greys, inverted) */
+  --color-secondary-50-dark: #020617;
+  --color-secondary-100-dark: #0f172a;
+  --color-secondary-200-dark: #1e293b;
+  --color-secondary-300-dark: #334155;
+  --color-secondary-400-dark: #475569;
+  --color-secondary-500-dark: #64748b;
+  --color-secondary-600-dark: #94a3b8;
+  --color-secondary-700-dark: #cbd5e1;
+  --color-secondary-800-dark: #e2e8f0;
+  --color-secondary-900-dark: #f1f5f9;
+  --color-secondary-950-dark: #f8fafc;
+
+  /* Neutral (Pure black → Pure white, inverted) */
+  --color-neutral-50-dark: #000000; /* pure-black */
+  --color-neutral-100-dark: #111827;
+  --color-neutral-200-dark: #1f2937;
+  --color-neutral-300-dark: #374151;
+  --color-neutral-400-dark: #4b5563;
+  --color-neutral-500-dark: #6b7280;
+  --color-neutral-600-dark: #9ca3af;
+  --color-neutral-700-dark: #cccccc; /* light-grey */
+  --color-neutral-800-dark: #e5e5e5;
+  --color-neutral-900-dark: #f8f8f8; /* off-white */
+  --color-neutral-950-dark: #ffffff; /* pure-white */
+
+  /* Accent (Warm oranges, inverted) */
+  --color-accent-50-dark: #431407;
+  --color-accent-100-dark: #7c2d12;
+  --color-accent-200-dark: #9a3412;
+  --color-accent-300-dark: #c2410c;
+  --color-accent-400-dark: #ea580c;
+  --color-accent-500-dark: #f97316;
+  --color-accent-600-dark: #fb923c;
+  --color-accent-700-dark: #fdba74;
+  --color-accent-800-dark: #fed7aa;
+  --color-accent-900-dark: #ffedd5;
+  --color-accent-950-dark: #fff7ed;
+
+  /* Semantic (dark theme aliases) */
+  --color-success-dark: #f3ce57; /* bright gold */
+  --color-warning-dark: #d97706; /* darker gold */
+  --color-error-dark: #dc2626; /* red */
+  --color-info-dark: #3b82f6; /* blue */
+
+  /* Backgrounds (dark) */
+  --color-bg-primary-dark: #000000; /* pure black */
+  --color-bg-secondary-dark: #111827; /* very dark grey */
+  --color-bg-tertiary-dark: #1f2937; /* dark grey */
+  --color-bg-overlay-dark: rgba(0, 0, 0, 0.8); /* pure black overlay */
+
+  /* Surfaces (dark) */
+  --color-surface-primary-dark: #111827; /* very dark grey */
+  --color-surface-secondary-dark: #1f2937; /* dark grey */
+  --color-surface-tertiary-dark: #374151; /* medium dark grey */
+  --color-surface-elevated-dark: #1f2937; /* dark grey */
+
+  /* Text (dark) */
+  --color-text-primary-dark: #ffffff; /* pure white */
+  --color-text-secondary-dark: #e5e5e5; /* light grey */
+  --color-text-tertiary-dark: #9ca3af; /* medium grey */
+  --color-text-inverse-dark: #000000; /* pure black */
+
+  /* Borders (dark) */
+  --color-border-primary-dark: #374151; /* medium dark grey */
+  --color-border-secondary-dark: #4b5563; /* medium grey */
+
+  /* ========================================
+     DEFAULT THEME APPLICATION (LIGHT)
+     ======================================== */
+
+  --color-primary: var(--color-primary-600);
+  --color-secondary: var(--color-secondary-600);
+  --color-accent: var(--color-accent-600);
+  --color-neutral: var(--color-neutral-600);
+  --color-bg: var(--color-bg-primary);
+  --color-surface: var(--color-surface-primary);
+  --color-text: var(--color-text-primary);
+  --color-border: var(--color-border-primary);
+
+  /* ========================================
+     SEMANTIC COLOR MAPPINGS
+     ======================================== */
+
+  /* Primary colors */
+  --color-primary-main: var(--color-primary-600);
+  --color-primary-light: var(--color-primary-400);
+  --color-primary-dark: var(--color-primary-700);
+
+  /* Secondary colors */
+  --color-secondary-main: var(--color-secondary-600);
+  --color-secondary-light: var(--color-secondary-400);
+  --color-secondary-dark: var(--color-secondary-700);
+
+  /* Surface colors */
+  --color-surface-primary: var(--color-bg-primary);
+  --color-surface-secondary: var(--color-bg-secondary);
+  --color-surface-tertiary: var(--color-bg-tertiary);
+  --color-surface-elevated: #ffffff;
+
+  /* Text colors */
+  --color-text-primary: var(--color-neutral-950);
+  --color-text-secondary: var(--color-neutral-900);
+  --color-text-tertiary: var(--color-neutral-700);
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-muted: rgba(255, 255, 255, 0.9);
+
+  /* Borders */
+  --color-border-primary: var(--color-neutral-200);
+  --color-border-secondary: var(--color-neutral-300);
+
+  /* Semantic */
+  --color-success-main: var(--color-success);
+  --color-warning-main: var(--color-warning);
+  --color-error-main: var(--color-error);
+  --color-info-main: var(--color-info);
+
+  /* ========================================
+     COMPONENT-SPECIFIC COLORS
+     ======================================== */
+
+  /* Buttons */
+  --color-btn-primary: var(--color-primary);
+  --color-btn-secondary: var(--color-secondary);
+  --color-btn-accent: var(--color-accent);
+  --color-btn-neutral: var(--color-neutral);
+  --color-btn-success: var(--color-success);
+  --color-btn-warning: var(--color-warning);
+  --color-btn-error: var(--color-error);
+  --color-btn-danger: var(--color-error);
+  --color-btn-info: var(--color-info);
+
+  /* Interactive states */
+  --color-hover: var(--color-primary-500);
+  --color-active: var(--color-primary-600);
+  --color-focus: var(--color-secondary-400);
+  --color-disabled: var(--color-neutral-400);
+
+  /* Forms */
+  --color-input-border: var(--color-border-primary);
+  --color-input-focus: var(--color-secondary-400);
+  --color-input-focus-ring: rgba(var(--color-info-rgb), 0.15);
+  --color-input-error: var(--color-error);
+  --color-input-success: var(--color-success);
+
+  /* Status */
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-error);
+  --color-status-info: var(--color-info);
+
+  /* Alert backgrounds (15% opacity) */
+  --color-alert-info-bg: rgba(var(--color-info-rgb), 0.15);
+  --color-alert-warning-bg: rgba(var(--color-warning-rgb), 0.15);
+  --color-alert-success-bg: rgba(var(--color-success-rgb), 0.15);
+  --color-alert-error-bg: rgba(var(--color-error-rgb), 0.15);
+
+  /* Card variant backgrounds (10% opacity) */
+  --color-card-primary-bg: rgba(var(--color-info-rgb), 0.1);
+  --color-card-success-bg: rgba(var(--color-success-rgb), 0.1);
+  --color-card-warning-bg: rgba(var(--color-warning-rgb), 0.1);
+  --color-card-danger-bg: rgba(var(--color-error-rgb), 0.1);
+
+  /* Badges */
+  --color-badge-default-bg: rgba(12, 12, 12, 0.08);
+  --color-badge-default-border: rgba(12, 12, 12, 0.35);
+  --color-badge-success-bg: rgba(var(--color-success-rgb), 0.1);
+  --color-badge-danger-bg: rgba(var(--color-error-rgb), 0.1);
+
+  /* Radios */
+  --color-radio-error-bg: rgba(var(--color-error-rgb), 0.05);
+
+  /* ========================================
+     BACKWARD COMPATIBILITY ALIASES
+     ======================================== */
+  --border: var(--color-border);
+  --bg: var(--color-bg);
+  --text: var(--color-text);
+  --primary: var(--color-primary);
+  --secondary: var(--color-secondary);
+  --success: var(--color-success);
+  --warning: var(--color-warning);
+  --error: var(--color-error);
+  --info: var(--color-info);
+}
+
+/* ========================================
+   THEME OVERRIDES
+   ======================================== */
+
+.theme-light {
+  --color-primary: var(--color-primary-600);
+  --color-secondary: var(--color-secondary-600);
+  --color-accent: var(--color-accent-600);
+  --color-neutral: var(--color-neutral-600);
+  --color-bg: var(--color-bg-primary);
+  --color-surface: var(--color-surface-primary);
+  --color-text: var(--color-text-primary);
+  --color-border: var(--color-border-primary);
+
+  /* Semantic mappings */
+  --color-primary-main: var(--color-primary-600);
+  --color-primary-light: var(--color-primary-400);
+  --color-primary-dark: var(--color-primary-700);
+  --color-secondary-main: var(--color-secondary-600);
+  --color-secondary-light: var(--color-secondary-400);
+  --color-secondary-dark: var(--color-secondary-700);
+
+  --color-surface-primary: var(--color-bg-primary);
+  --color-surface-secondary: var(--color-bg-secondary);
+  --color-surface-tertiary: var(--color-bg-tertiary);
+  --color-surface-elevated: #ffffff;
+
+  --color-text-primary: var(--color-neutral-950);
+  --color-text-secondary: var(--color-neutral-900);
+  --color-text-tertiary: var(--color-neutral-700);
+  --color-text-inverse: #ffffff;
+
+  --color-border-primary: var(--color-neutral-200);
+  --color-border-secondary: var(--color-neutral-300);
+
+  --color-success-main: var(--color-success);
+  --color-warning-main: var(--color-warning);
+  --color-error-main: var(--color-error);
+  --color-info-main: var(--color-info);
+
+  /* Components */
+  --color-btn-primary: var(--color-primary-600);
+  --color-btn-secondary: var(--color-secondary-600);
+  --color-btn-accent: var(--color-accent-600);
+  --color-btn-neutral: var(--color-neutral-600);
+  --color-btn-success: var(--color-success);
+  --color-btn-warning: var(--color-warning);
+  --color-btn-error: var(--color-error);
+  --color-btn-danger: var(--color-error);
+  --color-btn-info: var(--color-info);
+
+  --color-hover: var(--color-primary-500);
+  --color-active: var(--color-primary-600);
+  --color-focus: var(--color-secondary-400);
+  --color-disabled: var(--color-neutral-400);
+
+  --color-input-border: var(--color-neutral-200);
+  --color-input-focus: var(--color-secondary-400);
+  --color-input-error: var(--color-error);
+  --color-input-success: var(--color-success);
+
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-error);
+  --color-status-info: var(--color-info);
+}
+
+.theme-dark {
+  --color-primary: var(--color-primary-400-dark);
+  --color-secondary: var(--color-secondary-400-dark);
+  --color-accent: var(--color-accent-400-dark);
+  --color-neutral: var(--color-neutral-400-dark);
+  --color-bg: var(--color-bg-primary-dark);
+  --color-surface: var(--color-surface-primary-dark);
+  --color-text: var(--color-text-primary-dark);
+  --color-border: var(--color-border-primary-dark);
+
+  /* Semantic mappings */
+  --color-primary-main: var(--color-primary-400-dark);
+  --color-primary-light: var(--color-primary-600-dark);
+  --color-primary-dark: var(--color-primary-300-dark);
+  --color-secondary-main: var(--color-secondary-400-dark);
+  --color-secondary-light: var(--color-secondary-600-dark);
+  --color-secondary-dark: var(--color-secondary-300-dark);
+
+  --color-surface-primary: var(--color-bg-primary-dark);
+  --color-surface-secondary: var(--color-bg-secondary-dark);
+  --color-surface-tertiary: var(--color-bg-tertiary-dark);
+  --color-surface-elevated: var(--color-surface-elevated-dark);
+
+  --color-text-primary: var(--color-text-primary-dark);
+  --color-text-secondary: var(--color-text-secondary-dark);
+  --color-text-tertiary: var(--color-text-tertiary-dark);
+  --color-text-inverse: var(--color-text-inverse-dark);
+
+  --color-border-primary: var(--color-border-primary-dark);
+  --color-border-secondary: var(--color-border-secondary-dark);
+
+  --color-success-main: var(--color-success-dark);
+  --color-warning-main: var(--color-warning-dark);
+  --color-error-main: var(--color-error-dark);
+  --color-info-main: var(--color-info-dark);
+
+  /* Components */
+  --color-btn-primary: var(--color-primary-400-dark);
+  --color-btn-secondary: var(--color-secondary-400-dark);
+  --color-btn-accent: var(--color-accent-400-dark);
+  --color-btn-neutral: var(--color-neutral-400-dark);
+  --color-btn-success: var(--color-success-dark);
+  --color-btn-warning: var(--color-warning-dark);
+  --color-btn-error: var(--color-error-dark);
+  --color-btn-danger: var(--color-error-dark);
+  --color-btn-info: var(--color-info-dark);
+
+  --color-hover: var(--color-primary-500-dark);
+  --color-active: var(--color-primary-400-dark);
+  --color-focus: var(--color-secondary-600-dark);
+  --color-disabled: var(--color-neutral-400-dark);
+
+  --color-input-border: var(--color-border-primary-dark);
+  --color-input-focus: var(--color-secondary-600-dark);
+  --color-input-focus-ring: rgba(var(--color-info-rgb), 0.2);
+  --color-input-error: var(--color-error-dark);
+  --color-input-success: var(--color-success-dark);
+
+  --color-status-success: var(--color-success-dark);
+  --color-status-warning: var(--color-warning-dark);
+  --color-status-error: var(--color-error-dark);
+  --color-status-info: var(--color-info-dark);
+}
+
+/* ========================================
+   SHADOW TOKENS
+   ======================================== */
+
+:root {
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-focus: 0 0 0 3px var(--color-focus);
+}
+
+/* ========================================
+   GRADIENT TOKENS
+   ======================================== */
+
+:root {
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-primary-dark) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--color-secondary-light) 0%,
+    var(--color-secondary-dark) 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--color-accent-500) 0%,
+    var(--color-accent-700) 100%
+  );
+  --gradient-neutral: linear-gradient(
+    135deg,
+    var(--color-neutral-100) 0%,
+    var(--color-neutral-200) 100%
+  );
+  --gradient-warm: linear-gradient(
+    135deg,
+    var(--color-bright-gold) 0%,
+    var(--color-primary-700) 100%
+  );
+  --gradient-cool: linear-gradient(
+    135deg,
+    var(--color-secondary-300) 0%,
+    var(--color-secondary-700) 100%
+  );
+  --gradient-surface: linear-gradient(
+    135deg,
+    var(--color-surface-primary) 0%,
+    var(--color-surface-secondary) 100%
+  );
+}
+
+/* ========================================
+   ANIMATION TOKENS
+   ======================================== */
+
+:root {
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-colors: color 0.15s ease, background-color 0.15s ease,
+    border-color 0.15s ease;
+  --transition-transform: transform 0.15s ease;
+  --easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
