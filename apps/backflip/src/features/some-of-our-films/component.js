@@ -122,6 +122,11 @@ export class BackflipSomeOfOurFilms extends LitElement {
     initializeSomeOfOurFilms();
   }
 
+  _navigateToMovieDetail(movieId) {
+    // Navigate to the detailed single movie page with the specific movie ID
+    window.location.hash = `#detailed-single-movie?movieId=${movieId}`;
+  }
+
   render() {
     const content = getSomeOfOurFilmsContent();
 
@@ -137,7 +142,7 @@ export class BackflipSomeOfOurFilms extends LitElement {
               <div class="gallery-grid">
                 ${content.gallery.map(
                   (item) => html`
-                    <div class="gallery-item">
+                    <div class="gallery-item" @click=${() => this._navigateToMovieDetail(item.movieId)} style="cursor: pointer;">
                       ${item.imageUrl === "placeholder"
                         ? html`<div
                             class="gallery-placeholder"
