@@ -97,6 +97,9 @@ public
 tmp/
 temp/
 
+# Images (large binary files)
+apps/backflip/images/
+
 # Editor directories and files
 !.vscode/extensions.json
 .history/*
