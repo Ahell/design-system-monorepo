@@ -75,7 +75,7 @@ export class BackflipRouter extends LitElement {
 
     // Determine which page is currently in view
     const currentPageIndex = Math.round(currentScrollY / viewportHeight);
-    const pages = ['home', 'about'];
+    const pages = ['home', 'about', 'who-are-we'];
     const newPage = pages[currentPageIndex] || 'home';
 
     // Update active page if it changed
@@ -86,13 +86,12 @@ export class BackflipRouter extends LitElement {
     this.lastScrollY = currentScrollY;
   }
 
-  _setActivePage(page) {
-    this.currentPage = page;
-    
-    // Update menu active state
+    _navigateToPage(page) {
+    // Find the menu item for this page
     const menuItems = [
       { label: "Home", href: "#home" },
       { label: "About", href: "#about" },
+      { label: "Who", href: "#who-are-we" },
       { label: "Services", href: "#services" },
       { label: "Contact", href: "#contact" },
     ];
@@ -111,6 +110,7 @@ export class BackflipRouter extends LitElement {
       <div class="page-container">
         <backflip-homepage></backflip-homepage>
         <backflip-about-us></backflip-about-us>
+        <backflip-who-are-we></backflip-who-are-we>
       </div>
     `;
   }

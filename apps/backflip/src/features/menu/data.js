@@ -5,6 +5,7 @@ export const MENU_CONFIG = {
   items: [
     { label: "Home", href: "#home", active: true },
     { label: "About", href: "#about" },
+    { label: "Who", href: "#who-are-we" },
     { label: "Services", href: "#services" },
     { label: "Contact", href: "#contact" },
   ],

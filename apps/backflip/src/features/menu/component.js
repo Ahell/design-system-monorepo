@@ -115,7 +115,7 @@ export class BackflipMenu extends LitElement {
   }
   
   _scrollToPage(page) {
-    const pageIndex = page === 'home' ? 0 : page === 'about' ? 1 : 0;
+    const pageIndex = page === 'home' ? 0 : page === 'about' ? 1 : page === 'who-are-we' ? 2 : 0;
     const targetScrollY = pageIndex * window.innerHeight;
     
     window.scrollTo({
