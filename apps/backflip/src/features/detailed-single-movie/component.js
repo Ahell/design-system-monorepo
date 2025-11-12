@@ -83,7 +83,6 @@ export class BackflipDetailedSingleMovie extends LitElement {
       width: 100%;
       max-width: 900px;
       aspect-ratio: 16 / 9;
-      border-radius: var(--radius-md);
       box-shadow: var(--shadow-lg);
       object-fit: cover;
     }
@@ -94,12 +93,19 @@ export class BackflipDetailedSingleMovie extends LitElement {
       gap: var(--space-6);
     }
 
+    .meta-title {
+      font-size: var(--text-lg);
+      font-weight: var(--weight-bold);
+      font-family: var(--font-display);
+      margin: 0 0 var(--space-4) 0;
+      color: var(--color-text-primary);
+    }
+
     .description-section {
       background-color: var(--color-surface-secondary);
       padding: var(--space-6);
-      border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
-      margin-top: var(--space-8);
+      margin-top: var(--space-4);
     }
 
     .description-title {
@@ -164,6 +170,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
             </div>
 
             <div class="content-section">
+              <h3 class="meta-title">Film Details</h3>
               <div class="movie-meta">
                 <div class="meta-item">
                   <div class="meta-label">Year</div>
