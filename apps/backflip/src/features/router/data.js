@@ -5,6 +5,7 @@ export const ROUTER_CONFIG = {
   routes: [
     { path: "home", component: "backflip-homepage" },
     { path: "about", component: "backflip-about-us" },
+    { path: "films", component: "backflip-some-of-our-films" },
     { path: "services", component: "services-placeholder" },
     { path: "contact", component: "contact-placeholder" },
   ],
