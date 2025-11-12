@@ -63,7 +63,6 @@ export class BackflipDetailedSingleMovie extends LitElement {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: var(--space-6);
-      margin-top: var(--space-8);
     }
 
     .media-section {
@@ -88,12 +87,17 @@ export class BackflipDetailedSingleMovie extends LitElement {
       object-fit: cover;
     }
 
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
     .description-section {
       background-color: var(--color-surface-secondary);
       padding: var(--space-6);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
-      height: fit-content;
     }
 
     .description-title {
@@ -157,40 +161,42 @@ export class BackflipDetailedSingleMovie extends LitElement {
               </video>
             </div>
 
-            <div class="description-section">
-              <h2 class="description-title">About the Film</h2>
-              <p class="description-text">${movieData.description}</p>
-            </div>
-          </div>
+            <div class="content-section">
+              <div class="description-section">
+                <h2 class="description-title">About the Film</h2>
+                <p class="description-text">${movieData.description}</p>
+              </div>
 
-          <div class="movie-meta">
-            <div class="meta-item">
-              <div class="meta-label">Year</div>
-              <div class="meta-value">${movieData.year}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Duration</div>
-              <div class="meta-value">${movieData.duration}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Director</div>
-              <div class="meta-value">${movieData.director}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Producer</div>
-              <div class="meta-value">${movieData.producer}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Editor</div>
-              <div class="meta-value">${movieData.editor}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Music</div>
-              <div class="meta-value">${movieData.music}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">With Support From</div>
-              <div class="meta-value">${movieData.support}</div>
+              <div class="movie-meta">
+                <div class="meta-item">
+                  <div class="meta-label">Year</div>
+                  <div class="meta-value">${movieData.year}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Duration</div>
+                  <div class="meta-value">${movieData.duration}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Director</div>
+                  <div class="meta-value">${movieData.director}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Producer</div>
+                  <div class="meta-value">${movieData.producer}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Editor</div>
+                  <div class="meta-value">${movieData.editor}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Music</div>
+                  <div class="meta-value">${movieData.music}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">With Support From</div>
+                  <div class="meta-value">${movieData.support}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
