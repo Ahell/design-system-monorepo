@@ -57,7 +57,7 @@ export class BackflipAboutUs extends LitElement {
 
     .about-us-title {
       grid-column: 2;
-      align-self: end;
+      align-self: center;
       font-size: var(--text-10xl);
       font-weight: var(--weight-black);
       margin: 0 0 var(--space-4) 0;
