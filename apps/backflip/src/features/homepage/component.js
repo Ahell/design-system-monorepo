@@ -3,6 +3,7 @@
 
 import { LitElement, html, css } from "lit";
 import { initializeHomepage } from "./logic.js";
+import { getCurrentPage } from "../menu/logic.js";
 
 export class BackflipHomepage extends LitElement {
   static styles = css`
@@ -30,7 +31,7 @@ export class BackflipHomepage extends LitElement {
       padding: var(--space-4) 0;
     }
 
-    .hero-container {
+    .content-container {
       grid-row: 2;
       grid-column: 2;
       width: 100%;
@@ -43,9 +44,31 @@ export class BackflipHomepage extends LitElement {
     }
   `;
 
+  static properties = {
+    currentPage: { type: String },
+  };
+
+  constructor() {
+    super();
+    this.currentPage = 'home';
+  }
+
   connectedCallback() {
     super.connectedCallback();
     initializeHomepage();
+    
+    // Listen for page changes
+    window.addEventListener('pagechange', (e) => {
+      this.currentPage = e.detail.page;
+    });
+    
+    // Set initial page
+    this.currentPage = getCurrentPage();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('pagechange', () => {});
   }
 
   render() {
@@ -54,12 +77,27 @@ export class BackflipHomepage extends LitElement {
         <div class="menu-container">
           <backflip-menu></backflip-menu>
         </div>
-        <div class="hero-container">
-          <backflip-hero></backflip-hero>
+        <div class="content-container">
+          ${this._renderContent()}
         </div>
         <div class="footer-container"></div>
       </div>
     `;
+  }
+
+  _renderContent() {
+    switch (this.currentPage) {
+      case 'home':
+        return html`<backflip-hero></backflip-hero>`;
+      case 'about':
+        return html`<backflip-about-us></backflip-about-us>`;
+      case 'services':
+        return html`<div>Services page coming soon...</div>`;
+      case 'contact':
+        return html`<div>Contact page coming soon...</div>`;
+      default:
+        return html`<backflip-hero></backflip-hero>`;
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import {
   initializeMenu,
   handleMenuItemClick,
   getMenuItemStyles,
+  getCurrentPage,
 } from "./logic.js";
 
 export class BackflipMenu extends LitElement {
@@ -48,23 +49,43 @@ export class BackflipMenu extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     initializeMenu();
+    
+    // Listen for page changes
+    window.addEventListener('pagechange', () => {
+      this.requestUpdate();
+    });
+    
+    // Listen for hash changes (browser back/forward)
+    window.addEventListener('hashchange', () => {
+      this._updateActiveFromHash();
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('pagechange', () => {});
+    window.removeEventListener('hashchange', () => {});
   }
 
   render() {
     const menuItems = getMenuItems();
+    const currentPage = getCurrentPage();
 
     return html`
       <nav class="menu">
         ${menuItems.map(
-          (item) => html`
-            <a
-              class="menu-item ${item.active ? "active" : ""}"
-              href="${item.href}"
-              @click="${(e) => this._handleItemClick(e, item)}"
-            >
-              ${item.label}
-            </a>
-          `
+          (item) => {
+            const isActive = item.href.substring(1) === currentPage;
+            return html`
+              <a
+                class="menu-item ${isActive ? "active" : ""}"
+                href="${item.href}"
+                @click="${(e) => this._handleItemClick(e, item)}"
+              >
+                ${item.label}
+              </a>
+            `;
+          }
         )}
       </nav>
     `;
@@ -73,7 +94,16 @@ export class BackflipMenu extends LitElement {
   _handleItemClick(event, item) {
     event.preventDefault();
     handleMenuItemClick(item);
-    this.requestUpdate();
+  }
+  
+  _updateActiveFromHash() {
+    const hash = window.location.hash.substring(1) || 'home';
+    // This will trigger a pagechange event through handleMenuItemClick
+    const items = getMenuItems();
+    const item = items.find(i => i.href === `#${hash}`);
+    if (item) {
+      handleMenuItemClick(item);
+    }
   }
 }
 

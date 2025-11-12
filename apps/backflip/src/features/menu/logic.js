@@ -3,11 +3,18 @@
 
 import { getMenuConfig, getMenuItems } from "./data.js";
 
+// Current page state
+let currentPage = 'home';
+
 /**
  * Initialize menu functionality
  */
 export function initializeMenu() {
   console.log("🍔 Menu initialized");
+  
+  // Set initial page from URL hash or default to home
+  const hash = window.location.hash.substring(1) || 'home';
+  setCurrentPage(hash);
 }
 
 /**
@@ -17,13 +24,41 @@ export function initializeMenu() {
 export function handleMenuItemClick(item) {
   console.log(`Menu item clicked: ${item.label}`);
 
+  // Extract page from href (remove #)
+  const page = item.href.substring(1);
+  
+  // Update URL hash
+  window.location.hash = page;
+  
+  // Set current page
+  setCurrentPage(page);
+
   // Update active state
   const items = getMenuItems();
   items.forEach((menuItem) => {
     menuItem.active = menuItem.label === item.label;
   });
 
-  // Here you could add navigation logic, routing, etc.
+  // Dispatch custom event for page changes
+  window.dispatchEvent(new CustomEvent('pagechange', { 
+    detail: { page, item } 
+  }));
+}
+
+/**
+ * Set the current page
+ * @param {string} page - Page identifier
+ */
+export function setCurrentPage(page) {
+  currentPage = page;
+}
+
+/**
+ * Get the current page
+ * @returns {string} Current page identifier
+ */
+export function getCurrentPage() {
+  return currentPage;
 }
 
 /**
