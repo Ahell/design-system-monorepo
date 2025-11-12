@@ -4,6 +4,7 @@
 import { LitElement, html, css } from "lit";
 import { getDetailedMovieData } from "./data.js";
 import { initializeDetailedSingleMovie } from "./logic.js";
+import "../menu/index.js";
 
 export class BackflipDetailedSingleMovie extends LitElement {
   static styles = css`
@@ -179,7 +180,9 @@ export class BackflipDetailedSingleMovie extends LitElement {
 
     return html`
       <div class="detailed-movie-grid">
-        <div class="menu-container"></div>
+        <div class="menu-container">
+          <backflip-menu></backflip-menu>
+        </div>
         <div class="content-container">
           <div class="movie-header">
             <h1 class="movie-title">${movieData.title}</h1>
