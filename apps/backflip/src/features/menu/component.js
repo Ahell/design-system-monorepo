@@ -44,6 +44,15 @@ export class BackflipMenu extends LitElement {
       text-decoration: underline;
       text-underline-offset: 2px;
     }
+
+    /* Inverted colors for about-us page */
+    .menu.inverted .menu-item {
+      color: var(--color-bright-gold);
+    }
+
+    .menu.inverted .menu-item.active {
+      color: var(--color-bright-gold);
+    }
   `;
 
   connectedCallback() {
@@ -70,9 +79,10 @@ export class BackflipMenu extends LitElement {
   render() {
     const menuItems = getMenuItems();
     const currentPage = getCurrentPage();
+    const isInverted = currentPage === 'about';
 
     return html`
-      <nav class="menu">
+      <nav class="menu ${isInverted ? 'inverted' : ''}">
         ${menuItems.map((item) => {
           const isActive = item.href.substring(1) === currentPage;
           return html`
