@@ -7,6 +7,15 @@ import { getSingleMovieContent } from "./data.js";
 import { initializeSingleMovie } from "./logic.js";
 
 export class BackflipSingleMovie extends LitElement {
+  static properties = {
+    creator: { type: String },
+    title: { type: String },
+    description: { type: String },
+    imageUrl: { type: String },
+    buttonLabel: { type: String },
+    videoUrl: { type: String },
+  };
+
   static styles = css`
     :host {
       display: block;
@@ -39,7 +48,7 @@ export class BackflipSingleMovie extends LitElement {
       display: grid;
       grid-template-columns: 1fr 1200px 1fr;
       width: 100%;
-      padding: var(--space-8) 0;
+      padding: var(--space-32) 0;
       min-height: 300px;
       background-color: var(--color-text-primary);
     }
@@ -59,6 +68,7 @@ export class BackflipSingleMovie extends LitElement {
       object-fit: cover;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
+      margin-bottom: var(--space-6);
     }
 
     .media-content {
@@ -116,6 +126,14 @@ export class BackflipSingleMovie extends LitElement {
 
   render() {
     const content = getSingleMovieContent();
+    const media = {
+      creator: this.creator || content.media.creator,
+      title: this.title || content.media.title,
+      description: this.description || content.media.description,
+      imageUrl: this.imageUrl || content.media.imageUrl,
+      buttonLabel: this.buttonLabel || content.media.buttonLabel,
+      videoUrl: this.videoUrl || content.media.videoUrl,
+    };
 
     return html`
       <div class="single-movie-grid">
@@ -126,7 +144,7 @@ export class BackflipSingleMovie extends LitElement {
             muted
             loop
             playsinline
-            src="./videos/born_to_fly.mp4"
+            src="${media.videoUrl}"
           >
             Your browser does not support the video tag.
           </video>
@@ -135,17 +153,17 @@ export class BackflipSingleMovie extends LitElement {
           <div class="media-container">
             <img
               class="media-image"
-              src="${content.media.imageUrl}"
-              alt="${content.media.title}"
+              src="${media.imageUrl}"
+              alt="${media.title}"
             />
             <div class="media-content">
-              <h2 class="media-creator">${content.media.creator}</h2>
-              <h2 class="media-title">${content.media.title}</h2>
-                        <p class="media-description">${content.media.description}</p>
-          <button class="media-button">${content.media.buttonLabel}</button>
-        </div>
+              <h2 class="media-creator">${media.creator}</h2>
+              <h2 class="media-title">${media.title}</h2>
+              <p class="media-description">${media.description}</p>
+              <button class="media-button">${media.buttonLabel}</button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     `;
