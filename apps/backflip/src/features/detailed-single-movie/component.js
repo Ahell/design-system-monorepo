@@ -182,7 +182,11 @@ export class BackflipDetailedSingleMovie extends LitElement {
 
           <div class="media-section">
             <div class="video-section">
-              <video class="video-player" controls poster="${movieData.imageUrl}">
+              <video
+                class="video-player"
+                controls
+                poster="${movieData.imageUrl}"
+              >
                 <source src="${movieData.videoUrl}" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>

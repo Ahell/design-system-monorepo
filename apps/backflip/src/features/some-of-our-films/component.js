@@ -142,7 +142,11 @@ export class BackflipSomeOfOurFilms extends LitElement {
               <div class="gallery-grid">
                 ${content.gallery.map(
                   (item) => html`
-                    <div class="gallery-item" @click=${() => this._navigateToMovieDetail(item.movieId)} style="cursor: pointer;">
+                    <div
+                      class="gallery-item"
+                      @click=${() => this._navigateToMovieDetail(item.movieId)}
+                      style="cursor: pointer;"
+                    >
                       ${item.imageUrl === "placeholder"
                         ? html`<div
                             class="gallery-placeholder"

@@ -4,16 +4,56 @@
 export const SOME_OF_OUR_FILMS_CONFIG = {
   title: "Some of our films.",
   gallery: [
-    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly", movieId: "men-who-sing" },
-    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing", movieId: "men-who-sing" },
-    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly", movieId: "men-who-sing" },
-    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing", movieId: "men-who-sing" },
-    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly", movieId: "men-who-sing" },
-    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing", movieId: "men-who-sing" },
-    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly", movieId: "men-who-sing" },
-    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing", movieId: "men-who-sing" },
-    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly", movieId: "men-who-sing" },
-    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing", movieId: "men-who-sing" },
+    {
+      imageUrl: "../../images/born_to_fly.png",
+      alt: "Born to Fly",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/men_who_sing.png",
+      alt: "Men Who Sing",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/born_to_fly.png",
+      alt: "Born to Fly",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/men_who_sing.png",
+      alt: "Men Who Sing",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/born_to_fly.png",
+      alt: "Born to Fly",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/men_who_sing.png",
+      alt: "Men Who Sing",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/born_to_fly.png",
+      alt: "Born to Fly",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/men_who_sing.png",
+      alt: "Men Who Sing",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/born_to_fly.png",
+      alt: "Born to Fly",
+      movieId: "men-who-sing",
+    },
+    {
+      imageUrl: "../../images/men_who_sing.png",
+      alt: "Men Who Sing",
+      movieId: "men-who-sing",
+    },
   ],
 };
 
