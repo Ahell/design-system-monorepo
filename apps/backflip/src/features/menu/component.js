@@ -12,6 +12,7 @@ export class BackflipMenu extends LitElement {
   constructor() {
     super();
     this.isOpen = false;
+    this.dropdownElement = null;
   }
 
   static styles = css`
@@ -84,14 +85,15 @@ export class BackflipMenu extends LitElement {
     }
 
     .dropdown {
-      position: absolute;
-      top: 60px;
-      right: 0;
+      position: fixed;
+      top: 80px;
+      right: 20px;
       background: var(--color-pure-white);
       border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 8px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
       min-width: 180px;
+      padding: 8px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-8px) scale(0.95);
@@ -135,8 +137,26 @@ export class BackflipMenu extends LitElement {
       font-weight: 600;
     }
 
-    .menu-container {
+    /* Styles for the portal dropdown */
+    :host {
       position: relative;
+    }
+
+    .hamburger-dropdown {
+      position: fixed !important;
+      top: 80px !important;
+      right: 20px !important;
+      background: var(--color-surface-primary) !important;
+      border: var(--border-width-thin) solid var(--color-border-primary) !important;
+      border-radius: var(--radius-lg) !important;
+      box-shadow: var(--shadow-lg) !important;
+      min-width: 200px !important;
+      padding: var(--space-2) !important;
+      z-index: var(--z-dropdown) !important;
+      opacity: 0 !important;
+      transform: translateY(-8px) scale(0.95) !important;
+      transition: var(--transition-all) !important;
+      backdrop-filter: blur(8px) !important;
     }
   `;
 
@@ -152,16 +172,17 @@ export class BackflipMenu extends LitElement {
     window.addEventListener("hashchange", () => {
       this._updateActiveFromHash();
     });
-
-    // Listen for clicks outside to close menu
-    document.addEventListener("click", this._handleOutsideClick.bind(this));
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener("pagechange", () => {});
-    window.removeEventListener("hashchange", () => {});
-    document.removeEventListener("click", this._handleOutsideClick.bind(this));
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if (changedProperties.has("isOpen")) {
+      if (this.isOpen) {
+        this._createDropdown();
+      } else {
+        this._destroyDropdown();
+      }
+    }
   }
 
   render() {
@@ -175,27 +196,13 @@ export class BackflipMenu extends LitElement {
           class="hamburger ${isInverted ? "inverted" : ""} ${this.isOpen
             ? "open"
             : ""}"
-          @click="${this._toggleMenu}"
+          @click="${(e) => this._toggleMenu(e)}"
           aria-label="Toggle menu"
         >
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
         </button>
-        <div class="dropdown ${this.isOpen ? "open" : ""}">
-          ${menuItems.map((item) => {
-            const isActive = item.href.substring(1) === currentPage;
-            return html`
-              <a
-                class="dropdown-item ${isActive ? "active" : ""}"
-                href="${item.href}"
-                @click="${(e) => this._handleItemClick(e, item)}"
-              >
-                ${item.label}
-              </a>
-            `;
-          })}
-        </div>
       </div>
     `;
   }
@@ -229,31 +236,282 @@ export class BackflipMenu extends LitElement {
     );
   }
 
-  _toggleMenu() {
+  _toggleMenu(event) {
+    event.stopPropagation(); // Prevent event bubbling to avoid triggering outside click
     this.isOpen = !this.isOpen;
   }
 
+  _createDropdown() {
+    if (this.dropdownElement) return;
+
+    const menuItems = getMenuItems();
+    const currentPage = window.location.hash.substring(1) || "home";
+
+    // Create dropdown element
+    this.dropdownElement = document.createElement("div");
+    this.dropdownElement.className = "hamburger-dropdown";
+    this.dropdownElement.innerHTML = `
+      <button class="menu-close-btn" style="
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--color-pure-black);
+        border: 2px solid var(--color-pure-white);
+        padding: 12px 10px;
+        border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2),
+          0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(255, 255, 255, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        width: 48px;
+        height: 48px;
+      ">
+        <span class="close-bar" style="
+          width: 22px;
+          height: 2px;
+          background-color: var(--color-pure-white);
+          border-radius: 1px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform-origin: center;
+        "></span>
+        <span class="close-bar" style="
+          width: 22px;
+          height: 2px;
+          background-color: var(--color-pure-white);
+          border-radius: 1px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform-origin: center;
+        "></span>
+        <span class="close-bar" style="
+          width: 22px;
+          height: 2px;
+          background-color: var(--color-pure-white);
+          border-radius: 1px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform-origin: center;
+        "></span>
+      </button>
+      ${
+        menuItems && menuItems.length > 0
+          ? menuItems
+              .map((item) => {
+                const isActive = item.href.substring(1) === currentPage;
+                return `
+              <a
+                class="hamburger-dropdown-item ${isActive ? "active" : ""}"
+                href="${item.href}"
+                style="
+                  display: block;
+                  padding: 16px 20px;
+                  color: #000000;
+                  text-decoration: none;
+                  font-size: 16px;
+                  font-weight: 500;
+                  transition: all 0.2s ease;
+                  border: none;
+                  background: transparent;
+                  width: 100%;
+                  text-align: left;
+                  cursor: pointer;
+                  border-radius: 8px;
+                  margin: 4px 0;
+                  line-height: 1.4;
+                  box-sizing: border-box;
+                  ${isActive ? "color: #000000; font-weight: 600;" : ""}
+                "
+              >
+                ${item.label}
+              </a>
+            `;
+              })
+              .join("")
+          : '<div class="hamburger-dropdown-item" style="display: block; padding: 16px 20px; color: #000000; text-decoration: none; font-size: 16px; font-weight: 500; box-sizing: border-box;">No menu items</div>'
+      }
+    `;
+
+    // Style the dropdown
+    Object.assign(this.dropdownElement.style, {
+      position: "fixed",
+      top: "0",
+      right: "0",
+      width: "250px",
+      height: "100vh",
+      background: "white",
+      border: "none",
+      borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
+      boxShadow: "-4px 0 20px rgba(0, 0, 0, 0.15)",
+      padding: "80px 24px 24px 24px",
+      zIndex: "9999",
+      transform: "translateX(100%)",
+      transition: "transform 0.3s ease-out",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+    });
+
+    // Add click handler
+    this.dropdownElement.addEventListener(
+      "click",
+      this._handleDropdownClick.bind(this)
+    );
+
+    // Add close button handler
+    const closeBtn = this.dropdownElement.querySelector(".menu-close-btn");
+    if (closeBtn) {
+      // Apply X transformation to close button bars
+      const closeBars = closeBtn.querySelectorAll(".close-bar");
+      if (closeBars.length === 3) {
+        closeBars[0].style.transform = "rotate(45deg) translate(5px, 5px)";
+        closeBars[1].style.opacity = "0";
+        closeBars[1].style.transform = "scaleX(0)";
+        closeBars[2].style.transform = "rotate(-45deg) translate(5px, -5px)";
+      }
+
+      closeBtn.addEventListener("click", () => {
+        this.isOpen = false;
+      });
+      closeBtn.addEventListener("mouseenter", () => {
+        closeBtn.style.transform = "translateY(-3px) scale(1.08)";
+        closeBtn.style.boxShadow =
+          "0 12px 32px rgba(0, 0, 0, 0.35), 0 6px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 20px rgba(255, 255, 255, 0.12)";
+        closeBtn.style.borderColor = "var(--color-pure-white)";
+      });
+      closeBtn.addEventListener("mouseleave", () => {
+        closeBtn.style.transform = "translateY(0) scale(1)";
+        closeBtn.style.boxShadow =
+          "0 8px 24px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(255, 255, 255, 0.08)";
+        closeBtn.style.borderColor = "var(--color-pure-white)";
+      });
+    }
+
+    // Add hover styles for menu items
+    const menuItemsElements = this.dropdownElement.querySelectorAll(
+      ".hamburger-dropdown-item"
+    );
+    menuItemsElements.forEach((item) => {
+      item.addEventListener("mouseenter", () => {
+        item.style.transform = "translateX(4px)";
+      });
+      item.addEventListener("mouseleave", () => {
+        item.style.transform = "translateX(0)";
+      });
+    });
+
+    // Create overlay
+    this.overlayElement = document.createElement("div");
+    Object.assign(this.overlayElement.style, {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      width: "100vw",
+      height: "100vh",
+      background: "rgba(0, 0, 0, 0.5)",
+      zIndex: "9998",
+      opacity: "0",
+      transition: "opacity 0.3s ease-out",
+    });
+    this.overlayElement.addEventListener("click", () => {
+      this.isOpen = false;
+    });
+
+    // Append overlay first
+    document.body.appendChild(this.overlayElement);
+
+    // Append to body
+    document.body.appendChild(this.dropdownElement);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+      this.dropdownElement.style.transform = "translateX(0%)";
+      this.overlayElement.style.opacity = "1";
+    });
+
+    // Add outside click listener after a short delay to avoid immediate closing
+    setTimeout(() => {
+      document.addEventListener("click", this._handleOutsideClick.bind(this), {
+        once: true,
+      });
+    }, 10);
+  }
+
+  _destroyDropdown() {
+    if (this.dropdownElement) {
+      this.dropdownElement.style.transform = "translateX(100%)";
+      if (this.overlayElement) {
+        this.overlayElement.style.opacity = "0";
+      }
+      setTimeout(() => {
+        if (this.dropdownElement && this.dropdownElement.parentNode) {
+          this.dropdownElement.parentNode.removeChild(this.dropdownElement);
+        }
+        this.dropdownElement = null;
+        if (this.overlayElement && this.overlayElement.parentNode) {
+          this.overlayElement.parentNode.removeChild(this.overlayElement);
+        }
+        this.overlayElement = null;
+      }, 300);
+    }
+  }
+
+  _handleDropdownClick(event) {
+    const target = event.target.closest(".hamburger-dropdown-item");
+    if (target) {
+      event.preventDefault();
+      const href = target.getAttribute("href");
+      const item = { href, label: target.textContent.trim() };
+      this._handleItemClick(event, item);
+    }
+  }
+
   _handleOutsideClick(event) {
-    if (!this.shadowRoot.contains(event.target)) {
+    // Check if the click is outside the menu container and dropdown
+    const menuContainer =
+      this.shadowRoot?.querySelector(".menu-container") ||
+      this.querySelector(".menu-container");
+    const isOutsideMenu =
+      menuContainer && !menuContainer.contains(event.target);
+    const isOutsideDropdown =
+      this.dropdownElement && !this.dropdownElement.contains(event.target);
+
+    if (isOutsideMenu && isOutsideDropdown) {
       this.isOpen = false;
     }
   }
 
   _scrollToPage(page) {
-    const pageIndex =
-      page === "home"
-        ? 0
-        : page === "about"
-        ? 1
-        : page === "who-are-we"
-        ? 2
-        : 0;
-    const targetScrollY = pageIndex * window.innerHeight;
-
-    window.scrollTo({
-      top: targetScrollY,
-      behavior: "smooth",
-    });
+    // Try to find the element by ID
+    const element = document.getElementById(page);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      // Fallback to viewport height calculation
+      const pageIndex =
+        page === "home"
+          ? 0
+          : page === "about"
+          ? 1
+          : page === "who-are-we"
+          ? 2
+          : page === "films"
+          ? 3
+          : page === "single-movie"
+          ? 4
+          : page === "detailed-single-movie"
+          ? 10
+          : page === "contact"
+          ? 11
+          : 0;
+      const targetScrollY = pageIndex * window.innerHeight;
+      window.scrollTo({
+        top: targetScrollY,
+        behavior: "smooth",
+      });
+    }
   }
 
   _updateActiveFromHash() {

@@ -21,9 +21,10 @@ export class BackflipRouter extends LitElement {
     }
 
     backflip-homepage,
-    backflip-who-are-we,
+    backflip-homepage,
     backflip-some-of-our-films,
     backflip-single-movie,
+    backflip-detailed-single-movie,
     backflip-contact {
       flex: 0 0 100vh;
       width: 100%;
@@ -69,6 +70,9 @@ export class BackflipRouter extends LitElement {
     window.addEventListener("hashchange", () => {
       const hash = window.location.hash.substring(1) || "home";
       this.currentPage = hash;
+
+      // Scroll to the corresponding page
+      this._scrollToPage(hash);
     });
 
     // Listen for scroll events
@@ -103,6 +107,11 @@ export class BackflipRouter extends LitElement {
       "films",
       "single-movie",
       "single-movie",
+      "single-movie",
+      "single-movie",
+      "single-movie",
+      "single-movie",
+      "detailed-single-movie",
       "contact",
     ];
     const newPage = pages[currentPageIndex] || "home";
@@ -115,50 +124,57 @@ export class BackflipRouter extends LitElement {
     this.lastScrollY = currentScrollY;
   }
 
-  _navigateToPage(page) {
-    // Find the menu item for this page
-    const menuItems = [
-      { label: "Home", href: "#home" },
-      { label: "About", href: "#about" },
-      { label: "Who", href: "#who-are-we" },
-      { label: "Films", href: "#films" },
-      { label: "Single Movie", href: "#single-movie" },
-      { label: "Services", href: "#services" },
-      { label: "Contact", href: "#contact" },
-    ];
-
-    const menuItem = menuItems.find((item) => item.href === `#${page}`);
-    if (menuItem) {
-      // Trigger menu update without full navigation
-      window.dispatchEvent(
-        new CustomEvent("pagechange", {
-          detail: { page, item: menuItem },
-        })
-      );
+  _scrollToPage(page) {
+    // Try to find the element by ID
+    const element = document.getElementById(page);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      // Fallback to viewport height calculation
+      const pages = [
+        "home",
+        "about",
+        "who-are-we",
+        "films",
+        "single-movie",
+        "single-movie",
+        "single-movie",
+        "single-movie",
+        "single-movie",
+        "single-movie",
+        "detailed-single-movie",
+        "contact",
+      ];
+      const pageIndex = pages.indexOf(page);
+      if (pageIndex !== -1) {
+        const viewportHeight = window.innerHeight;
+        const scrollPosition = pageIndex * viewportHeight;
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: "smooth",
+        });
+      }
     }
   }
 
   render() {
     const currentHash = window.location.hash.substring(1) || "home";
-    console.log("Current hash:", currentHash); // Debug logging
     return html`
-      ${currentHash !== "who-are-we"
-        ? html`
-            <div class="floating-menu">
-              <backflip-menu></backflip-menu>
-            </div>
-          `
-        : ""}
+      <div class="floating-menu">
+        <backflip-menu></backflip-menu>
+      </div>
       <div class="page-container">
-        <backflip-homepage></backflip-homepage>
-        <backflip-about-us></backflip-about-us>
-        <backflip-who-are-we></backflip-who-are-we>
-        <backflip-some-of-our-films></backflip-some-of-our-films>
+        <backflip-homepage id="home"></backflip-homepage>
+        <backflip-about-us id="about"></backflip-about-us>
+        <backflip-who-are-we id="who-are-we"></backflip-who-are-we>
+        <backflip-some-of-our-films id="films"></backflip-some-of-our-films>
         <backflip-single-movie
+          id="single-movie-1"
           theme="inverted"
           showVideo="false"
         ></backflip-single-movie>
         <backflip-single-movie
+          id="single-movie-2"
           showVideo="false"
           creator="Dylan Williams"
           title="Men Who Sing"
@@ -176,10 +192,12 @@ Audience Award."
         >
         </backflip-single-movie>
         <backflip-single-movie
+          id="single-movie-3"
           theme="inverted"
           showVideo="false"
         ></backflip-single-movie>
         <backflip-single-movie
+          id="single-movie-4"
           showVideo="false"
           creator="Dylan Williams"
           title="Men Who Sing"
@@ -197,10 +215,12 @@ Audience Award."
         >
         </backflip-single-movie>
         <backflip-single-movie
+          id="single-movie-5"
           theme="inverted"
           showVideo="false"
         ></backflip-single-movie>
         <backflip-single-movie
+          id="single-movie-6"
           showVideo="false"
           creator="Dylan Williams"
           title="Men Who Sing"
@@ -217,7 +237,10 @@ Audience Award."
           videoUrl="./videos/behind_the_swedish_model.mp4"
         >
         </backflip-single-movie>
-        <backflip-contact></backflip-contact>
+        <backflip-detailed-single-movie
+          id="detailed-single-movie"
+        ></backflip-detailed-single-movie>
+        <backflip-contact id="contact"></backflip-contact>
       </div>
     `;
   }

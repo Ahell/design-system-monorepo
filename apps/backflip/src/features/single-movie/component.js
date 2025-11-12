@@ -175,6 +175,11 @@ export class BackflipSingleMovie extends LitElement {
     initializeSingleMovie();
   }
 
+  _navigateToDetailed() {
+    // Navigate to the detailed single movie page
+    window.location.hash = "#detailed-single-movie";
+  }
+
   render() {
     const content = getSingleMovieContent();
     const media = {
@@ -219,7 +224,9 @@ export class BackflipSingleMovie extends LitElement {
               <h2 class="media-creator">${media.creator}</h2>
               <h2 class="media-title">${media.title}</h2>
               <p class="media-description">${media.description}</p>
-              <button class="media-button">${media.buttonLabel}</button>
+              <button class="media-button" @click=${this._navigateToDetailed}>${
+      media.buttonLabel
+    }</button>
             </div>
           </div>
         </div>

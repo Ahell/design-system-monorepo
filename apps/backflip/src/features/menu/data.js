@@ -5,10 +5,10 @@ export const MENU_CONFIG = {
   items: [
     { label: "Home", href: "#home", active: true },
     { label: "About", href: "#about" },
-    { label: "Who", href: "#who-are-we" },
-    { label: "Films", href: "#films" },
-    { label: "Single Movie", href: "#single-movie" },
-    { label: "Services", href: "#services" },
+    { label: "Who We Are", href: "#who-are-we" },
+    { label: "Our Films", href: "#films" },
+    { label: "Featured Film", href: "#single-movie" },
+    { label: "Film Details", href: "#detailed-single-movie" },
     { label: "Contact", href: "#contact" },
   ],
 };
@@ -18,5 +18,6 @@ export function getMenuConfig() {
 }
 
 export function getMenuItems() {
+  console.log("getMenuItems called, returning:", MENU_CONFIG.items);
   return MENU_CONFIG.items;
 }
