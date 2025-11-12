@@ -29,6 +29,13 @@ export class BackflipRouter extends LitElement {
       flex: 0 0 100vh;
       width: 100%;
     }
+
+    .floating-menu {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
   `;
 
   static properties = {
@@ -124,7 +131,16 @@ export class BackflipRouter extends LitElement {
   }
 
   render() {
+    const currentHash = window.location.hash.substring(1) || "home";
+    console.log("Current hash:", currentHash); // Debug logging
     return html`
+      ${currentHash !== "who-are-we"
+        ? html`
+            <div class="floating-menu">
+              <backflip-menu></backflip-menu>
+            </div>
+          `
+        : ""}
       <div class="page-container">
         <backflip-homepage></backflip-homepage>
         <backflip-about-us></backflip-about-us>

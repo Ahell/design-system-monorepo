@@ -51,9 +51,6 @@ export class BackflipHomepage extends LitElement {
   render() {
     return html`
       <div class="homepage-grid">
-        <div class="menu-container">
-          <backflip-menu></backflip-menu>
-        </div>
         <div class="hero-container">
           <backflip-hero></backflip-hero>
         </div>

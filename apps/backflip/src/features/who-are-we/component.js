@@ -101,9 +101,7 @@ export class BackflipWhoAreWe extends LitElement {
 
     return html`
       <div class="who-are-we-grid">
-        <div class="menu-container">
-          <backflip-menu></backflip-menu>
-        </div>
+        <div class="menu-container"></div>
         <div class="content-container">
           <h1 class="who-are-we-headline">Who are we?</h1>
           ${content.sections.map(

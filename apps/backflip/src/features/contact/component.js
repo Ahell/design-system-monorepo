@@ -127,9 +127,7 @@ export class BackflipContact extends LitElement {
 
     return html`
       <div class="contact-grid">
-        <div class="menu-container">
-          <backflip-menu></backflip-menu>
-        </div>
+        <div class="menu-container"></div>
         <div class="content-container">
           <h1 class="contact-title">${content.title}</h1>
           <p class="contact-subtitle">${content.subtitle}</p>
