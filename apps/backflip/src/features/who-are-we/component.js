@@ -37,8 +37,8 @@ export class BackflipWhoAreWe extends LitElement {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: var(--space-6);
-      padding: var(--space-4) 0;
+      gap: var(--space-8);
+      padding: var(--space-2) 0;
       max-width: 1000px;
       margin: 0 auto;
       overflow-y: auto;
@@ -46,16 +46,8 @@ export class BackflipWhoAreWe extends LitElement {
 
     .section-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: var(--space-8);
-    }
-
-    .section-item:nth-child(even) {
-      flex-direction: row-reverse;
-    }
-
-    .section-item:nth-child(even) .text-section {
-      text-align: right;
     }
 
     .footer-container {
@@ -65,8 +57,8 @@ export class BackflipWhoAreWe extends LitElement {
     }
 
     .image-section {
-      flex: 0 0 350px;
-      height: 220px;
+      flex: 0 0 120px;
+      height: 160px;
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-lg);
@@ -83,28 +75,19 @@ export class BackflipWhoAreWe extends LitElement {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       gap: var(--space-4);
       color: var(--color-text-primary);
     }
 
     .who-are-we-title {
-      font-size: var(--text-6xl);
+      font-size: var(--text-2xl);
       font-weight: var(--weight-black);
-      font-family: var(--font-serif);
+      font-family: var(--font-display);
       margin: 0;
       letter-spacing: var(--tracking-tight);
       line-height: 1.1;
       color: var(--color-text-primary);
-    }
-
-    .who-are-we-description {
-      font-size: var(--text-lg);
-      font-weight: var(--weight-normal);
-      line-height: 1.6;
-      margin: 0;
-      color: var(--color-text-secondary);
-      max-width: 600px;
     }
   `;
 
@@ -122,6 +105,7 @@ export class BackflipWhoAreWe extends LitElement {
           <backflip-menu></backflip-menu>
         </div>
         <div class="content-container">
+          <h1 class="who-are-we-headline">Who are we?</h1>
           ${content.sections.map(
             (section, index) => html`
               <div class="section-item">
