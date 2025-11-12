@@ -62,7 +62,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
     .movie-meta {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-6);
+      gap: var(--space-4);
     }
 
     .media-section {
@@ -90,14 +90,14 @@ export class BackflipDetailedSingleMovie extends LitElement {
     .content-section {
       display: flex;
       flex-direction: column;
-      gap: var(--space-6);
+      gap: var(--space-3);
     }
 
     .meta-title {
       font-size: var(--text-lg);
       font-weight: var(--weight-bold);
       font-family: var(--font-display);
-      margin: 0 0 var(--space-4) 0;
+      margin: 0 0 var(--space-2) 0;
       color: var(--color-text-primary);
     }
 
@@ -105,7 +105,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
       font-size: var(--text-sm);
       font-weight: var(--weight-semibold);
       font-family: var(--font-display);
-      margin: 0 0 var(--space-2) 0;
+      margin: 0 0 var(--space-1) 0;
       color: var(--color-text-secondary);
       text-transform: none;
       letter-spacing: var(--tracking-normal);
