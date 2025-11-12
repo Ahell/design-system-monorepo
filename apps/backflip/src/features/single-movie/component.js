@@ -206,6 +206,7 @@ export class BackflipSingleMovie extends LitElement {
                     loop
                     playsinline
                     src="${media.videoUrl}"
+                    poster="${media.imageUrl}"
                   >
                     Your browser does not support the video tag.
                   </video>
