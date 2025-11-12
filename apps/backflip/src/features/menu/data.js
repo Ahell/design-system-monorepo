@@ -8,7 +8,6 @@ export const MENU_CONFIG = {
     { label: "Who We Are", href: "#who-are-we" },
     { label: "Our Films", href: "#films" },
     { label: "Featured Film", href: "#single-movie" },
-    { label: "Film Details", href: "#detailed-single-movie" },
     { label: "Contact", href: "#contact" },
   ],
 };
