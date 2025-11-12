@@ -93,8 +93,11 @@ export class BackflipRouter extends LitElement {
       console.log("Hash change detected:", hash);
       this.currentPage = hash;
 
-      // Scroll to the corresponding page
-      this._waitForDOMAndScroll(hash);
+      // Skip scrolling for detailed-single-movie as it's not part of scroll flow
+      if (hash !== "detailed-single-movie") {
+        // Scroll to the corresponding page
+        this._waitForDOMAndScroll(hash);
+      }
     });
 
     // Listen for scroll events
