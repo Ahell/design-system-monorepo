@@ -6,14 +6,14 @@ export const SOME_OF_OUR_FILMS_CONFIG = {
   gallery: [
     { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly" },
     { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#FF6B6B" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#4ECDC4" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#45B7D1" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#96CEB4" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#FFEAA7" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#DDA0DD" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#98D8C8" },
-    { imageUrl: "placeholder", alt: "Film Poster", bgColor: "#F7DC6F" },
+    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly" },
+    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing" },
+    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly" },
+    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing" },
+    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly" },
+    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing" },
+    { imageUrl: "../../images/born_to_fly.png", alt: "Born to Fly" },
+    { imageUrl: "../../images/men_who_sing.png", alt: "Men Who Sing" },
   ],
 };
 

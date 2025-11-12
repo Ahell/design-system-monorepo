@@ -175,6 +175,48 @@ Audience Award."
           videoUrl="./videos/behind_the_swedish_model.mp4"
         >
         </backflip-single-movie>
+        <backflip-single-movie
+          theme="inverted"
+          showVideo="false"
+        ></backflip-single-movie>
+        <backflip-single-movie
+          showVideo="false"
+          creator="Dylan Williams"
+          title="Men Who Sing"
+          description="And here is a simple film about my Dad. A very sim-
+ple but heartfelt film about my father and his choir.
+This film was distributed via Curzon Cinemas in 40
+towns and cities in the UK, BBC and SVT. It is now
+being made into a major Fiction Film in the UK with
+an Oscar winning actor in the main role. Cinema re-
+lease in the UK and Sweden. Winner BAFTA, BIFFL
+Audience Award."
+          imageUrl="./images/men_who_sing.png"
+          buttonLabel="Link"
+          videoUrl="./videos/behind_the_swedish_model.mp4"
+        >
+        </backflip-single-movie>
+        <backflip-single-movie
+          theme="inverted"
+          showVideo="false"
+        ></backflip-single-movie>
+        <backflip-single-movie
+          showVideo="false"
+          creator="Dylan Williams"
+          title="Men Who Sing"
+          description="And here is a simple film about my Dad. A very sim-
+ple but heartfelt film about my father and his choir.
+This film was distributed via Curzon Cinemas in 40
+towns and cities in the UK, BBC and SVT. It is now
+being made into a major Fiction Film in the UK with
+an Oscar winning actor in the main role. Cinema re-
+lease in the UK and Sweden. Winner BAFTA, BIFFL
+Audience Award."
+          imageUrl="./images/men_who_sing.png"
+          buttonLabel="Link"
+          videoUrl="./videos/behind_the_swedish_model.mp4"
+        >
+        </backflip-single-movie>
         <backflip-contact></backflip-contact>
       </div>
     `;
