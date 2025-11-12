@@ -22,7 +22,10 @@ export class BackflipRouter extends LitElement {
 
     backflip-homepage,
     backflip-about-us,
-    backflip-some-of-our-films {
+    backflip-who-are-we,
+    backflip-some-of-our-films,
+    backflip-single-movie,
+    backflip-contact {
       flex: 0 0 100vh;
       width: 100%;
     }
@@ -78,7 +81,14 @@ export class BackflipRouter extends LitElement {
 
     // Determine which page is currently in view
     const currentPageIndex = Math.round(currentScrollY / viewportHeight);
-    const pages = ["home", "about", "who-are-we", "films"];
+    const pages = [
+      "home",
+      "about",
+      "who-are-we",
+      "films",
+      "single-movie",
+      "contact",
+    ];
     const newPage = pages[currentPageIndex] || "home";
 
     // Update active page if it changed
@@ -96,6 +106,7 @@ export class BackflipRouter extends LitElement {
       { label: "About", href: "#about" },
       { label: "Who", href: "#who-are-we" },
       { label: "Films", href: "#films" },
+      { label: "Single Movie", href: "#single-movie" },
       { label: "Services", href: "#services" },
       { label: "Contact", href: "#contact" },
     ];
@@ -118,6 +129,8 @@ export class BackflipRouter extends LitElement {
         <backflip-about-us></backflip-about-us>
         <backflip-who-are-we></backflip-who-are-we>
         <backflip-some-of-our-films></backflip-some-of-our-films>
+        <backflip-single-movie></backflip-single-movie>
+        <backflip-contact></backflip-contact>
       </div>
     `;
   }

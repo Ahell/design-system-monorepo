@@ -9,6 +9,8 @@ import { BackflipMenu } from "./features/menu/index.js";
 import { BackflipAboutUs } from "./features/about-us/index.js";
 import { BackflipWhoAreWe } from "./features/who-are-we/index.js";
 import { BackflipSomeOfOurFilms } from "./features/some-of-our-films/index.js";
+import { BackflipSingleMovie } from "./features/single-movie/index.js";
+import { BackflipContact } from "./features/contact/index.js";
 import { BackflipRouter } from "./features/router/index.js";
 
 // Components are now available globally as custom elements:
@@ -19,5 +21,5 @@ import { BackflipRouter } from "./features/router/index.js";
 // Add any Backflip-specific initialization here
 console.log("🎪 Backflip app initialized with design system components!");
 console.log(
-  "🏠 Homepage, Hero, Menu, About Us, Who Are We, Some of Our Films, and Router features loaded"
+  "🏠 Homepage, Hero, Menu, About Us, Who Are We, Some of Our Films, Single Movie, Contact, and Router features loaded"
 );

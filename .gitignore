@@ -100,6 +100,9 @@ temp/
 # Images (large binary files)
 apps/backflip/images/
 
+# Videos (large binary files)
+apps/backflip/videos/
+
 # Editor directories and files
 !.vscode/extensions.json
 .history/*
