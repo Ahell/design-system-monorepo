@@ -101,6 +101,25 @@ export class BackflipDetailedSingleMovie extends LitElement {
       color: var(--color-text-primary);
     }
 
+    .meta-label {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      font-family: var(--font-display);
+      margin: 0 0 var(--space-2) 0;
+      color: var(--color-text-secondary);
+      text-transform: none;
+      letter-spacing: var(--tracking-normal);
+    }
+
+    .meta-value {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-normal);
+      font-family: var(--font-sans);
+      margin: 0;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+    }
+
     .description-section {
       background-color: var(--color-surface-secondary);
       padding: var(--space-6);
