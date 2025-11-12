@@ -39,7 +39,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
       flex-direction: column;
       gap: var(--space-8);
       padding: var(--space-4) 0;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       overflow-y: auto;
     }
@@ -99,6 +99,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
       padding: var(--space-6);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
+      margin-top: var(--space-8);
     }
 
     .description-title {
@@ -163,11 +164,6 @@ export class BackflipDetailedSingleMovie extends LitElement {
             </div>
 
             <div class="content-section">
-              <div class="description-section">
-                <h2 class="description-title">About the Film</h2>
-                <p class="description-text">${movieData.description}</p>
-              </div>
-
               <div class="movie-meta">
                 <div class="meta-item">
                   <div class="meta-label">Year</div>
@@ -199,6 +195,11 @@ export class BackflipDetailedSingleMovie extends LitElement {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="description-section">
+            <h2 class="description-title">About the Film</h2>
+            <p class="description-text">${movieData.description}</p>
           </div>
         </div>
         <div class="footer-container"></div>
