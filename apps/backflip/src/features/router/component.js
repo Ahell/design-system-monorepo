@@ -6,6 +6,10 @@ import { getCurrentPage } from "../menu/logic.js";
 import { handleMenuItemClick } from "../menu/logic.js";
 
 export class BackflipRouter extends LitElement {
+  static properties = {
+    currentHash: { type: String }
+  };
+
   static styles = css`
     :host {
       display: block;
@@ -61,6 +65,7 @@ export class BackflipRouter extends LitElement {
     this.currentPage = getCurrentPage();
     this.lastScrollY = 0;
     this.scrollThreshold = 100; // Minimum scroll distance to trigger page change
+    this.currentHash = window.location.hash.substring(1) || "home";
   }
 
   // Render in light DOM so elements are accessible via document.getElementById
@@ -75,8 +80,9 @@ export class BackflipRouter extends LitElement {
     // Handle initial hash on page load
     const initialHash = window.location.hash.substring(1) || "home";
     console.log("Initial hash detected:", initialHash);
+    this.currentPage = initialHash;
+    this.currentHash = initialHash;
     if (initialHash !== "home") {
-      this.currentPage = initialHash;
       // Wait for DOM to be fully ready before scrolling
       this._waitForDOMAndScroll(initialHash);
     }
@@ -92,6 +98,7 @@ export class BackflipRouter extends LitElement {
       const hash = window.location.hash.substring(1) || "home";
       console.log("Hash change detected:", hash);
       this.currentPage = hash;
+      this.currentHash = hash;
 
       // Skip scrolling for detailed-single-movie as it's not part of scroll flow
       if (hash !== "detailed-single-movie") {
@@ -239,8 +246,7 @@ export class BackflipRouter extends LitElement {
   }
 
   render() {
-    const currentHash = window.location.hash.substring(1) || "home";
-    console.log("Router render called, current hash:", currentHash);
+    console.log("Router render called, current hash:", this.currentHash);
     return html`
       <backflip-menu></backflip-menu>
       <div class="page-container">
@@ -319,6 +325,9 @@ Audience Award."
         </backflip-single-movie>
         <backflip-contact id="contact"></backflip-contact>
       </div>
+      ${this.currentHash === "detailed-single-movie" ? html`
+        <backflip-detailed-single-movie id="detailed-single-movie"></backflip-detailed-single-movie>
+      ` : ''}
     `;
   }
 }
