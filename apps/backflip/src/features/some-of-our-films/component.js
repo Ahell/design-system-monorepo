@@ -19,7 +19,7 @@ export class BackflipSomeOfOurFilms extends LitElement {
       display: grid;
       grid-template-columns: 1fr 1200px 1fr;
       grid-template-rows: 100px 1fr 100px;
-      height: 100vh;
+      min-height: 100vh;
       width: 100%;
       background-color: var(--color-text-primary);
     }
@@ -46,25 +46,74 @@ export class BackflipSomeOfOurFilms extends LitElement {
     }
 
     .some-of-our-films-hero {
-      display: grid;
-      grid-template-columns: 1fr 728px 1fr;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       color: var(--color-bright-gold);
       background-color: var(--color-text-primary);
       width: 100%;
       height: 100%;
-      padding: 0 var(--space-0);
+      padding: var(--space-4) 0;
+      gap: var(--space-8);
+    }
+
+    .title-section {
+      width: 100%;
+      max-width: 728px;
+    }
+
+    .gallery-section {
+      width: 100%;
+      max-width: 1400px;
     }
 
     .some-of-our-films-title {
-      grid-column: 2;
-      align-self: center;
       font-size: var(--text-10xl);
       font-weight: var(--weight-black);
-      margin: 0 0 var(--space-4) 0;
+      margin: 0;
       padding: 0;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
       letter-spacing: var(--tracking-tight);
-      text-align: left;
+      text-align: center;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-4);
+      width: 100%;
+    }
+
+    .gallery-item {
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: transform var(--duration-fast) var(--ease-out);
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.05);
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-primary);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      text-align: center;
+      padding: var(--space-2);
     }
   `;
 
@@ -81,7 +130,31 @@ export class BackflipSomeOfOurFilms extends LitElement {
         <div class="menu-container"></div>
         <div class="hero-container">
           <div class="some-of-our-films-hero">
-            <h1 class="some-of-our-films-title">${content.title}</h1>
+            <div class="title-section">
+              <h1 class="some-of-our-films-title">${content.title}</h1>
+            </div>
+            <div class="gallery-section">
+              <div class="gallery-grid">
+                ${content.gallery.map(
+                  (item) => html`
+                    <div class="gallery-item">
+                      ${item.imageUrl === "placeholder"
+                        ? html`<div
+                            class="gallery-placeholder"
+                            style="background-color: ${item.bgColor}"
+                          >
+                            Film Poster
+                          </div>`
+                        : html`<img
+                            class="gallery-image"
+                            src="${item.imageUrl}"
+                            alt="${item.alt}"
+                          />`}
+                    </div>
+                  `
+                )}
+              </div>
+            </div>
           </div>
         </div>
         <div class="footer-container"></div>

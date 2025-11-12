@@ -89,6 +89,26 @@ export class BackflipWhoAreWe extends LitElement {
       line-height: 1.1;
       color: var(--color-text-primary);
     }
+
+    .who-are-we-headline {
+      font-size: var(--text-4xl);
+      font-weight: var(--weight-black);
+      font-family: var(--font-display);
+      margin: 0 0 var(--space-6) 0;
+      letter-spacing: var(--tracking-tight);
+      line-height: 1.1;
+      color: var(--color-text-primary);
+      text-align: center;
+    }
+
+    .who-are-we-description {
+      font-size: var(--text-sm);
+      font-weight: var(--weight-normal);
+      font-family: var(--font-sans);
+      margin: 0;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
   `;
 
   connectedCallback() {

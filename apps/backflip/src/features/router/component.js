@@ -21,13 +21,21 @@ export class BackflipRouter extends LitElement {
     }
 
     backflip-homepage,
-    backflip-about-us,
     backflip-who-are-we,
     backflip-some-of-our-films,
     backflip-single-movie,
     backflip-contact {
       flex: 0 0 100vh;
       width: 100%;
+    }
+
+    backflip-about-us {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+
+    backflip-single-movie[showvideo="false"] {
+      flex: 0 0 auto;
     }
 
     .floating-menu {
@@ -146,8 +154,12 @@ export class BackflipRouter extends LitElement {
         <backflip-about-us></backflip-about-us>
         <backflip-who-are-we></backflip-who-are-we>
         <backflip-some-of-our-films></backflip-some-of-our-films>
-        <backflip-single-movie theme="inverted"></backflip-single-movie>
         <backflip-single-movie
+          theme="inverted"
+          showVideo="false"
+        ></backflip-single-movie>
+        <backflip-single-movie
+          showVideo="false"
           creator="Dylan Williams"
           title="Men Who Sing"
           description="And here is a simple film about my Dad. A very sim-

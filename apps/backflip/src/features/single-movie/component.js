@@ -15,6 +15,7 @@ export class BackflipSingleMovie extends LitElement {
     buttonLabel: { type: String },
     videoUrl: { type: String },
     theme: { type: String },
+    showVideo: { type: String },
   };
 
   static styles = css`
@@ -26,19 +27,26 @@ export class BackflipSingleMovie extends LitElement {
     }
 
     .single-movie-grid {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        "video"
+        "content";
       width: 100%;
-      padding-top: 80px;
+      padding-top: 20px;
     }
-
     .single-movie-grid:not(.inverted) {
       background-color: var(--color-text-primary);
     }
 
+    .single-movie-grid.video-hidden {
+      grid-template-areas: "content";
+      grid-template-rows: 1fr;
+    }
+
     .video-section {
+      grid-area: video;
       width: 100%;
-      flex-shrink: 0;
     }
 
     .single-movie-video {
@@ -49,13 +57,18 @@ export class BackflipSingleMovie extends LitElement {
     }
 
     .content-section {
+      grid-area: content;
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 1200px 1fr;
       width: 100%;
-      padding: var(--space-32) 0;
+      padding: 80px 0;
       min-height: 300px;
       background-color: var(--color-text-primary);
+    }
+
+    .video-hidden .content-section {
+      padding: 80px 0;
     }
 
     .media-container {
@@ -176,19 +189,25 @@ export class BackflipSingleMovie extends LitElement {
     return html`
       <div class="single-movie-grid ${
         this.theme === "inverted" ? "inverted" : ""
-      }">
-        <div class="video-section">
-          <video
-            class="single-movie-video"
-            autoplay
-            muted
-            loop
-            playsinline
-            src="${media.videoUrl}"
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+      } ${this.showVideo === "false" ? "video-hidden" : ""}">
+        ${
+          this.showVideo !== "false"
+            ? html`
+                <div class="video-section">
+                  <video
+                    class="single-movie-video"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    src="${media.videoUrl}"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              `
+            : ""
+        }
         <div class="content-section">
           <div class="media-container">
             <img
