@@ -10,15 +10,20 @@ export class BackflipDetailedSingleMovie extends LitElement {
     :host {
       display: block;
       width: 100%;
-      height: 100%;
-      position: relative;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      background-color: var(--color-surface-primary);
+      overflow-y: auto;
     }
 
     .detailed-movie-grid {
       display: grid;
       grid-template-columns: 1fr 1200px 1fr;
       grid-template-rows: 100px 1fr 100px;
-      min-height: 100vh;
+      height: 100vh;
       width: 100%;
       background-color: var(--color-surface-primary);
     }
@@ -41,7 +46,7 @@ export class BackflipDetailedSingleMovie extends LitElement {
       padding: var(--space-4) 0;
       max-width: 1200px;
       margin: 0 auto;
-      overflow-y: auto;
+      overflow-y: visible;
     }
 
     .movie-header {
