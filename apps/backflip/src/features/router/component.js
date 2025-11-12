@@ -38,18 +38,24 @@ export class BackflipRouter extends LitElement {
     backflip-single-movie[showvideo="false"] {
       flex: 0 0 auto;
     }
-
-    .floating-menu {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
   `;
 
-  static properties = {
-    currentPage: { type: String },
-  };
+  firstUpdated() {
+    console.log("Router firstUpdated called");
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    console.log("Router updated, checking for elements...");
+
+    // Check if elements exist after render
+    setTimeout(() => {
+      const aboutEl = document.getElementById("about");
+      const homeEl = document.getElementById("home");
+      console.log("After render - about element:", !!aboutEl, aboutEl?.tagName);
+      console.log("After render - home element:", !!homeEl, homeEl?.tagName);
+    }, 100);
+  }
 
   constructor() {
     super();
@@ -58,21 +64,38 @@ export class BackflipRouter extends LitElement {
     this.scrollThreshold = 100; // Minimum scroll distance to trigger page change
   }
 
+  // Render in light DOM so elements are accessible via document.getElementById
+  createRenderRoot() {
+    console.log("Router createRenderRoot called, returning this (light DOM)");
+    return this;
+  }
+
   connectedCallback() {
     super.connectedCallback();
 
+    // Handle initial hash on page load
+    const initialHash = window.location.hash.substring(1) || "home";
+    console.log("Initial hash detected:", initialHash);
+    if (initialHash !== "home") {
+      this.currentPage = initialHash;
+      // Wait for DOM to be fully ready before scrolling
+      this._waitForDOMAndScroll(initialHash);
+    }
+
     // Listen for page changes
     window.addEventListener("pagechange", (e) => {
+      console.log("Page change event:", e.detail);
       this.currentPage = e.detail.page;
     });
 
     // Listen for hash changes
     window.addEventListener("hashchange", () => {
       const hash = window.location.hash.substring(1) || "home";
+      console.log("Hash change detected:", hash);
       this.currentPage = hash;
 
       // Scroll to the corresponding page
-      this._scrollToPage(hash);
+      this._waitForDOMAndScroll(hash);
     });
 
     // Listen for scroll events
@@ -125,11 +148,27 @@ export class BackflipRouter extends LitElement {
   }
 
   _scrollToPage(page) {
+    console.log(`Scrolling to page: ${page}`);
+    // Handle special cases
+    if (page === "single-movie") {
+      // Scroll to the first single-movie element
+      const element =
+        document.getElementById("single-movie-1") ||
+        document.getElementById("single-movie");
+      if (element) {
+        console.log(`Found single-movie element, scrolling...`);
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+
     // Try to find the element by ID
     const element = document.getElementById(page);
     if (element) {
+      console.log(`Found element for ${page}, scrolling...`);
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
+      console.log(`Element not found for ${page}, using fallback calculation`);
       // Fallback to viewport height calculation
       const pages = [
         "home",
@@ -149,20 +188,61 @@ export class BackflipRouter extends LitElement {
       if (pageIndex !== -1) {
         const viewportHeight = window.innerHeight;
         const scrollPosition = pageIndex * viewportHeight;
+        console.log(`Using fallback scroll to position: ${scrollPosition}`);
         window.scrollTo({
           top: scrollPosition,
           behavior: "smooth",
         });
+      } else {
+        console.log(`Page ${page} not found in pages array`);
       }
     }
   }
 
+  _waitForDOMAndScroll(page) {
+    let attempts = 0;
+    const maxAttempts = 50; // Max 5 seconds at 100ms intervals
+
+    const checkAndScroll = () => {
+      attempts++;
+      console.log(`Attempt ${attempts} to scroll to ${page}`);
+
+      // Check if the element exists
+      let element;
+      if (page === "single-movie") {
+        element =
+          document.getElementById("single-movie-1") ||
+          document.getElementById("single-movie");
+      } else {
+        element = document.getElementById(page);
+      }
+
+      if (element) {
+        console.log(`Element found for ${page}, scrolling...`);
+        this._scrollToPage(page);
+        return;
+      }
+
+      if (attempts < maxAttempts) {
+        setTimeout(checkAndScroll, 100);
+      } else {
+        console.log(
+          `Failed to find element for ${page} after ${maxAttempts} attempts, using fallback`
+        );
+        // Use fallback scrolling
+        this._scrollToPage(page);
+      }
+    };
+
+    // Start checking immediately
+    checkAndScroll();
+  }
+
   render() {
     const currentHash = window.location.hash.substring(1) || "home";
+    console.log("Router render called, current hash:", currentHash);
     return html`
-      <div class="floating-menu">
-        <backflip-menu></backflip-menu>
-      </div>
+      <backflip-menu></backflip-menu>
       <div class="page-container">
         <backflip-homepage id="home"></backflip-homepage>
         <backflip-about-us id="about"></backflip-about-us>

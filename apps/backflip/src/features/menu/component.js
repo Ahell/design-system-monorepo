@@ -46,6 +46,14 @@ export class BackflipMenu extends LitElement {
         0 0 20px rgba(255, 255, 255, 0.12);
       border-color: var(--color-pure-white);
     }
+
+    .hamburger:hover {
+      transform: translateY(-3px) scale(1.08);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35),
+        0 6px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2),
+        0 0 20px rgba(255, 255, 255, 0.12);
+      border-color: var(--color-pure-white);
+    }
     .hamburger:active {
       transform: translateY(0) scale(0.98);
       transition: all 0.1s ease;
@@ -65,10 +73,6 @@ export class BackflipMenu extends LitElement {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
       position: relative;
-    }
-
-    .hamburger.inverted .hamburger-bar {
-      background-color: var(--color-pure-black);
     }
 
     .hamburger.open .hamburger-bar:nth-child(1) {
@@ -139,7 +143,10 @@ export class BackflipMenu extends LitElement {
 
     /* Styles for the portal dropdown */
     :host {
-      position: relative;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
     }
 
     .hamburger-dropdown {
@@ -188,14 +195,11 @@ export class BackflipMenu extends LitElement {
   render() {
     const menuItems = getMenuItems();
     const currentPage = window.location.hash.substring(1) || "home";
-    const isInverted = currentPage === "about";
 
     return html`
       <div class="menu-container">
         <button
-          class="hamburger ${isInverted ? "inverted" : ""} ${this.isOpen
-            ? "open"
-            : ""}"
+          class="hamburger ${this.isOpen ? "open" : ""}"
           @click="${(e) => this._toggleMenu(e)}"
           aria-label="Toggle menu"
         >
@@ -209,6 +213,7 @@ export class BackflipMenu extends LitElement {
 
   _handleItemClick(event, item) {
     event.preventDefault();
+    event.stopPropagation();
 
     // Close the menu
     this.isOpen = false;
@@ -219,16 +224,13 @@ export class BackflipMenu extends LitElement {
     // Update URL hash
     window.location.hash = page;
 
-    // Scroll to the appropriate position
-    this._scrollToPage(page);
-
     // Update active state
     const items = getMenuItems();
     items.forEach((menuItem) => {
       menuItem.active = menuItem.label === item.label;
     });
 
-    // Dispatch custom event for page changes
+    // Dispatch custom event for page changes (router will handle scrolling)
     window.dispatchEvent(
       new CustomEvent("pagechange", {
         detail: { page, item },
@@ -302,9 +304,9 @@ export class BackflipMenu extends LitElement {
               .map((item) => {
                 const isActive = item.href.substring(1) === currentPage;
                 return `
-              <a
+              <div
                 class="hamburger-dropdown-item ${isActive ? "active" : ""}"
-                href="${item.href}"
+                data-href="${item.href}"
                 style="
                   display: block;
                   padding: 16px 20px;
@@ -326,7 +328,7 @@ export class BackflipMenu extends LitElement {
                 "
               >
                 ${item.label}
-              </a>
+              </div>
             `;
               })
               .join("")
@@ -462,7 +464,8 @@ export class BackflipMenu extends LitElement {
     const target = event.target.closest(".hamburger-dropdown-item");
     if (target) {
       event.preventDefault();
-      const href = target.getAttribute("href");
+      event.stopPropagation();
+      const href = target.getAttribute("data-href");
       const item = { href, label: target.textContent.trim() };
       this._handleItemClick(event, item);
     }
@@ -480,37 +483,6 @@ export class BackflipMenu extends LitElement {
 
     if (isOutsideMenu && isOutsideDropdown) {
       this.isOpen = false;
-    }
-  }
-
-  _scrollToPage(page) {
-    // Try to find the element by ID
-    const element = document.getElementById(page);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      // Fallback to viewport height calculation
-      const pageIndex =
-        page === "home"
-          ? 0
-          : page === "about"
-          ? 1
-          : page === "who-are-we"
-          ? 2
-          : page === "films"
-          ? 3
-          : page === "single-movie"
-          ? 4
-          : page === "detailed-single-movie"
-          ? 10
-          : page === "contact"
-          ? 11
-          : 0;
-      const targetScrollY = pageIndex * window.innerHeight;
-      window.scrollTo({
-        top: targetScrollY,
-        behavior: "smooth",
-      });
     }
   }
 
