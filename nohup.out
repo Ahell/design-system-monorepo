@@ -1,0 +1,13 @@
+ WARN  Issue while reading "/home/initium/webapps/design-system-monorepo/.npmrc". Failed to replace env in config: ${GITHUB_TOKEN}
+ WARN  Issue while reading "/home/initium/webapps/design-system-monorepo/.npmrc". Failed to replace env in config: ${GITHUB_TOKEN}
+
+> backflip@1.0.0 dev /home/initium/webapps/design-system-monorepo/apps/backflip
+> vite --port 3020
+
+Port 3020 is in use, trying another one...
+
+  VITE v7.1.12  ready in 175 ms
+
+  ➜  Local:   http://localhost:3021/
+  ➜  Network: http://192.168.68.50:3021/
+  ➜  Network: http://172.21.0.1:3021/

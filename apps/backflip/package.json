@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@ahell/design-system": "workspace:*",
+    "lit": "^3.3.1",
     "vite": "^7.1.12"
   }
 }
